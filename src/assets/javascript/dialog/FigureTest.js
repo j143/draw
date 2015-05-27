@@ -1,3 +1,5 @@
+/* jshint evil: true */
+
 shape_designer.dialog.FigureTest = Class.extend(
 {
     NAME : "shape_designer.dialog.FigureTest", 

@@ -35,18 +35,6 @@ shape_designer.policy.LineToolPolicy = shape_designer.policy.AbstractToolPolicy.
         canvas.setCursor(null);
     },
    
-    
-    /**
-     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} x the x-coordinate of the mouse event
-     * @param {Number} y the y-coordinate of the mouse event
-     * @template
-     */
-    onMouseMove:function(canvas, x, y){
-    },
-    
     /**
      * @method
      * 

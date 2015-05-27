@@ -47,8 +47,8 @@ shape_designer.Layer = Class.extend({
 	        this.html.append(
 	                '<div class="layerElement" data-figure="'+figure.id+'" id="layerElement_'+figure.id+'" >'+
 	                   figure.getUserData().name +
-	                   '<img data-figure="'+figure.id+'" class="layer_visibility pull-right" src="./icons/layer_visibility_'+figure.isVisible()+'.png">'+
-                       '<img data-figure="'+figure.id+'" class="layer_edit pull-right" src="./icons/layer_edit.png">'+
+	                   '<img data-figure="'+figure.id+'" class="layer_visibility pull-right" src="./assets/images/layer_visibility_'+figure.isVisible()+'.png">'+
+                       '<img data-figure="'+figure.id+'" class="layer_edit pull-right" src="./assets/images/layer_edit.png">'+
 	        		'</div>');
 	    },this),true);
 	    

@@ -12,7 +12,7 @@ shape_designer.policy.SelectionToolPolicy = draw2d.policy.canvas.BoundingboxSele
 
 
     setToolHeader: function(heading, icon ){
-        $("#currentTool_image").attr({"src": "./icons/tools/"+icon});
+        $("#currentTool_image").attr({"src": "./assets/images/tools/"+icon});
         $("#currentTool_heading").text(heading);
     },
 

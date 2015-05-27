@@ -24,18 +24,7 @@ shape_designer.policy.TextToolPolicy = shape_designer.policy.AbstractToolPolicy.
     },
     
     
-    /**
-     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} x the x-coordinate of the mouse event
-     * @param {Number} y the y-coordinate of the mouse event
-     * @template
-     */
-    onMouseMove:function(canvas, x, y){
-    },
-    
-    /**
+     /**
      * @method
      * 
      * @param {draw2d.Canvas} canvas
@@ -100,7 +89,7 @@ shape_designer.policy.TextToolPolicy = shape_designer.policy.AbstractToolPolicy.
             setTimeout($.proxy(function(){this.newFigure.onDoubleClick();},this),100);
         }
         else{
-            this.topLeft ==null;
+            this.topLeft=null;
         }
     }
 });

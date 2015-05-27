@@ -76,7 +76,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
                     name: figure.getUserData().name
                     });
             }else if(figure instanceof shape_designer.figure.ExtLabel){
-                var attr = figure.svgNodes[0].attr();
+                attr = figure.svgNodes[0].attr();
                 attr.x = attr.x+figure.getAbsoluteX();
                 attr.y = attr.y+figure.getAbsoluteY();
                 delete attr.transform;

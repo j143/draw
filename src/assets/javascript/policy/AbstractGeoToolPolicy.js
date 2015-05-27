@@ -1,3 +1,4 @@
+/* jshint evil: true */
 shape_designer.policy.AbstractGeoToolPolicy = shape_designer.policy.AbstractToolPolicy.extend({
 	
 	init:function(){

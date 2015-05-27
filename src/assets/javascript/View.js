@@ -15,7 +15,7 @@ shape_designer.View = draw2d.Canvas.extend({
         
         Mousetrap.bind(['ctrl+c', 'command+c'], $.proxy(function (event) {
             var primarySelection = this.getSelection().getPrimary();
-            if(primarySelection!=null){
+            if(primarySelection!==null){
                 this.clippboardFigure = primarySelection.clone();
                 this.clippboardFigure.translate(5,5);
             }
@@ -23,7 +23,7 @@ shape_designer.View = draw2d.Canvas.extend({
         },this));
 
         Mousetrap.bind(['ctrl+v', 'command+v'], $.proxy(function (event) {
-           if(this.clippboardFigure!=null){
+           if(this.clippboardFigure!==null){
                var cloneToAdd = this.clippboardFigure.clone();
                var command = new draw2d.command.CommandAdd(this, cloneToAdd, cloneToAdd.getPosition());
                this.getCommandStack().execute(command);

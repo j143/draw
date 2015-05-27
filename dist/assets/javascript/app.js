@@ -48,7 +48,8 @@ jQuery.fn.reverse = [].reverse;
     };
 }(Date));
 
-;// declare the namespace for this example
+
+// declare the namespace for this example
 var shape_designer = {
 		figure:{
 			
@@ -137,7 +138,7 @@ shape_designer.Application = Class.extend(
            about.hide();
            
            var param = this.getParam("figureId");
-           if(param!=null){
+           if(param!==null){
                this.storage.load(param, 
                    function(fileData){
                    console.log(fileData.json);
@@ -161,7 +162,7 @@ shape_designer.Application = Class.extend(
       var regexS = "[\\?&]"+name+"=([^&#]*)";
       var regex = new RegExp( regexS );
       var results = regex.exec( window.location.href );
-      if( results == null )
+      if( results === null )
         return null;
       
       return results[1];
@@ -223,7 +224,8 @@ shape_designer.Application = Class.extend(
 		);
 	}
 });
-;
+
+
 
 shape_designer.View = draw2d.Canvas.extend({
 	
@@ -240,7 +242,7 @@ shape_designer.View = draw2d.Canvas.extend({
         
         Mousetrap.bind(['ctrl+c', 'command+c'], $.proxy(function (event) {
             var primarySelection = this.getSelection().getPrimary();
-            if(primarySelection!=null){
+            if(primarySelection!==null){
                 this.clippboardFigure = primarySelection.clone();
                 this.clippboardFigure.translate(5,5);
             }
@@ -248,7 +250,7 @@ shape_designer.View = draw2d.Canvas.extend({
         },this));
 
         Mousetrap.bind(['ctrl+v', 'command+v'], $.proxy(function (event) {
-           if(this.clippboardFigure!=null){
+           if(this.clippboardFigure!==null){
                var cloneToAdd = this.clippboardFigure.clone();
                var command = new draw2d.command.CommandAdd(this, cloneToAdd, cloneToAdd.getPosition());
                this.getCommandStack().execute(command);
@@ -390,7 +392,8 @@ shape_designer.View = draw2d.Canvas.extend({
     }
 });
 
-;
+
+
 shape_designer.Layer = Class.extend({
 	
 	NAME: "shape_designer.Layer",
@@ -439,8 +442,8 @@ shape_designer.Layer = Class.extend({
 	        this.html.append(
 	                '<div class="layerElement" data-figure="'+figure.id+'" id="layerElement_'+figure.id+'" >'+
 	                   figure.getUserData().name +
-	                   '<img data-figure="'+figure.id+'" class="layer_visibility pull-right" src="./icons/layer_visibility_'+figure.isVisible()+'.png">'+
-                       '<img data-figure="'+figure.id+'" class="layer_edit pull-right" src="./icons/layer_edit.png">'+
+	                   '<img data-figure="'+figure.id+'" class="layer_visibility pull-right" src="./assets/images/layer_visibility_'+figure.isVisible()+'.png">'+
+                       '<img data-figure="'+figure.id+'" class="layer_edit pull-right" src="./assets/images/layer_edit.png">'+
 	        		'</div>');
 	    },this),true);
 	    
@@ -494,7 +497,8 @@ shape_designer.Layer = Class.extend({
 	        $("#layerElement_"+e.id).addClass("layerSelectedElement");
 	    });
 	}
-});;
+});
+
 shape_designer.FilterPane = Class.extend({
 	
     DEFAULT_LABEL : "Properties",
@@ -550,7 +554,7 @@ shape_designer.FilterPane = Class.extend({
             $("#add_filter_action_menu a").on("click", function(){
                 var $this = $(this);
                 var filterName = $this.data("filter");
-                var filter = eval("new "+filterName+"()");
+                var filter = new window[filterName]();
                 _this.currentFigure.addFilter(filter);
                 _this.onSelectionChanged(_this.view, _this.currentFigure);
             });
@@ -572,7 +576,8 @@ shape_designer.FilterPane = Class.extend({
 	{
 	}
 
-});;
+});
+
 shape_designer.Toolbar = Class.extend({
     
     init:function(app, elementId, view){
@@ -609,7 +614,7 @@ shape_designer.Toolbar = Class.extend({
         
         var buttonGroup=$("<div class=\"btn-group\"></div>");
         this.toolbarDiv.append(buttonGroup);
-        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./icons/toolbar_download.png"></button>');
+        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_download.png"></button>');
         buttonGroup.append(this.openButton);
         this.openButton.on("click",$.proxy(function(){
             var button = this.openButton;
@@ -638,7 +643,7 @@ shape_designer.Toolbar = Class.extend({
         Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
         this.openButton.hide();
         
-        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./icons/toolbar_upload.png"></button>');
+        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_upload.png"></button>');
         buttonGroup.append(this.saveButton);
         this.saveButton.on("click",$.proxy(function(){
             var button = this.saveButton;
@@ -685,9 +690,9 @@ shape_designer.Toolbar = Class.extend({
             
         // Inject the UNDO Button and the callbacks
         //
-        var buttonGroup=$('<div class="btn-group" ></div>');
+        buttonGroup=$('<div class="btn-group" ></div>');
         this.toolbarDiv.append(buttonGroup);
-        this.undoButton  = $('<button  data-toggle="tooltip" title="Undo <span class=\'highlight\'> [ Ctrl+Z ]</span>" class=\"btn btn-default\" ><img src="./icons/toolbar_undo.png"></button>');
+        this.undoButton  = $('<button  data-toggle="tooltip" title="Undo <span class=\'highlight\'> [ Ctrl+Z ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_undo.png"></button>');
         buttonGroup.append(this.undoButton);
         this.undoButton.on("click",$.proxy(function(){
                this.view.getCommandStack().undo();
@@ -697,7 +702,7 @@ shape_designer.Toolbar = Class.extend({
         
         // Inject the REDO Button and the callback
         //
-        this.redoButton  = $('<button data-toggle="tooltip" title="Redo <span class=\'highlight\'> [ Ctrl+Y ]</span>"  class=\"btn btn-default\" ><img src="./icons/toolbar_redo.png"></button>');
+        this.redoButton  = $('<button data-toggle="tooltip" title="Redo <span class=\'highlight\'> [ Ctrl+Y ]</span>"  class=\"btn btn-default\" ><img src="./assets/images/toolbar_redo.png"></button>');
         buttonGroup.append(this.redoButton);
         this.redoButton.on("click",$.proxy(function(){
             this.view.getCommandStack().redo();
@@ -707,13 +712,13 @@ shape_designer.Toolbar = Class.extend({
         this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
         this.toolbarDiv.append(this.delimiter);
         
-        this.testButton  = $('<button  data-toggle="tooltip" title="Test</span>" class=\"btn btn-default\" ><img src="./icons/toolbar_test.png"></button>');
+        this.testButton  = $('<button  data-toggle="tooltip" title="Test</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_test.png"></button>');
         this.toolbarDiv.append(this.testButton);
         this.testButton.on("click",$.proxy(function(){
             new shape_designer.dialog.FigureTest().show();
         },this));
   
-        this.codeButton  = $('<button  data-toggle="tooltip" title="JS Code</span>" class=\"btn btn-default\" ><img src="./icons/toolbar_js.png"></button>');
+        this.codeButton  = $('<button  data-toggle="tooltip" title="JS Code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_js.png"></button>');
         this.toolbarDiv.append(this.codeButton);
         this.codeButton.on("click",$.proxy(function(){
             new shape_designer.dialog.FigureCode().show();
@@ -724,7 +729,7 @@ shape_designer.Toolbar = Class.extend({
 
         // Inject the DELETE Button
         //
-        this.deleteButton  = $('<button  data-toggle="tooltip" title="Delete <span class=\'highlight\'> [ Del ]</span>" class=\"btn btn-default\" ><img src="./icons/toolbar_delete.png"></button>');
+        this.deleteButton  = $('<button  data-toggle="tooltip" title="Delete <span class=\'highlight\'> [ Del ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_delete.png"></button>');
         this.toolbarDiv.append(this.deleteButton);
         this.deleteButton.on("click",$.proxy(function(){
             var node = this.view.getCurrentSelection();
@@ -739,20 +744,20 @@ shape_designer.Toolbar = Class.extend({
 
         
        
-        var buttonGroup=$('<div class="btn-group" data-toggle="buttons"></div>');
+        buttonGroup=$('<div class="btn-group" data-toggle="buttons"></div>');
         this.toolbarDiv.append(buttonGroup);
 
         this.shapeButton = $(
                              '<label id="tool_shape" class="dropdown btn btn-sm btn-primary">'+
                              '    <input id="tool_shape_button"  data-policy="shape_designer.policy.RectangleToolPolicy" class="btn-default btn"  type="radio">'+
-                             '    <img   id="tool_shape_image" data-toggle="tooltip" title="Rectangle <span class=\'highlight\'> [ R ]</span>"  src="./icons/tools/POLYGON_DIAGONALS_032.png">'+
+                             '    <img   id="tool_shape_image" data-toggle="tooltip" title="Rectangle <span class=\'highlight\'> [ R ]</span>"  src="./assets/images/tools/POLYGON_DIAGONALS_032.png">'+
                              '    <span data-toggle="dropdown" role="button" href="#" id="tool_shape_caret"><span class="caret">&nbsp;</span></span>'+
                              '    <ul class="dropdown-menu" role="menu" >'+
-                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.RectangleToolPolicy" data-toggle="tooltip" title="Rectangle <span class=\'highlight\'> [ R ]</span>"><a href="#"><img  src="./icons/tools/POLYGON_DIAGONALS_032.png">Rectangle</a></li>'+
-                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.CircleToolPolicy"    data-toggle="tooltip" title="Circle <span class=\'highlight\'> [ C ]</span>">   <a href="#"><img  src="./icons/tools/CIRCLE_1_032.png">Circle</a></li>'+
-                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.LineToolPolicy"      data-toggle="tooltip" title="Line <span class=\'highlight\'> [ L ]</span>">     <a href="#"><img  src="./icons/tools/LINE_032.png">Line</a></li>'+
-                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.TextToolPolicy"      data-toggle="tooltip" title="Text <span class=\'highlight\'> [ T ]</span>">     <a href="#"><img  src="./icons/tools/TEXT_032.png">Text</a></li>'+
-                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.PortToolPolicy"      data-toggle="tooltip" title="Port <span class=\'highlight\'> [ P ]</span>">     <a href="#"><img  src="./icons/tools/PORT_032.png">Port</a></li>'+
+                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.RectangleToolPolicy" data-toggle="tooltip" title="Rectangle <span class=\'highlight\'> [ R ]</span>"><a href="#"><img  src="./assets/images/tools/POLYGON_DIAGONALS_032.png">Rectangle</a></li>'+
+                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.CircleToolPolicy"    data-toggle="tooltip" title="Circle <span class=\'highlight\'> [ C ]</span>">   <a href="#"><img  src="./assets/images/tools/CIRCLE_1_032.png">Circle</a></li>'+
+                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.LineToolPolicy"      data-toggle="tooltip" title="Line <span class=\'highlight\'> [ L ]</span>">     <a href="#"><img  src="./assets/images/tools/LINE_032.png">Line</a></li>'+
+                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.TextToolPolicy"      data-toggle="tooltip" title="Text <span class=\'highlight\'> [ T ]</span>">     <a href="#"><img  src="./assets/images/tools/TEXT_032.png">Text</a></li>'+
+                             '       <li class="tool_shape_entry" data-policy="shape_designer.policy.PortToolPolicy"      data-toggle="tooltip" title="Port <span class=\'highlight\'> [ P ]</span>">     <a href="#"><img  src="./assets/images/tools/PORT_032.png">Port</a></li>'+
                              '    </ul>'+
                              '</label>'
                           );
@@ -769,7 +774,7 @@ shape_designer.Toolbar = Class.extend({
         },this));
        
         $("#tool_shape_image").on("click",$.proxy(function(){
-            this.view.installEditPolicy(eval("new "+$("#tool_shape_button").data("policy")+"()"));
+            this.view.installEditPolicy(new window[$("#tool_shape_button").data("policy")]());
         },this));
         Mousetrap.bind(["R","r"], $.proxy(function (event) {
             $('*[data-policy="shape_designer.policy.RectangleToolPolicy"]').click();
@@ -793,7 +798,7 @@ shape_designer.Toolbar = Class.extend({
         },this));
         
         
-        this.selectButton = $('<label data-toggle="tooltip" title="Select mode <span class=\'highlight\'> [ spacebar ]</span>" class="btn btn-sm btn-primary active"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./icons/tools/SELECT_TOOL_032.png"></label>');
+        this.selectButton = $('<label data-toggle="tooltip" title="Select mode <span class=\'highlight\'> [ spacebar ]</span>" class="btn btn-sm btn-primary active"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/tools/SELECT_TOOL_032.png"></label>');
         buttonGroup.append(this.selectButton);
         this.selectButton.on("click",$.proxy(function(){
             this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
@@ -804,7 +809,7 @@ shape_designer.Toolbar = Class.extend({
         buttonGroup=$('<div class="btn-group" data-toggle="buttons"></div>');
         
         this.toolbarDiv.append(buttonGroup);
-        this.unionButton = $('<label data-toggle="tooltip" title="Polygon Union <span class=\'highlight\'> [ U ]</span>" class="btn btn-sm btn-primary"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./icons/toolbar_union.png"></label>');
+        this.unionButton = $('<label data-toggle="tooltip" title="Polygon Union <span class=\'highlight\'> [ U ]</span>" class="btn btn-sm btn-primary"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/toolbar_union.png"></label>');
         buttonGroup.append(this.unionButton);
         this.unionButton.on("click",$.proxy(function(){
            var selection = this.view.getSelection().getAll();
@@ -814,14 +819,14 @@ shape_designer.Toolbar = Class.extend({
         },this));
         Mousetrap.bind(["U", "u"], $.proxy(function (event) {this.unionButton.click();return false;},this));
 
-       this.differenceButton = $('<label data-toggle="tooltip" title="Polygon Difference <span class=\'highlight\'> [ D ]</span>"  class="btn btn-sm btn-primary"><input type="radio" name="selected_tool" id="tool2" class="btn-default btn" ><img src="./icons/toolbar_difference.png"></label>');
+       this.differenceButton = $('<label data-toggle="tooltip" title="Polygon Difference <span class=\'highlight\'> [ D ]</span>"  class="btn btn-sm btn-primary"><input type="radio" name="selected_tool" id="tool2" class="btn-default btn" ><img src="./assets/images/toolbar_difference.png"></label>');
        buttonGroup.append(this.differenceButton);
        this.differenceButton.on("click",$.proxy(function(){
            this.view.installEditPolicy(new shape_designer.policy.GeoDifferenceToolPolicy());
        },this));
        Mousetrap.bind(["D", "d"], $.proxy(function (event) {this.differenceButton.click();return false;},this));
         
-       this.intersectionButton = $('<label data-toggle="tooltip" title="Polygon Intersection <span class=\'highlight\'> [ I ]</span>"  class="btn btn-sm btn-primary"><input type="radio" name="selected_tool" id="too3" class="btn-default btn" ><img src="./icons/toolbar_intersect.png"></label>');
+       this.intersectionButton = $('<label data-toggle="tooltip" title="Polygon Intersection <span class=\'highlight\'> [ I ]</span>"  class="btn btn-sm btn-primary"><input type="radio" name="selected_tool" id="too3" class="btn-default btn" ><img src="./assets/images/toolbar_intersect.png"></label>');
        buttonGroup.append(this.intersectionButton);
        this.intersectionButton.on("click",$.proxy(function(){
            this.view.installEditPolicy(new shape_designer.policy.GeoIntersectionToolPolicy());
@@ -862,7 +867,8 @@ shape_designer.Toolbar = Class.extend({
         this.redoButton.button( "option", "disabled", !event.getStack().canRedo() );
     }
     
-});;shape_designer.dialog.About = Class.extend(
+});
+shape_designer.dialog.About = Class.extend(
 {
     NAME : "shape_designer.dialog.About", 
 
@@ -892,7 +898,10 @@ shape_designer.Toolbar = Class.extend({
 	}
 
       
-});  ;shape_designer.dialog.FigureTest = Class.extend(
+});  
+/* jshint evil: true */
+
+shape_designer.dialog.FigureTest = Class.extend(
 {
     NAME : "shape_designer.dialog.FigureTest", 
 
@@ -946,7 +955,8 @@ shape_designer.Toolbar = Class.extend({
 	}
 
       
-});  ;shape_designer.dialog.FigureCode = Class.extend(
+});  
+shape_designer.dialog.FigureCode = Class.extend(
 {
     NAME : "shape_designer.dialog.FigureCode", 
 
@@ -984,7 +994,8 @@ shape_designer.Toolbar = Class.extend({
 	}
 
       
-});  ;
+});  
+
 shape_designer.filter.Filter = Class.extend({
     NAME : "shape_designer.filter.Filter",
 	
@@ -1029,7 +1040,8 @@ shape_designer.filter.Filter = Class.extend({
 
 
 
-;
+
+
 shape_designer.filter.StrokeFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.StrokeFilter",
     
@@ -1100,7 +1112,8 @@ shape_designer.filter.StrokeFilter = shape_designer.filter.Filter.extend({
 
 
 
-;
+
+
 shape_designer.filter.OutlineStrokeFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.OutlineStrokeFilter",
     
@@ -1172,7 +1185,8 @@ shape_designer.filter.OutlineStrokeFilter = shape_designer.filter.Filter.extend(
 
 
 
-;
+
+
 shape_designer.filter.BlurFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.BlurFilter",
     
@@ -1220,7 +1234,8 @@ shape_designer.filter.BlurFilter = shape_designer.filter.Filter.extend({
 
 
 
-;
+
+
 shape_designer.filter.FillColorFilter = shape_designer.filter.Filter.extend({
 	NAME : "shape_designer.filter.FillColorFilter",
 	
@@ -1277,7 +1292,8 @@ shape_designer.filter.FillColorFilter = shape_designer.filter.Filter.extend({
 
 
 
-;
+
+
 shape_designer.filter.FontColorFilter = shape_designer.filter.Filter.extend({
 	NAME : "shape_designer.filter.FontColorFilter",
 	
@@ -1334,7 +1350,8 @@ shape_designer.filter.FontColorFilter = shape_designer.filter.Filter.extend({
 
 
 
-;
+
+
 shape_designer.filter.FontSizeFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.FontSizeFilter",
     
@@ -1392,7 +1409,8 @@ shape_designer.filter.FontSizeFilter = shape_designer.filter.Filter.extend({
 
 
 
-;
+
+
 shape_designer.filter.OpacityFilter = shape_designer.filter.Filter.extend({
     NAME : "shape_designer.filter.OpacityFilter",
 	
@@ -1445,7 +1463,8 @@ shape_designer.filter.OpacityFilter = shape_designer.filter.Filter.extend({
 
 
 
-;
+
+
 shape_designer.filter.LinearGradientFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.LinearGradientFilter",
     
@@ -1566,7 +1585,8 @@ shape_designer.filter.LinearGradientFilter = shape_designer.filter.Filter.extend
 
 
 
-;
+
+
 shape_designer.filter.TextLinearGradientFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.TextLinearGradientFilter",
     
@@ -1688,7 +1708,8 @@ shape_designer.filter.TextLinearGradientFilter = shape_designer.filter.Filter.ex
 
 
 
-;
+
+
 shape_designer.filter.PortTypeFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.PortTypeFilter",
     
@@ -1757,7 +1778,8 @@ shape_designer.filter.PortTypeFilter = shape_designer.filter.Filter.extend({
 
 
 
-;
+
+
 shape_designer.filter.PortDirectionFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.PortDirectionFilter",
     
@@ -1829,7 +1851,8 @@ shape_designer.filter.PortDirectionFilter = shape_designer.filter.Filter.extend(
 
 
 
-;
+
+
 shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.PositionFilter",
     
@@ -1914,7 +1937,8 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
 
 
 
-;
+
+
 shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
     NAME : "shape_designer.filter.RadiusFilter",
 	
@@ -1966,7 +1990,8 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
 
 
 
-;shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
+
+shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
     
     NAME: "shape_designer.figure.ExtLabel",
     
@@ -2098,14 +2123,15 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = eval("new "+e.name+"()");
+                var filter = new window[e.name]();//eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
         }
     }
 });
-;shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
+
+shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     
     NAME: "shape_designer.figure.ExtPolygon",
     
@@ -2240,14 +2266,15 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = eval("new "+e.name+"()");
+                var filter = new window[e.name]();//eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
         }
     }
 });
-;shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
+
+shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     
     NAME: "shape_designer.figure.ExtPort",
     
@@ -2397,7 +2424,7 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = eval("new "+e.name+"()");
+                var filter = new window[e.name]();//eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
@@ -2405,7 +2432,8 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
         this.updateDecoration();
     }
 });
-;shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
+
+shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
     
     NAME: "shape_designer.figure.ExtLine",
     
@@ -2512,14 +2540,15 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = eval("new "+e.name+"()");
+                var filter = new window[e.name]();//eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
         }
     }
 });
-;shape_designer.figure.PolyRect = shape_designer.figure.ExtPolygon.extend({
+
+shape_designer.figure.PolyRect = shape_designer.figure.ExtPolygon.extend({
 
     NAME: "shape_designer.figure.PolyRect",
 
@@ -2545,7 +2574,8 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
       this.setUserData({name:"Rectangle"});
     }
 });
-;shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
+
+shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
 
     NAME: "shape_designer.figure.PolyCircle",
 
@@ -2674,14 +2704,15 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = eval("new "+e.name+"()");
+                var filter = new window[e.name]();//eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
         }
     }
 });
-;shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
+
+shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
     NAME : "shape_designer.storage.BackendStorage",
 
     /**
@@ -2807,7 +2838,7 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
     save: function(view, currentFileHandle, successCallback, errorCallback, abortCallback){
         var _this = this;
         
-    	if(currentFileHandle==null){
+    	if(currentFileHandle===null){
     		currentFileHandle= {
     		    title:"Document name",
     		    tags:"Common"
@@ -2876,7 +2907,7 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
                         out += (idx === 0 ? add : add[0].toUpperCase() + add.slice(1));
                     });
                     return out;
-                }
+                };
                 currentFileHandle.title = toCamleCase(currentFileHandle.title);
     
                     // generate the json 
@@ -2913,7 +2944,8 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
             $("#fileSaveDialog").modal();
         },this), view.getBoundingBox().scale(10,10));     
     }
-});;
+});
+
 shape_designer.FigureWriter = draw2d.io.Writer.extend({
     
     init:function(){
@@ -2991,7 +3023,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
                     name: figure.getUserData().name
                     });
             }else if(figure instanceof shape_designer.figure.ExtLabel){
-                var attr = figure.svgNodes[0].attr();
+                attr = figure.svgNodes[0].attr();
                 attr.x = attr.x+figure.getAbsoluteX();
                 attr.y = attr.y+figure.getAbsoluteY();
                 delete attr.transform;
@@ -3079,7 +3111,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
         
         resultCallback(output,  draw2d.util.Base64.encode(output));
     }
-});;shape_designer.policy.AbstractToolPolicy = draw2d.policy.canvas.SelectionPolicy.extend({
+});
+shape_designer.policy.AbstractToolPolicy = draw2d.policy.canvas.SelectionPolicy.extend({
 	
 	init:function(){
 	    this._super();
@@ -3088,7 +3121,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
    
     setToolHeader: function(heading, icon ){
         $('#currentTool_image').fadeOut(200, function() {
-            $("#currentTool_image").attr({"src": "./icons/tools/"+icon});
+            $("#currentTool_image").attr({"src": "./assets/images/tools/"+icon});
             $('#currentTool_image').fadeIn(200);
         });
         $('#currentTool_heading').fadeOut(200, function() {
@@ -3108,7 +3141,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
 
 
 
-;shape_designer.policy.AbstractGeoToolPolicy = shape_designer.policy.AbstractToolPolicy.extend({
+
+/* jshint evil: true */
+shape_designer.policy.AbstractGeoToolPolicy = shape_designer.policy.AbstractToolPolicy.extend({
 	
 	init:function(){
 	    this._super();
@@ -3195,7 +3230,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
 
 
 
-;
+
+
 shape_designer.policy.GeoUnionToolPolicy = shape_designer.policy.AbstractGeoToolPolicy.extend({
 	
 	init:function(){
@@ -3250,7 +3286,8 @@ shape_designer.policy.GeoUnionToolPolicy = shape_designer.policy.AbstractGeoTool
 
 
 
-;
+
+
 shape_designer.policy.GeoDifferenceToolPolicy = shape_designer.policy.AbstractGeoToolPolicy.extend({
 	
 	init:function(){
@@ -3303,7 +3340,8 @@ shape_designer.policy.GeoDifferenceToolPolicy = shape_designer.policy.AbstractGe
 
 
 
-;
+
+
 shape_designer.policy.GeoIntersectionToolPolicy = shape_designer.policy.AbstractGeoToolPolicy.extend({
 	
 	init:function(){
@@ -3358,7 +3396,8 @@ shape_designer.policy.GeoIntersectionToolPolicy = shape_designer.policy.Abstract
 
 
 
-;
+
+
 shape_designer.policy.SelectionToolPolicy = draw2d.policy.canvas.BoundingboxSelectionPolicy.extend({
 	
 	init:function(){
@@ -3372,7 +3411,7 @@ shape_designer.policy.SelectionToolPolicy = draw2d.policy.canvas.BoundingboxSele
 
 
     setToolHeader: function(heading, icon ){
-        $("#currentTool_image").attr({"src": "./icons/tools/"+icon});
+        $("#currentTool_image").attr({"src": "./assets/images/tools/"+icon});
         $("#currentTool_heading").text(heading);
     },
 
@@ -3380,7 +3419,8 @@ shape_designer.policy.SelectionToolPolicy = draw2d.policy.canvas.BoundingboxSele
         $("#currentTool_message").html(message);
 	}
 });
-;
+
+
 shape_designer.policy.RectangleToolPolicy = shape_designer.policy.AbstractToolPolicy.extend({
 	
 	init:function(){
@@ -3408,18 +3448,6 @@ shape_designer.policy.RectangleToolPolicy = shape_designer.policy.AbstractToolPo
         canvas.setCursor(null);
     },
    
-    
-    /**
-     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} x the x-coordinate of the mouse event
-     * @param {Number} y the y-coordinate of the mouse event
-     * @template
-     */
-    onMouseMove:function(canvas, x, y){
-    },
-    
     /**
      * @method
      * 
@@ -3513,7 +3541,8 @@ shape_designer.policy.RectangleToolPolicy = shape_designer.policy.AbstractToolPo
 
 
 
-;
+
+
 shape_designer.policy.CircleToolPolicy = shape_designer.policy.AbstractToolPolicy.extend({
 	
     TITLE: "Circle",
@@ -3545,18 +3574,7 @@ shape_designer.policy.CircleToolPolicy = shape_designer.policy.AbstractToolPolic
         canvas.setCursor(null);
     },
     
-    
-    /**
-     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} x the x-coordinate of the mouse event
-     * @param {Number} y the y-coordinate of the mouse event
-     * @template
-     */
-    onMouseMove:function(canvas, x, y){
-    },
-    
+
     /**
      * @method
      * 
@@ -3646,7 +3664,8 @@ shape_designer.policy.CircleToolPolicy = shape_designer.policy.AbstractToolPolic
 
 
 
-;
+
+
 shape_designer.policy.TextToolPolicy = shape_designer.policy.AbstractToolPolicy.extend({
     
     TITLE: "Text",
@@ -3672,18 +3691,7 @@ shape_designer.policy.TextToolPolicy = shape_designer.policy.AbstractToolPolicy.
     },
     
     
-    /**
-     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} x the x-coordinate of the mouse event
-     * @param {Number} y the y-coordinate of the mouse event
-     * @template
-     */
-    onMouseMove:function(canvas, x, y){
-    },
-    
-    /**
+     /**
      * @method
      * 
      * @param {draw2d.Canvas} canvas
@@ -3748,7 +3756,7 @@ shape_designer.policy.TextToolPolicy = shape_designer.policy.AbstractToolPolicy.
             setTimeout($.proxy(function(){this.newFigure.onDoubleClick();},this),100);
         }
         else{
-            this.topLeft ==null;
+            this.topLeft=null;
         }
     }
 });
@@ -3756,7 +3764,8 @@ shape_designer.policy.TextToolPolicy = shape_designer.policy.AbstractToolPolicy.
 
 
 
-;
+
+
 shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy.extend({
     
     TITLE: "Port",
@@ -3806,7 +3815,7 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
      * @template
      */
     onMouseUp: function(canvas, x, y){
-        if(this.mouseDownElement===null || !this.mouseDownElement instanceof shape_designer.figure.ExtPort){
+        if(this.mouseDownElement===null || !(this.mouseDownElement instanceof shape_designer.figure.ExtPort)){
             var command = new draw2d.command.CommandAdd(canvas, new shape_designer.figure.ExtPort(), x, y);
             canvas.getCommandStack().execute(command);
         }
@@ -3819,7 +3828,8 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
 
 
 
-;
+
+
 shape_designer.policy.LineToolPolicy = shape_designer.policy.AbstractToolPolicy.extend({
 	
     MESSAGE_STEP1 : "Select start point of the line.",
@@ -3856,18 +3866,6 @@ shape_designer.policy.LineToolPolicy = shape_designer.policy.AbstractToolPolicy.
         canvas.setCursor(null);
     },
    
-    
-    /**
-     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} x the x-coordinate of the mouse event
-     * @param {Number} y the y-coordinate of the mouse event
-     * @template
-     */
-    onMouseMove:function(canvas, x, y){
-    },
-    
     /**
      * @method
      * 

@@ -48,7 +48,7 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
      * @template
      */
     onMouseUp: function(canvas, x, y){
-        if(this.mouseDownElement===null || !this.mouseDownElement instanceof shape_designer.figure.ExtPort){
+        if(this.mouseDownElement===null || !(this.mouseDownElement instanceof shape_designer.figure.ExtPort)){
             var command = new draw2d.command.CommandAdd(canvas, new shape_designer.figure.ExtPort(), x, y);
             canvas.getCommandStack().execute(command);
         }

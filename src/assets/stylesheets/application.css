@@ -151,7 +151,7 @@ body{
   -webkit-box-shadow: 5px 5px 21px 0px rgba(50, 50, 50, 0.45);
   -moz-box-shadow:    5px 5px 21px 0px rgba(50, 50, 50, 0.45);
   box-shadow:         5px 5px 21px 0px rgba(50, 50, 50, 0.45);
-  background-image: url(../splash.png);
+  background-image: url(../images/splash.png);
 }
 
 #splash div {

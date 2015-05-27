@@ -124,7 +124,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
     save: function(view, currentFileHandle, successCallback, errorCallback, abortCallback){
         var _this = this;
         
-    	if(currentFileHandle==null){
+    	if(currentFileHandle===null){
     		currentFileHandle= {
     		    title:"Document name",
     		    tags:"Common"
@@ -193,7 +193,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                         out += (idx === 0 ? add : add[0].toUpperCase() + add.slice(1));
                     });
                     return out;
-                }
+                };
                 currentFileHandle.title = toCamleCase(currentFileHandle.title);
     
                     // generate the json 

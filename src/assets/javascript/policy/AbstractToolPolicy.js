@@ -7,7 +7,7 @@ shape_designer.policy.AbstractToolPolicy = draw2d.policy.canvas.SelectionPolicy.
    
     setToolHeader: function(heading, icon ){
         $('#currentTool_image').fadeOut(200, function() {
-            $("#currentTool_image").attr({"src": "./icons/tools/"+icon});
+            $("#currentTool_image").attr({"src": "./assets/images/tools/"+icon});
             $('#currentTool_image').fadeIn(200);
         });
         $('#currentTool_heading').fadeOut(200, function() {

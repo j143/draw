@@ -10,7 +10,6 @@ module.exports = function (grunt) {
         // Task configuration
         concat: {
             options: {
-                separator: ';'
             },
             libs: {
                 src: [
@@ -105,6 +104,17 @@ module.exports = function (grunt) {
                     './src/assets/javascript/policy/LineToolPolicy.js'
                 ],
                 dest: './dist/assets/javascript/app.js'
+            },
+            css:{
+                src:[
+                    './src/assets/stylesheets/application.css',
+                    './bower_components/anglepicker/ui.anglepicker.css',
+                    './bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
+                    './bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
+                    './bower_components/ladda/dist/ladda-themeless.min.css',
+                    './src/assets/stylesheets/myprettify.css'
+                ],
+                dest: './dist/assets/stylesheets/application.css'
             }
         },
 
@@ -112,8 +122,20 @@ module.exports = function (grunt) {
             application: {
                 expand: true,
                 cwd: 'src/',
-                src: ['**/*.html', '**/*.css'],
+                src: ['**/*.html', 'assets/images/**/*'],
                 dest: 'dist/'
+            },
+            jquery:{
+                expand: true,
+                cwd: 'bower_components/jquery-ui/themes/eggplant',
+                src: ['**/*'],
+                dest: 'dist/lib/jquery-ui'
+            },
+            bootstrap:{
+                expand: true,
+                cwd: 'bower_components/bootstrap/dist',
+                src: ['**/*'],
+                dest: 'dist/lib/bootstrap'
             }
         },
 
