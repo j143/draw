@@ -1,3 +1,4 @@
+/* jshint evil:true */
 
 shape_designer.Toolbar = Class.extend({
     
@@ -23,7 +24,7 @@ shape_designer.Toolbar = Class.extend({
                 ' <span class="pull-left" >'+
                 '    <img id="currentTool_image" class="media-object" src="" >'+
                 ' </span>'+
-                ' <div class="media-body pull-right">'+
+                ' <div class="media-body">'+
                 '   <h4 id="currentTool_heading" class="media-heading">Media heading</h4>'+
                 '    <div id="currentTool_message"></div>'+
                 '  </div>'+
@@ -195,7 +196,7 @@ shape_designer.Toolbar = Class.extend({
         },this));
        
         $("#tool_shape_image").on("click",$.proxy(function(){
-            this.view.installEditPolicy(new window[$("#tool_shape_button").data("policy")]());
+            this.view.installEditPolicy(eval("new "+$("#tool_shape_button").data("policy")+"()"));
         },this));
         Mousetrap.bind(["R","r"], $.proxy(function (event) {
             $('*[data-policy="shape_designer.policy.RectangleToolPolicy"]').click();

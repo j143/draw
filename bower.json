@@ -20,7 +20,8 @@
     "bootstrap-switch": "3.0.0",
     "bootstrap-tagsinput": "0.4.2",
     "jquery-jsonrpc": "0.1.1",
-    "jsts": "0.13.2"
+    "jsts": "0.13.2",
+    "github-fork-ribbon-css": "~0.1.1"
   },
   "private": true,
   "resolutions": {

@@ -303,7 +303,7 @@ shape_designer.View = draw2d.Canvas.extend({
 
 	setCursor:function(cursor){
 	    if(cursor!==null){
-	        this.html.css("cursor","url(icons/"+cursor+") 0 0, default");
+	        this.html.css("cursor","url(assets/images/cursors/"+cursor+") 0 0, default");
 	    }
 	    else{
             this.html.css("cursor","default");
@@ -471,13 +471,12 @@ shape_designer.Layer = Class.extend({
             });
  	    },this));
 
-
 	    
 	    $(".layerElement img.layer_visibility").on("click", $.proxy(function(event){
             var figure =this.view.getExtFigure($(event.target).data("figure"));
             figure.setVisible(!figure.isVisible());
             this.view.setCurrentSelection(null);
-            $(event.target).attr({"src": "./icons/layer_visibility_"+figure.isVisible()+".png"});
+            $(event.target).attr({"src": "./assets/icons/layer_visibility_"+figure.isVisible()+".png"});
         },this));
 
         $(".layerElement").on("click", $.proxy(function(event){
@@ -498,6 +497,7 @@ shape_designer.Layer = Class.extend({
 	    });
 	}
 });
+/* jshint evil:true */
 
 shape_designer.FilterPane = Class.extend({
 	
@@ -554,7 +554,7 @@ shape_designer.FilterPane = Class.extend({
             $("#add_filter_action_menu a").on("click", function(){
                 var $this = $(this);
                 var filterName = $this.data("filter");
-                var filter = new window[filterName]();
+                var filter = eval("new "+filterName+"()");
                 _this.currentFigure.addFilter(filter);
                 _this.onSelectionChanged(_this.view, _this.currentFigure);
             });
@@ -577,6 +577,7 @@ shape_designer.FilterPane = Class.extend({
 	}
 
 });
+/* jshint evil:true */
 
 shape_designer.Toolbar = Class.extend({
     
@@ -602,7 +603,7 @@ shape_designer.Toolbar = Class.extend({
                 ' <span class="pull-left" >'+
                 '    <img id="currentTool_image" class="media-object" src="" >'+
                 ' </span>'+
-                ' <div class="media-body pull-right">'+
+                ' <div class="media-body">'+
                 '   <h4 id="currentTool_heading" class="media-heading">Media heading</h4>'+
                 '    <div id="currentTool_message"></div>'+
                 '  </div>'+
@@ -774,7 +775,7 @@ shape_designer.Toolbar = Class.extend({
         },this));
        
         $("#tool_shape_image").on("click",$.proxy(function(){
-            this.view.installEditPolicy(new window[$("#tool_shape_button").data("policy")]());
+            this.view.installEditPolicy(eval("new "+$("#tool_shape_button").data("policy")+"()"));
         },this));
         Mousetrap.bind(["R","r"], $.proxy(function (event) {
             $('*[data-policy="shape_designer.policy.RectangleToolPolicy"]').click();
@@ -1991,6 +1992,7 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
 
 
 
+/* jshint evil:true */
 shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
     
     NAME: "shape_designer.figure.ExtLabel",
@@ -2123,13 +2125,15 @@ shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = new window[e.name]();//eval("new "+e.name+"()");
+                var filter = eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
         }
     }
 });
+
+/* jshint evil:true */
 
 shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     
@@ -2266,13 +2270,15 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = new window[e.name]();//eval("new "+e.name+"()");
+                var filter = eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
         }
     }
 });
+
+/* jshint evil:true */
 
 shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     
@@ -2424,7 +2430,7 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = new window[e.name]();//eval("new "+e.name+"()");
+                var filter = eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
@@ -2433,6 +2439,7 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     }
 });
 
+/* jshint evil:true */
 shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
     
     NAME: "shape_designer.figure.ExtLine",
@@ -2540,7 +2547,7 @@ shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = new window[e.name]();//eval("new "+e.name+"()");
+                var filter = eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
@@ -2575,6 +2582,7 @@ shape_designer.figure.PolyRect = shape_designer.figure.ExtPolygon.extend({
     }
 });
 
+/* jshint evil:true */
 shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
 
     NAME: "shape_designer.figure.PolyCircle",
@@ -2704,7 +2712,7 @@ shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = new window[e.name]();//eval("new "+e.name+"()");
+                var filter = eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));

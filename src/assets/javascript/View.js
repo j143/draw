@@ -76,7 +76,7 @@ shape_designer.View = draw2d.Canvas.extend({
 
 	setCursor:function(cursor){
 	    if(cursor!==null){
-	        this.html.css("cursor","url(icons/"+cursor+") 0 0, default");
+	        this.html.css("cursor","url(assets/images/cursors/"+cursor+") 0 0, default");
 	    }
 	    else{
             this.html.css("cursor","default");

@@ -76,13 +76,12 @@ shape_designer.Layer = Class.extend({
             });
  	    },this));
 
-
 	    
 	    $(".layerElement img.layer_visibility").on("click", $.proxy(function(event){
             var figure =this.view.getExtFigure($(event.target).data("figure"));
             figure.setVisible(!figure.isVisible());
             this.view.setCurrentSelection(null);
-            $(event.target).attr({"src": "./icons/layer_visibility_"+figure.isVisible()+".png"});
+            $(event.target).attr({"src": "./assets/icons/layer_visibility_"+figure.isVisible()+".png"});
         },this));
 
         $(".layerElement").on("click", $.proxy(function(event){

@@ -125,6 +125,13 @@ module.exports = function (grunt) {
                 src: ['**/*.html', 'assets/images/**/*'],
                 dest: 'dist/'
             },
+            banner:{
+                expand: true,
+                cwd: 'bower_components/github-fork-ribbon-css/',
+                src: ['**/*.css'],
+                dest: 'dist/lib/banner'
+            },
+
             jquery:{
                 expand: true,
                 cwd: 'bower_components/jquery-ui/themes/eggplant',

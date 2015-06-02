@@ -1,3 +1,4 @@
+/* jshint evil:true */
 
 shape_designer.FilterPane = Class.extend({
 	
@@ -54,7 +55,7 @@ shape_designer.FilterPane = Class.extend({
             $("#add_filter_action_menu a").on("click", function(){
                 var $this = $(this);
                 var filterName = $this.data("filter");
-                var filter = new window[filterName]();
+                var filter = eval("new "+filterName+"()");
                 _this.currentFigure.addFilter(filter);
                 _this.onSelectionChanged(_this.view, _this.currentFigure);
             });

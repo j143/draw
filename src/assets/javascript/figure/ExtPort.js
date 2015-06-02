@@ -1,3 +1,5 @@
+/* jshint evil:true */
+
 shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     
     NAME: "shape_designer.figure.ExtPort",
@@ -148,7 +150,7 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
             $.each(memento.filters, $.proxy(function(i,e){
-                var filter = new window[e.name]();//eval("new "+e.name+"()");
+                var filter = eval("new "+e.name+"()");
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
