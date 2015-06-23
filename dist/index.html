@@ -28,10 +28,6 @@
 
     <script type="text/javascript">
 
-        $(document).on('shown.bs.modal', function (e) {
-            setTimeout(function(){ $(e.target, '[autofocus]').focus();},500);
-        });
-
 	var app=null;
 	var about = new shape_designer.dialog.About();
 	$( window ).load(function() {
@@ -128,7 +124,7 @@
                                         <input type="text"
                                                class="form-control floating-label"
                                                id="githubToken"
-                                               value="fd42244b4b4b4201658bef05f3dff6310091a816"
+                                               value=""
                                                placeholder="Paste your token here.."
                                                data-hint="you can always revoke the token in your github settings">
                                     </div>
