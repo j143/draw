@@ -117,6 +117,11 @@ shape_designer.Application = Class.extend(
       return results[1];
     },
 
+    login:function(githubToken){
+        this.storage.login(githubToken, $.proxy(function(success){
+            this.toolbar.onLogginStatusChanged(success);
+        },this));
+    },
  	
  	isLoggedIn: function( callback){
  	   if(this.storage.requiresLogin()){

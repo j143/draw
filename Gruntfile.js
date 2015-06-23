@@ -41,9 +41,8 @@ module.exports = function (grunt) {
                     './bower_components/ladda/dist/spin.min.js',
                     './bower_components/ladda/dist/ladda.min.js',
                     './bower_components/bootbox/bootbox.js',
-                    './bower_components/hogan/lib/compiler.js',
-                    './bower_components/hogan/lib/hogan.js',
-                    './bower_components/hogan/lib/template.js',
+                    './bower_components/hogan/web//1.0.0/hogan.min.js',
+                    './bower_components/octokat/dist/octokat.js',
                     './lib/Blob.js',
                     './bower_components/bootstrap-tagsinput/dist/boostrap-tagsinput.min.js'
 
@@ -54,6 +53,7 @@ module.exports = function (grunt) {
             application: {
                 src: [
 
+                    './src/assets/javascript/polyfill.js',
                     './src/assets/javascript/Configuration.js',
                     './src/assets/javascript/Application.js',
                     './src/assets/javascript/View.js',
@@ -131,7 +131,12 @@ module.exports = function (grunt) {
                 src: ['**/*.css'],
                 dest: 'dist/lib/banner'
             },
-
+            material:{
+                expand: true,
+                cwd: 'bower_components/bootstrap-material-design/dist/',
+                src: ['**/*'],
+                dest: './dist/lib/material'
+            },
             jquery:{
                 expand: true,
                 cwd: 'bower_components/jquery-ui/themes/eggplant',
@@ -172,7 +177,7 @@ module.exports = function (grunt) {
                 files: [
                     './src/assets/javascript/**/*.js'
                 ],
-                tasks: ['concat:appliction'],
+                tasks: ['concat:application'],
                 options: {
                     livereload: true
                 }

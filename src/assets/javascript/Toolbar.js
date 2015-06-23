@@ -94,22 +94,20 @@ shape_designer.Toolbar = Class.extend({
         },this));
         Mousetrap.bind("ctrl+s", $.proxy(function (event) {this.saveButton.click();return false;},this));
         this.saveButton.hide();
-        
-        this.loginButton  = $('<a href="#" class="button-google-plus"><span><i class="icon-google-plus"></i></span><p>Sign in with Google</p></a>');
-        this.toolbarDiv.append(this.loginButton);
-        this.loginButton.on("click",$.proxy(function(){            
-            window.location.href=Configuration.backend[location.host]+"oauth2.php?refererUrl="+window.location.href;
-        },this));
 
-        // update the visibility of the button regarding to the login state
-        app.isLoggedIn(function(result){
-            if(result===true){
-                this.loginButton.hide();
-                this.openButton.show();
-                this.saveButton.show();
-            }
-        }.bind(this));
-            
+
+
+        this.loginButton  = $('<button class="btn" data-toggle="modal" data-target="#githubConnectDialog" id="githubButton"><img height="32" src="assets/images/octocat.png">Connect to Github</button>');
+        buttonGroup.append(this.loginButton);
+        // Button: Connect to GITHUB
+        //
+        $("#connectToGithub").on("click",function(){
+            var githubToken = $("#githubToken").val();
+            app.login(githubToken);
+            $('#githubConnectDialog').modal('hide');
+        });
+
+
         // Inject the UNDO Button and the callbacks
         //
         buttonGroup=$('<div class="btn-group" ></div>');
@@ -261,6 +259,20 @@ shape_designer.Toolbar = Class.extend({
        //
        $('*[data-toggle="tooltip"]').tooltip({placement:"bottom", container:"body",delay: { show: 1000, hide: 10 }, html:true});
 
+    },
+
+    // update the visibility of the button regarding to the login state
+    onLogginStatusChanged: function(result){
+        if(result===true){
+            this.loginButton.hide();
+            this.openButton.show();
+            this.saveButton.show();
+        }
+        else{
+            this.loginButton.show();
+            this.openButton.hide();
+            this.saveButton.hide();
+        }
     },
 
     /**
