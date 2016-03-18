@@ -133,6 +133,8 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                 $(this).find('input:first').focus();
             });
             $("#githubSaveFileDialog").modal("show");
+
+            abortCallback();
             return;
 
             /*

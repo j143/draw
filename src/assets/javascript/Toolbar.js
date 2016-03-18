@@ -5,6 +5,7 @@ shape_designer.Toolbar = Class.extend({
     init:function(app, elementId, view){
         this.html = $("#"+elementId);
         this.view = view;
+        this.app = app;
 
         // register this class as event listener for the canvas
         // CommandStack. This is required to update the state of 
