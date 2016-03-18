@@ -42,7 +42,6 @@ module.exports = function (grunt) {
                     './bower_components/ladda/dist/ladda.min.js',
                     './bower_components/bootbox/bootbox.js',
                     './bower_components/hogan/web//1.0.0/hogan.min.js',
-                    './bower_components/octokat/dist/octokat.js',
                     './lib/Blob.js',
                     './bower_components/bootstrap-tagsinput/dist/boostrap-tagsinput.min.js'
 
@@ -173,6 +172,12 @@ module.exports = function (grunt) {
         },
 
         watch: {
+            html: {
+                files: [
+                    './src/**/*.html'
+                ],
+                tasks: ['copy']
+            },
             js: {
                 files: [
                     './src/assets/javascript/**/*.js'
