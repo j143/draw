@@ -2831,7 +2831,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                         sha: currentFileHandle.sha
                     };
 
-                    _this.currentRepository.contents(currentLoadedFile.path).add(config)
+                    _this.currentRepository.contents(currentFileHandle.path).add(config)
                         .then(function(info) {
                             currentFileHandle.sha =  info.content.sha;
                             $('#githubCommitDialog').modal('hide');
