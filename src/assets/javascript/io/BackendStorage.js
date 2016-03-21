@@ -8,8 +8,6 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
     init:function(){
         this._super();
 
-        var _this = this;
-
         this.octo=null;
         this.repositories = null;
         this.githubToken = null;

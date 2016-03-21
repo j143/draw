@@ -116,7 +116,7 @@ shape_designer.Application = Class.extend(
         else{
             code =  url.match(/[&\?]code=([\w\/\-]+)/)[1];
             $.getJSON('https://draw2d.herokuapp.com/authenticate/'+code, function(data) {
-                console.log(data.token);
+                 console.log(data.token);
                 _this.login(data.token);
             });
         }
@@ -2713,8 +2713,6 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
      */
     init:function(){
         this._super();
-
-        var _this = this;
 
         this.octo=null;
         this.repositories = null;

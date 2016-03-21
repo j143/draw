@@ -60,7 +60,7 @@ shape_designer.Application = Class.extend(
         else{
             code =  url.match(/[&\?]code=([\w\/\-]+)/)[1];
             $.getJSON('https://draw2d.herokuapp.com/authenticate/'+code, function(data) {
-                console.log(data.token);
+                 console.log(data.token);
                 _this.login(data.token);
             });
         }
