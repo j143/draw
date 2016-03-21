@@ -390,7 +390,7 @@ shape_designer.Layer = Class.extend({
 	 * 
 	 * @param {draw2d.Figure} figure
 	 */
-	onSelectionChanged : function(emitter, figure){
+	onSelectionChanged : function(emitter, event){
         this._updateSelection();
 	},
 	
@@ -477,12 +477,6 @@ shape_designer.FilterPane = Class.extend({
 		this.view = view;
 		this.currentFigure = null;
 
-		// register this class as event listener for the canvas
-		// CommandStack. This is required to update the state of 
-		// the Undo/Redo Buttons.
-		//
-		view.getCommandStack().addEventListener(this);
-
 		// Register a Selection listener for the state handling
 		// of the Delete Button
 		//
@@ -497,8 +491,9 @@ shape_designer.FilterPane = Class.extend({
      * @param {draw2d.Canvas} canvas the emitter of the event. In this case it is the canvas.
      * @param {draw2d.Figure} figure
 	 */
-	onSelectionChanged : function(canvas, figure){
-	    
+	onSelectionChanged : function(canvas, event){
+	    var figure = event?event.figure:null;
+
 	    this.html.html('');
 	    $('#add_filter_button').addClass('disabled');
 	    
@@ -525,26 +520,12 @@ shape_designer.FilterPane = Class.extend({
                 var filterName = $this.data("filter");
                 var filter = eval("new "+filterName+"()");
                 _this.currentFigure.addFilter(filter);
-                _this.onSelectionChanged(_this.view, _this.currentFigure);
+                _this.onSelectionChanged(_this.view,{figure:_this.currentFigure});
             });
 	    }
 
 	    this.currentFigure = figure;	    
-	},
-	
-	/**
-	 * @method
-	 * Sent when an event occurs on the command stack. draw2d.command.CommandStackEvent.getDetail() 
-	 * can be used to identify the type of event which has occurred.
-	 * 
-	 * @template
-	 * 
-	 * @param {draw2d.command.CommandStackEvent} event
-	 **/
-	stackChanged:function(event)
-	{
 	}
-
 });
 /* jshint evil:true */
 
@@ -829,8 +810,8 @@ shape_designer.Toolbar = Class.extend({
      * 
      * @param {draw2d.Figure} figure
      */
-    onSelectionChanged : function(emitter, figure){
-        this.deleteButton.button( "option", "disabled", figure===null );
+    onSelectionChanged : function(emitter, event){
+        this.deleteButton.button( "option", "disabled", event===null || event.figure===null );
     },
     
     /**
@@ -897,7 +878,7 @@ shape_designer.dialog.FigureTest = Class.extend(
 	        var splash = $(
 	                '<div id="test_canvas">'+
 	                '</div>'+
-	                ' <div id="test_close"><img src="icons/dialog_close.png"/></div>'
+	                ' <div id="test_close"><img src="./assets/images/dialog_close.png"/></div>'
 	                );
 	        splash.hide();
 	        // fadeTo MUSS leider sein. Man kann mit raphael keine paper.text elemente einfügen
@@ -953,7 +934,7 @@ shape_designer.dialog.FigureCode = Class.extend(
 	                '<pre id="test_code" class="prettyprint">'+
                     js+
 	                '</div>'+
-	                ' <div id="test_close"><img src="icons/dialog_close.png"/></div>'
+	                ' <div id="test_close"><img src="./assets/images/dialog_close.png"/></div>'
 	                );
 	        splash.hide();
 	        $("body").append(splash);
@@ -991,28 +972,34 @@ shape_designer.filter.Filter = Class.extend({
 	 * @template
 	 * 
 	 **/
-	apply:function(figure, attributes){
+	apply:function(figure, attributes)
+    {
 	},
 	
-	onInstall: function(figure){
+	onInstall: function(figure)
+    {
 	    
 	},
 	
-	insertPane: function(figure, $parent){
+	insertPane: function(figure, $parent)
+    {
 
     },
    
     removePane:function(){
     },
     
-    getPersistentAttributes : function(relatedFigure){   
+    getPersistentAttributes : function(relatedFigure)
+    {
+
         var memento = {};
         memento.name = this.NAME;
         
         return memento;
     },
     
-    setPersistentAttributes : function(relatedFigure, memento){
+    setPersistentAttributes : function(relatedFigure, memento)
+    {
 
     }
 
@@ -1977,12 +1964,12 @@ shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
     
     NAME: "shape_designer.figure.ExtLabel",
     
-    isExtFigure: true,
-    
+
     init:function()
     {
       this.blur = 0;
-      
+      this.isExtFigure = true;
+
       this._super();
  
      
@@ -2119,12 +2106,12 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     
     NAME: "shape_designer.figure.ExtPolygon",
     
-    isExtFigure: true,
 
-    init:function()
+    init:function(attr, setter, getter)
     {
-      this.blur=0;  
-      this._super();
+      this.blur=0;
+      this.isExtFigure = true;
+      this._super(attr, setter, getter);
  
       this.setUserData({name:"Polygon"});
       
@@ -2221,8 +2208,8 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         this.filters.each($.proxy(function(i,filter){
             filter.apply(this, attributes);
         },this));
-        
-        this.shape.blur(this.blur);
+
+//        this.shape.blur(this.blur===0?-1:this.blur);
         this._super(attributes);
     },
 
@@ -2264,14 +2251,14 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     
     NAME: "shape_designer.figure.ExtPort",
     
-    isExtFigure: true,
 
     init:function()
     {
+      this.isExtFigure = true;
+      this.decoration = null;
       this._super({diameter:10});
 
-      this.decoration = null;
-      
+
       this.setUserData({
     	  name:"Port",
     	  type:"Hybrid",
@@ -2424,13 +2411,14 @@ shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
     
     NAME: "shape_designer.figure.ExtLine",
     
-    isExtFigure: true,
-    
+
     init:function()
     {
       this._super();
  
       this.blur = 0;
+      this.isExtFigure = true;
+
       this.setUserData({name:"Line"});
       
       this.filters   = new draw2d.util.ArrayList();
@@ -2502,7 +2490,7 @@ shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
             filter.apply(this, attributes);
         },this));
         
-        this.shape.blur(this.blur);
+//        this.shape.blur(this.blur);
         this._super(attributes);
     },
 
@@ -2567,13 +2555,13 @@ shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
 
     NAME: "shape_designer.figure.PolyCircle",
 
-    isExtFigure: true,
 
     init:function(center, radius)
     {
-      this.blur=0;  
-      
-      // set some good defaults
+      this.blur=0;
+      this.isExtFigure = true;
+
+        // set some good defaults
       if(typeof radius==="undefined" ){
           radius = 10;
       }
@@ -2647,7 +2635,7 @@ shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
             filter.apply(this, attributes);
         },this));
         
-        this.shape.blur(this.blur);
+//        this.shape.blur(this.blur);
         this._super(attributes);
     },
 
@@ -3197,6 +3185,7 @@ shape_designer.policy.AbstractGeoToolPolicy = shape_designer.policy.AbstractTool
     },
     
     select: function(canvas, figure){
+        console.log(figure);
         if(canvas.getSelection().getAll().contains(figure)){
             return; // nothing to to
         }
@@ -3219,7 +3208,7 @@ shape_designer.policy.AbstractGeoToolPolicy = shape_designer.policy.AbstractTool
 
         // inform all selection listeners about the new selection.
         //
-        canvas.fireEvent("select",figure);
+        canvas.fireEvent("select",{figure:figure});
     },
     
     
@@ -3275,7 +3264,6 @@ shape_designer.policy.GeoUnionToolPolicy = shape_designer.policy.AbstractGeoTool
 	
 	init:function(){
 	    this._super();
-	    
 	    this.operation = "union";
 	},
 	
@@ -3385,7 +3373,7 @@ shape_designer.policy.GeoIntersectionToolPolicy = shape_designer.policy.Abstract
 	
 	init:function(){
 	    this._super();
-	    tis.operation="intersection";
+	    this.operation="intersection";
 	},
 	
     
