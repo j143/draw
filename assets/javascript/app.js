@@ -2823,7 +2823,6 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
         //
         new draw2d.io.png.Writer().marshal(view, $.proxy(function(imageDataUrl){
 
-
             $("#githubFilePreview").attr("src", imageDataUrl);
             $("#githubFileName")
                 .val(currentFileHandle.title)
@@ -2835,61 +2834,26 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
             $("#githubSaveFileDialog").modal("show");
 
             abortCallback();
-            return;
 
-            /*
+            // Button: Commit to GitHub
+            //
+            $("#commitToGithub").on("click",function(){
+                var writer = new draw2d.io.json.Writer();
+                writer.marshal(view,function(json, base64){
+                    var config = {
+                        message: $("#githubCommitMessage").val(),
+                        content: base64,
+                        sha: currentFileHandle.sha
+                    };
 
-            $('#saveButton').on('click', function (e) {
-                
-            	currentFileHandle.title = $("#inputName").val();
-            	currentFileHandle.tags  = $("#figureTags").val();
-            	abortCallback = function(){};
-            	
-                // ensure that the className is a regular JS className. May it is a potential file path
-                currentFileHandle.title = currentFileHandle.title.split(/[\\/]/).pop();
-                var toCamleCase = function(sentenceCase) {
-                    var out = "";
-                    sentenceCase.split(" ").forEach(function (el, idx) {
-                        var add = el;
-                        out += (idx === 0 ? add : add[0].toUpperCase() + add.slice(1));
-                    });
-                    return out;
-                };
-                currentFileHandle.title = toCamleCase(currentFileHandle.title);
-    
-                    // generate the json 
-                    //
-                    new draw2d.io.json.Writer().marshal(view,$.proxy(function(json){
-                        json = JSON.stringify(json, null, 2);
-                        // generate the JS file
-                        //
-                        new shape_designer.FigureWriter().marshal(view, currentFileHandle.title, $.proxy(function(js){ 
-    
-    	                    $("#fileSaveDialog").modal("hide");
-    	                    $("#modal-background, #fileSaveDialog").remove();
-    
-    	                    $.jsonRPC.request('save', {
-    	                        params: [currentFileHandle.title, json, js, imageDataUrl, currentFileHandle.tags],
-    	                        endPoint: _this.baseUrl+'rpc/Figure.php',
-    	                        success: function(result) {
-    	                            $.bootstrapGrowl("<b>"+currentFileHandle.title +"</b> saved");
-    	                            successCallback(currentFileHandle);
-    	                        },
-    	                        error: function(result) {
-    	                        	errorCallback();
-    	                        }
-    	                    });
-                        },this));
-                    },this));
+                    currentRepository.contents(currentLoadedFile.path).add(config)
+                        .then(function(info) {
+                            currentFileHandle.sha =  info.content.sha;
+                            $('#githubCommitDialog').modal('hide');
+                        });
+                });
             });
-            
-            $('#fileSaveDialog').on('hidden.bs.modal', function (e) {
-                abortCallback();
-                $("#fileSaveDialog").remove();
-            });
-            
-            $("#fileSaveDialog").modal();
-            */
+
         },this), view.getBoundingBox().scale(10,10));     
     },
 
