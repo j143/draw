@@ -10,7 +10,6 @@
     "draw2d": "~5.5.3",
     "bootstrap": "~3.3.4",
     "hogan": "~3.0.2",
-    "octokat": "~0.4.10",
     "mousetrap": "1.4.6",
     "jquery-ui": "1.10.3",
     "bootstrap-material-design": "~0.3.0",
@@ -23,7 +22,8 @@
     "bootstrap-switch": "3.0.0",
     "bootstrap-tagsinput": "0.4.2",
     "jsts": "0.13.2",
-    "github-fork-ribbon-css": "~0.1.1"
+    "github-fork-ribbon-css": "~0.1.1",
+    "octokat": "^0.4.17"
   },
   "private": true,
   "resolutions": {
