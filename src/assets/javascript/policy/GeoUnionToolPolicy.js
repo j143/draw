@@ -3,7 +3,6 @@ shape_designer.policy.GeoUnionToolPolicy = shape_designer.policy.AbstractGeoTool
 	
 	init:function(){
 	    this._super();
-	    
 	    this.operation = "union";
 	},
 	

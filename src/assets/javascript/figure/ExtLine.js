@@ -82,7 +82,7 @@ shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
             filter.apply(this, attributes);
         },this));
         
-        this.shape.blur(this.blur);
+//        this.shape.blur(this.blur);
         this._super(attributes);
     },
 

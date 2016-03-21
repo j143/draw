@@ -24,7 +24,7 @@ shape_designer.FilterPane = Class.extend({
      * @param {draw2d.Figure} figure
 	 */
 	onSelectionChanged : function(canvas, event){
-	    var figure = event.figure;
+	    var figure = event?event.figure:null;
 
 	    this.html.html('');
 	    $('#add_filter_button').addClass('disabled');

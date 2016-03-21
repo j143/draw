@@ -3,7 +3,7 @@ shape_designer.policy.GeoIntersectionToolPolicy = shape_designer.policy.Abstract
 	
 	init:function(){
 	    this._super();
-	    tis.operation="intersection";
+	    this.operation="intersection";
 	},
 	
     

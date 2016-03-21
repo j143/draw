@@ -83,7 +83,7 @@ shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
             filter.apply(this, attributes);
         },this));
         
-        this.shape.blur(this.blur);
+//        this.shape.blur(this.blur);
         this._super(attributes);
     },
 

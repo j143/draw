@@ -107,7 +107,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
             filter.apply(this, attributes);
         },this));
 
-        this.shape.blur(this.blur===0?-1:this.blur);
+//        this.shape.blur(this.blur===0?-1:this.blur);
         this._super(attributes);
     },
 

@@ -301,6 +301,7 @@ background-color:transparent;
  margin-top:10px;
  margin-left:10px;
  position:absolute;
+ width: 500px;
 }
 
 #currentTool_heading{
