@@ -103,7 +103,7 @@ shape_designer.Toolbar = Class.extend({
         // Button: Connect to GITHUB
         //
         $("#githubButton").on("click",function(){
-            window.open('https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo');
+            window.location.href='https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo';
         });
 
 

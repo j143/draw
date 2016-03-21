@@ -29,7 +29,6 @@ module.exports = function (grunt) {
                     './lib/jquery.browser.js',
                     './bower_components/jquery-ui/ui/minified/jquery-ui.min.js',
                     './lib/jquery.bootstrap-growl.js',
-                    './bower_components/jquery-jsonrpc/jquery.jsonrpc.js',
                     './bower_components/mousetrap/mousetrap.min.js',
                     './bower_components/bootstrap/dist/js/bootstrap.min.js',
                     './bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js',
@@ -42,7 +41,6 @@ module.exports = function (grunt) {
                     './bower_components/ladda/dist/ladda.min.js',
                     './bower_components/bootbox/bootbox.js',
                     './bower_components/hogan/web/1.0.0/hogan.min.js',
-                    './bower_components/ladda/dist/ladda.min.js',
                     './bower_components/octokat/dist/octokat.js',
                     './lib/Blob.js',
                     './bower_components/bootstrap-tagsinput/dist/boostrap-tagsinput.min.js'

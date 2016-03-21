@@ -109,12 +109,8 @@ shape_designer.Application = Class.extend(
         // Get the authorization code from the url that was returned by GitHub
         var _this = this;
         var url = window.location.href;
-        var error = url.match(/[&\?]error=([^&]+)/);
-        if (error) {
-            code= null;
-        }
-        else{
-            code =  url.match(/[&\?]code=([\w\/\-]+)/)[1];
+        var code = this.getParam("code");
+        if (code!==null) {
             $.getJSON('https://draw2d.herokuapp.com/authenticate/'+code, function(data) {
                  console.log(data.token);
                 _this.login(data.token);
@@ -655,7 +651,7 @@ shape_designer.Toolbar = Class.extend({
         // Button: Connect to GITHUB
         //
         $("#githubButton").on("click",function(){
-            window.open('https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo');
+            window.location.href='https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo';
         });
 
 

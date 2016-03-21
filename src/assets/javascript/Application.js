@@ -53,12 +53,8 @@ shape_designer.Application = Class.extend(
         // Get the authorization code from the url that was returned by GitHub
         var _this = this;
         var url = window.location.href;
-        var error = url.match(/[&\?]error=([^&]+)/);
-        if (error) {
-            code= null;
-        }
-        else{
-            code =  url.match(/[&\?]code=([\w\/\-]+)/)[1];
+        var code = this.getParam("code");
+        if (code!==null) {
             $.getJSON('https://draw2d.herokuapp.com/authenticate/'+code, function(data) {
                  console.log(data.token);
                 _this.login(data.token);
