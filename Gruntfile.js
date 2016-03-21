@@ -32,7 +32,6 @@ module.exports = function (grunt) {
                     './bower_components/mousetrap/mousetrap.min.js',
                     './bower_components/bootstrap/dist/js/bootstrap.min.js',
                     './bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js',
-                    './bower_components/jscolor/jscolor.js',
                     './bower_components/jsts/lib/javascript.util.js',
                     './bower_components/jsts/lib/jsts.js',
                     './bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
@@ -110,8 +109,9 @@ module.exports = function (grunt) {
                     './bower_components/anglepicker/ui.anglepicker.css',
                     './bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
                     './bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
+                    './bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css',
                     './bower_components/ladda/dist/ladda-themeless.min.css',
-                    './src/assets/stylesheets/myprettify.css'
+                    './bower_components/ladda/dist/ladda-themeless.min.css'
                 ],
                 dest: './dist/assets/stylesheets/application.css'
             }
@@ -124,11 +124,11 @@ module.exports = function (grunt) {
                 src: ['**/*.html', 'assets/images/**/*'],
                 dest: 'dist/'
             },
-            banner:{
+            jscolor:{
                 expand: true,
-                cwd: 'bower_components/github-fork-ribbon-css/',
-                src: ['**/*.css'],
-                dest: 'dist/lib/banner'
+                cwd: 'bower_components/jscolor/',
+                src: ['**/*'],
+                dest: './dist/lib/jscolor'
             },
             material:{
                 expand: true,
@@ -174,7 +174,9 @@ module.exports = function (grunt) {
         watch: {
             html: {
                 files: [
-                    './src/**/*.html'
+                    './src/**/*.html',
+                    './src/**/*.css'
+
                 ],
                 tasks: ['copy']
             },

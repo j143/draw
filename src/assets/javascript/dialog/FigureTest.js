@@ -15,7 +15,7 @@ shape_designer.dialog.FigureTest = Class.extend(
 	        var splash = $(
 	                '<div id="test_canvas">'+
 	                '</div>'+
-	                ' <div id="test_close"><img src="icons/dialog_close.png"/></div>'
+	                ' <div id="test_close"><img src="./assets/images/dialog_close.png"/></div>'
 	                );
 	        splash.hide();
 	        // fadeTo MUSS leider sein. Man kann mit raphael keine paper.text elemente einfügen

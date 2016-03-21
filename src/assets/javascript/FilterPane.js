@@ -9,12 +9,6 @@ shape_designer.FilterPane = Class.extend({
 		this.view = view;
 		this.currentFigure = null;
 
-		// register this class as event listener for the canvas
-		// CommandStack. This is required to update the state of 
-		// the Undo/Redo Buttons.
-		//
-		view.getCommandStack().addEventListener(this);
-
 		// Register a Selection listener for the state handling
 		// of the Delete Button
 		//
@@ -29,8 +23,9 @@ shape_designer.FilterPane = Class.extend({
      * @param {draw2d.Canvas} canvas the emitter of the event. In this case it is the canvas.
      * @param {draw2d.Figure} figure
 	 */
-	onSelectionChanged : function(canvas, figure){
-	    
+	onSelectionChanged : function(canvas, event){
+	    var figure = event.figure;
+
 	    this.html.html('');
 	    $('#add_filter_button').addClass('disabled');
 	    
@@ -57,24 +52,10 @@ shape_designer.FilterPane = Class.extend({
                 var filterName = $this.data("filter");
                 var filter = eval("new "+filterName+"()");
                 _this.currentFigure.addFilter(filter);
-                _this.onSelectionChanged(_this.view, _this.currentFigure);
+                _this.onSelectionChanged(_this.view,{figure:_this.currentFigure});
             });
 	    }
 
 	    this.currentFigure = figure;	    
-	},
-	
-	/**
-	 * @method
-	 * Sent when an event occurs on the command stack. draw2d.command.CommandStackEvent.getDetail() 
-	 * can be used to identify the type of event which has occurred.
-	 * 
-	 * @template
-	 * 
-	 * @param {draw2d.command.CommandStackEvent} event
-	 **/
-	stackChanged:function(event)
-	{
 	}
-
 });

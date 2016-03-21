@@ -3,13 +3,14 @@ shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
     
     NAME: "shape_designer.figure.ExtLine",
     
-    isExtFigure: true,
-    
+
     init:function()
     {
       this._super();
  
       this.blur = 0;
+      this.isExtFigure = true;
+
       this.setUserData({name:"Line"});
       
       this.filters   = new draw2d.util.ArrayList();

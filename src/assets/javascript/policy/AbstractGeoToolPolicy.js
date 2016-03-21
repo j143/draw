@@ -14,6 +14,7 @@ shape_designer.policy.AbstractGeoToolPolicy = shape_designer.policy.AbstractTool
     },
     
     select: function(canvas, figure){
+        console.log(figure);
         if(canvas.getSelection().getAll().contains(figure)){
             return; // nothing to to
         }
@@ -36,7 +37,7 @@ shape_designer.policy.AbstractGeoToolPolicy = shape_designer.policy.AbstractTool
 
         // inform all selection listeners about the new selection.
         //
-        canvas.fireEvent("select",figure);
+        canvas.fireEvent("select",{figure:figure});
     },
     
     

@@ -13,28 +13,34 @@ shape_designer.filter.Filter = Class.extend({
 	 * @template
 	 * 
 	 **/
-	apply:function(figure, attributes){
+	apply:function(figure, attributes)
+    {
 	},
 	
-	onInstall: function(figure){
+	onInstall: function(figure)
+    {
 	    
 	},
 	
-	insertPane: function(figure, $parent){
+	insertPane: function(figure, $parent)
+    {
 
     },
    
     removePane:function(){
     },
     
-    getPersistentAttributes : function(relatedFigure){   
+    getPersistentAttributes : function(relatedFigure)
+    {
+
         var memento = {};
         memento.name = this.NAME;
         
         return memento;
     },
     
-    setPersistentAttributes : function(relatedFigure, memento){
+    setPersistentAttributes : function(relatedFigure, memento)
+    {
 
     }
 

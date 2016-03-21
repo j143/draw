@@ -26,7 +26,7 @@ shape_designer.Layer = Class.extend({
 	 * 
 	 * @param {draw2d.Figure} figure
 	 */
-	onSelectionChanged : function(emitter, figure){
+	onSelectionChanged : function(emitter, event){
         this._updateSelection();
 	},
 	

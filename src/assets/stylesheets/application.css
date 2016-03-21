@@ -49,9 +49,9 @@
 }
 
 
-/***BOTSTRAP****/
+/***BOOTSTRAP****/
 .btn{
-    border-radius:0px !important;	
+    border-radius:0px !important;
 }
 
 .input-group-addon{
@@ -379,7 +379,6 @@ border-bottom: 1px solid #202525;
 }
 
 #filter_toolbar{
- position:fixed;
  overflow:visible;
  border:0px;
  padding:3px;
@@ -407,8 +406,8 @@ border-bottom: 1px solid #202525;
  top:130px;
  bottom:30px;
  width:200px;
- border:0px;
- padding:0px;
+ border:0;
+ padding:0;
  overflow-y: auto;
 }
 

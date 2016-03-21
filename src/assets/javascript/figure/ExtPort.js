@@ -4,14 +4,14 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     
     NAME: "shape_designer.figure.ExtPort",
     
-    isExtFigure: true,
 
     init:function()
     {
+      this.isExtFigure = true;
+      this.decoration = null;
       this._super({diameter:10});
 
-      this.decoration = null;
-      
+
       this.setUserData({
     	  name:"Port",
     	  type:"Hybrid",

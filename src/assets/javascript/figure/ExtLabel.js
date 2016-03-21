@@ -3,12 +3,12 @@ shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
     
     NAME: "shape_designer.figure.ExtLabel",
     
-    isExtFigure: true,
-    
+
     init:function()
     {
       this.blur = 0;
-      
+      this.isExtFigure = true;
+
       this._super();
  
      

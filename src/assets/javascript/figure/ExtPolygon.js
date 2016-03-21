@@ -4,12 +4,12 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     
     NAME: "shape_designer.figure.ExtPolygon",
     
-    isExtFigure: true,
 
-    init:function()
+    init:function(attr, setter, getter)
     {
-      this.blur=0;  
-      this._super();
+      this.blur=0;
+      this.isExtFigure = true;
+      this._super(attr, setter, getter);
  
       this.setUserData({name:"Polygon"});
       
@@ -106,8 +106,8 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         this.filters.each($.proxy(function(i,filter){
             filter.apply(this, attributes);
         },this));
-        
-        this.shape.blur(this.blur);
+
+        this.shape.blur(this.blur===0?-1:this.blur);
         this._super(attributes);
     },
 

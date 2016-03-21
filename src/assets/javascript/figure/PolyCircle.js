@@ -3,13 +3,13 @@ shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
 
     NAME: "shape_designer.figure.PolyCircle",
 
-    isExtFigure: true,
 
     init:function(center, radius)
     {
-      this.blur=0;  
-      
-      // set some good defaults
+      this.blur=0;
+      this.isExtFigure = true;
+
+        // set some good defaults
       if(typeof radius==="undefined" ){
           radius = 10;
       }

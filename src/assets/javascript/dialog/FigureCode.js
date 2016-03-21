@@ -14,7 +14,7 @@ shape_designer.dialog.FigureCode = Class.extend(
 	                '<pre id="test_code" class="prettyprint">'+
                     js+
 	                '</div>'+
-	                ' <div id="test_close"><img src="icons/dialog_close.png"/></div>'
+	                ' <div id="test_close"><img src="./assets/images/dialog_close.png"/></div>'
 	                );
 	        splash.hide();
 	        $("body").append(splash);

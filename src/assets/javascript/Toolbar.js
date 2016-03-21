@@ -281,8 +281,8 @@ shape_designer.Toolbar = Class.extend({
      * 
      * @param {draw2d.Figure} figure
      */
-    onSelectionChanged : function(emitter, figure){
-        this.deleteButton.button( "option", "disabled", figure===null );
+    onSelectionChanged : function(emitter, event){
+        this.deleteButton.button( "option", "disabled", event.figure===null );
     },
     
     /**
