@@ -2795,22 +2795,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
 
         $('#githubFileSelectDialog').modal('show');
     },
-    
-    load: function(fileId, successCallback, errorCallback){
-        var _this = this;
-        $.jsonRPC.request('findById', {
-            params: [fileId],
-            endPoint: _this.baseUrl+'rpc/Figure.php',
-            success: function(response) {
-                successCallback(response.result);
-            },
-            error: function(result) {
-                errorCallback();
-            }
-        });
-  
-    },
-    
+
     save: function(view, currentFileHandle, successCallback, errorCallback, abortCallback){
         var _this = this;
         
@@ -2846,7 +2831,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                         sha: currentFileHandle.sha
                     };
 
-                    currentRepository.contents(currentLoadedFile.path).add(config)
+                    _this.currentRepository.contents(currentLoadedFile.path).add(config)
                         .then(function(info) {
                             currentFileHandle.sha =  info.content.sha;
                             $('#githubCommitDialog').modal('hide');
