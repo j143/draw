@@ -64,7 +64,8 @@ shape_designer.Toolbar = Class.extend({
                     });
         },this));
         Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
-
+        this.openButton.hide();
+        
         this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_upload.png"></button>');
         buttonGroup.append(this.saveButton);
         this.saveButton.on("click",$.proxy(function(){
@@ -93,6 +94,17 @@ shape_designer.Toolbar = Class.extend({
         	        );
         },this));
         Mousetrap.bind("ctrl+s", $.proxy(function (event) {this.saveButton.click();return false;},this));
+        this.saveButton.hide();
+
+
+
+        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.png">Connect to Github</button>');
+        buttonGroup.append(this.loginButton);
+        // Button: Connect to GITHUB
+        //
+        $("#githubButton").on("click",function(){
+            window.open('https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo');
+        });
 
 
         // Inject the UNDO Button and the callbacks

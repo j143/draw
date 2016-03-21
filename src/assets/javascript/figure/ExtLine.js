@@ -18,7 +18,7 @@ shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
       this.setRouter(new draw2d.layout.connection.VertexRouter());
       this.installEditPolicy(new draw2d.policy.line.VertexSelectionFeedbackPolicy());
     },
-    
+
     setBlur: function( value){
         this.blur = parseInt(value);
         this.repaint();
