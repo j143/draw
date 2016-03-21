@@ -110,7 +110,7 @@ shape_designer.Application = Class.extend(
         var _this = this;
         var url = window.location.href;
         var code = this.getParam("code");
-        if (error!==null) {
+        if (code!==null) {
             $.getJSON('https://draw2d.herokuapp.com/authenticate/'+code, function(data) {
                  console.log(data.token);
                 _this.login(data.token);
