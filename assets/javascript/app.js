@@ -627,7 +627,7 @@ shape_designer.Toolbar = Class.extend({
 
 
 
-        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.png">Connect to Github</button>');
+        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
         buttonGroup.append(this.loginButton);
         // Button: Connect to GITHUB
         //
@@ -2111,6 +2111,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     {
       this.blur=0;
       this.isExtFigure = true;
+
       this._super(attr, setter, getter);
  
       this.setUserData({name:"Polygon"});
@@ -2154,6 +2155,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         this.filters.each($.proxy(function(i,e){
             alreadyIn = alreadyIn || (e.NAME===filter.NAME);
         },this));
+
         if(alreadyIn===true){
             return; // silently
         }
@@ -2209,7 +2211,14 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
             filter.apply(this, attributes);
         },this));
 
-//        this.shape.blur(this.blur===0?-1:this.blur);
+        //this.shape.blur(this.blur===0?-1:this.blur);
+/*
+        if(this.filter)
+        this.filter = this.canvas.paper.createFilter();
+        filter.addShiftToColor("red");
+        filter.addBlur(7);
+        this.shape.filter(filter);
+*/
         this._super(attributes);
     },
 
@@ -3015,7 +3024,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
             var attr = {};
             figure.svgPathString=null;
             figure.translate(-x,-y);
-            figure.repaint();
+            // paint the element and fill the "attr" object with the current
+            // settings
+            figure.repaint(attr);
             delete attr.path;
             delete attr.x;
             delete attr.y;
