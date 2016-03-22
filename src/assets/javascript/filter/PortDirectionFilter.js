@@ -22,24 +22,24 @@ shape_designer.filter.PortDirectionFilter = shape_designer.filter.Filter.extend(
                        '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
 
 		               '<label>'+
-					   '  <input '+(dir==0?' checked="checked"':'')+' type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="0" />'+
+					   '  <input '+(dir===0?' checked="checked"':'')+' type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="0" />'+
 		               '  <span  title="up" class="glyphicon glyphicon-arrow-up"></span>'+
 					   '</label>'+
 
                        '<br>'+
 
                        '<label>'+
-                       '  <input '+(dir==3?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="3" />'+
+                       '  <input '+(dir===3?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="3" />'+
                        '  <span  title="left" class="glyphicon glyphicon-arrow-left"></span>'+
                        '</label>'+
 
                        '<label>'+
-                       '  <input '+(dir==null?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="null" />'+
+                       '  <input '+(dir===null?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="null" />'+
                        '  <span title="automatic" class="glyphicon glyphicon-screenshot"></span>'+
                        '</label>'+
 
 					   '<label>'+
-					   '  <input '+(dir==1?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="1" />'+
+					   '  <input '+(dir===1?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="1" />'+
 					   '  <span title="right"  class="glyphicon glyphicon-arrow-right"></span>'+
 					   '</label>'+
 

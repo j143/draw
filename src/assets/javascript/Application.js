@@ -93,38 +93,43 @@ shape_designer.Application = Class.extend(
  	   }
  	},
  	
-	fileOpen: function( successCallback, errorCallback, abortCallback){
+	fileNew: function(){
+        this.view.clear();
+        this.currentFile = null;
+    },
+
+    fileOpen: function( successCallback, errorCallback, abortCallback){
         this.storage.pickFileAndLoad(
-          // file pattern
-          "draw2d",
-          
-          // success callback
-          //
-          $.proxy(function(file, fileData){
-            try{
-                this.view.clear();
-                var reader = new draw2d.io.json.Reader();
-                reader.unmarshal(this.view, fileData);
-                this.currentFile = file;
-                document.title = file.title;
-                this.view.getCommandStack().markSaveLocation();
-                successCallback();
-            }
-            catch(e){
-                this.view.reset();
-                errorCallback();
-            }
-          },this),
-          
-          // error callback
-          //
-          errorCallback,
-          
-          // abort callback
-          //
-          abortCallback);
-	},
-	
+            // file pattern
+            "draw2d",
+
+            // success callback
+            //
+            $.proxy(function(file, fileData){
+                try{
+                    this.view.clear();
+                    var reader = new draw2d.io.json.Reader();
+                    reader.unmarshal(this.view, fileData);
+                    this.currentFile = file;
+                    document.title = file.title;
+                    this.view.getCommandStack().markSaveLocation();
+                    successCallback();
+                }
+                catch(e){
+                    this.view.reset();
+                    errorCallback();
+                }
+            },this),
+
+            // error callback
+            //
+            errorCallback,
+
+            // abort callback
+            //
+            abortCallback);
+    },
+
 	fileSave: function(successCallback, errorCallback, abortCallback){
 		var _this = this;
 		this.storage.save(this.view, this.currentFile, 
