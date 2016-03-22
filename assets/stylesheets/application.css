@@ -273,20 +273,6 @@ background-color:transparent;
   margin-top:20px;
 }
 
-#tool_shape_caret{
-    border-top:20px solid transparent;
-    border-bottom:10px solid transparent;
-    border-right:4px solid transparent;
-    border-left:2px solid transparent;
-}
-
-#tool_shape_caret >span{
-  margin-top:21px;  
-}
-
-.tool_shape_entry {
-  text-align:left;  
-}
 
 #currentTool_container{
  margin:0px;    

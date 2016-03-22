@@ -205,10 +205,11 @@ shape_designer.View = draw2d.Canvas.extend({
 		
 		this.currentDropConnection = null;
 		
-        this.installEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy(20,1,"#FF4981"));
+        this.installEditPolicy( new draw2d.policy.canvas.ShowGridEditPolicy(20));
         this.installEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
-        this.installEditPolicy( new draw2d.policy.canvas.FadeoutDecorationPolicy());
-        
+        this.installEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
+        this.installEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
+
         Mousetrap.bind(['ctrl+c', 'command+c'], $.proxy(function (event) {
             var primarySelection = this.getSelection().getPrimary();
             if(primarySelection!==null){
@@ -445,7 +446,7 @@ shape_designer.Layer = Class.extend({
             var figure =this.view.getExtFigure($(event.target).data("figure"));
             figure.setVisible(!figure.isVisible());
             this.view.setCurrentSelection(null);
-            $(event.target).attr({"src": "./assets/icons/layer_visibility_"+figure.isVisible()+".png"});
+            $(event.target).attr({"src": "./assets/images/layer_visibility_"+figure.isVisible()+".png"});
         },this));
 
         $(".layerElement").on("click", $.proxy(function(event){
@@ -680,7 +681,7 @@ shape_designer.Toolbar = Class.extend({
         this.deleteButton  = $('<button  data-toggle="tooltip" title="Delete <span class=\'highlight\'> [ Del ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_delete.png"></button>');
         this.toolbarDiv.append(this.deleteButton);
         this.deleteButton.on("click",$.proxy(function(){
-            var node = this.view.getCurrentSelection();
+            var node = this.view.getPrimarySelection();
             var command= new draw2d.command.CommandDelete(node);
             this.view.getCommandStack().execute(command);
         },this)).button( "option", "disabled", true );
@@ -690,10 +691,18 @@ shape_designer.Toolbar = Class.extend({
         this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
         this.toolbarDiv.append(this.delimiter);
 
-        
-       
+
+
         buttonGroup=$('<div class="btn-group" data-toggle="buttons"></div>');
         this.toolbarDiv.append(buttonGroup);
+
+
+        this.selectButton = $('<label data-toggle="tooltip" title="Select mode <span class=\'highlight\'> [ spacebar ]</span>" class="btn btn-sm btn-primary active"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/tools/SELECT_TOOL_032.png"></label>');
+        buttonGroup.append(this.selectButton);
+        this.selectButton.on("click",$.proxy(function(){
+            this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
+        },this));
+        Mousetrap.bind("space", $.proxy(function (event) {this.selectButton.click();return false;},this));
 
         this.shapeButton = $(
                              '<label id="tool_shape" class="dropdown btn btn-sm btn-primary">'+
@@ -744,19 +753,7 @@ shape_designer.Toolbar = Class.extend({
             $('*[data-policy="shape_designer.policy.LineToolPolicy"]').click();
             return false;
         },this));
-        
-        
-        this.selectButton = $('<label data-toggle="tooltip" title="Select mode <span class=\'highlight\'> [ spacebar ]</span>" class="btn btn-sm btn-primary active"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/tools/SELECT_TOOL_032.png"></label>');
-        buttonGroup.append(this.selectButton);
-        this.selectButton.on("click",$.proxy(function(){
-            this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
-        },this));
-        Mousetrap.bind("space", $.proxy(function (event) {this.selectButton.click();return false;},this));
 
-        buttonGroup.find(".btn").button();
-        buttonGroup=$('<div class="btn-group" data-toggle="buttons"></div>');
-        
-        this.toolbarDiv.append(buttonGroup);
         this.unionButton = $('<label data-toggle="tooltip" title="Polygon Union <span class=\'highlight\'> [ U ]</span>" class="btn btn-sm btn-primary"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/toolbar_union.png"></label>');
         buttonGroup.append(this.unionButton);
         this.unionButton.on("click",$.proxy(function(){
@@ -888,7 +885,37 @@ shape_designer.dialog.FigureTest = Class.extend(
 	        splash.fadeIn( function(){
 	            var canvas    = new draw2d.Canvas("test_canvas");
 	            canvas.installEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy(20,1,"#FF4981"));
-	            
+				var router = new draw2d.layout.connection.InteractiveManhattanConnectionRouter();
+				canvas.installEditPolicy( new draw2d.policy.connection.ComposedConnectionCreatePolicy(
+						[
+							// create a connection via Drag&Drop of ports
+							//
+							new draw2d.policy.connection.DragConnectionCreatePolicy({
+								createConnection:function(){
+									return new draw2d.Connection({
+										radius:3,
+										stroke:2,
+										color: "#129CE4",
+										outlineStroke:1,
+										outlineColor:"#ffffff",
+										router: router});
+								}
+							}),
+							// or via click and point
+							//
+							new draw2d.policy.connection.OrthogonalConnectionCreatePolicy({
+								createConnection:function(){
+									return new draw2d.Connection({
+										radius:3,
+										stroke:2,
+										color: "#129CE4",
+										outlineStroke:1,
+										outlineColor:"#ffffff",
+										router: router});
+								}
+							})
+						])
+				);
 	            var test = new testShape();
 	            canvas.add( test,400,160);
 	          
@@ -1759,40 +1786,57 @@ shape_designer.filter.PortDirectionFilter = shape_designer.filter.Filter.extend(
 	},
 	
 	insertPane: function(figure, $parent){
-	   var _this = this; 
-       var dir2label ={"0":"Up","1":"Right","2":"Down","3":"Left", "null":"Calculated"};
+	   var _this = this;
+	   var dir = figure.getConnectionDirection();
 	   $parent.append('<div id="'+this.cssScope+'_container" class="panel panel-default">'+
                 	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#'+this.cssScope+'_panel">'+
-                	   '     Port Direction'+
+                	   '     Connection Direction'+
                 	   '</div>'+
                 	   
                 	   ' <div class="panel-body collapse in" id="'+this.cssScope+'_panel">'+
-                	   '   <div class="form-group">'+
+                	   '   <div class="form-group portDirectionOption">'+
                        '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
-                       '      <div class="btn-group dropdown">'+
-                       '         <button id="'+this.cssScope+'_button" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">'+
-                       '              <span id="'+this.cssScope+'_label">'+dir2label[""+figure.getConnectionDirection()]+'</span>        '+
-                       '              <span class="caret"></span></button>     '+
-                       '              <ul class="dropdown-menu" id="select_'+this.cssScope+'_menu">'+
-                       '                 <li><a href="#" data-dir="0">Up</a></li>'+
-                       '                 <li><a href="#" data-dir="1">Right</a></li>'+
-                       '                 <li><a href="#" data-dir="2">Down</a></li>'+
-                       '                 <li><a href="#" data-dir="3">Left</a></li>'+
-                       '                 <li><a href="#" data-dir="null">Calculated</a></li>'+
-                       '              </ul>'+
-                       '         </button>'+
-                       '       </div>'+
+
+		               '<label>'+
+					   '  <input '+(dir===0?' checked="checked"':'')+' type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="0" />'+
+		               '  <span  title="up" class="glyphicon glyphicon-arrow-up"></span>'+
+					   '</label>'+
+
+                       '<br>'+
+
+                       '<label>'+
+                       '  <input '+(dir===3?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="3" />'+
+                       '  <span  title="left" class="glyphicon glyphicon-arrow-left"></span>'+
+                       '</label>'+
+
+                       '<label>'+
+                       '  <input '+(dir===null?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="null" />'+
+                       '  <span title="automatic" class="glyphicon glyphicon-screenshot"></span>'+
+                       '</label>'+
+
+					   '<label>'+
+					   '  <input '+(dir===1?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="1" />'+
+					   '  <span title="right"  class="glyphicon glyphicon-arrow-right"></span>'+
+					   '</label>'+
+
+                       '<br>'+
+
+					   '<label>'+
+					   '  <input '+(dir==2?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="2" />'+
+					   '  <span  title="down" class="glyphicon glyphicon-arrow-down"></span>'+
+					   '</label>'+
+
+
+		               '       </div>'+
                        '   </div>'+
                        ' </div>'+
                 	   '</div>');
 
-	       $("#select_"+_this.cssScope+"_menu a").on("click", function(){
-	           var $this = $(this);
-               var dir = $this.data("dir");
-               var label = dir2label[""+dir];
-	           figure.setConnectionDirection(dir);
-	           $("#"+_this.cssScope+"_label").text(label);
-	       });
+		   $("#"+_this.cssScope+"_panel .portDirectionOption input").on("change", function(){
+			   var $this = $(this);
+			   var dir = $this.data("dir");
+			   figure.setConnectionDirection(dir);
+		   });
 	   },
 	   
 	    
@@ -3565,6 +3609,7 @@ shape_designer.policy.RectangleToolPolicy = shape_designer.policy.AbstractToolPo
             var rect =new shape_designer.figure.PolyRect(this.topLeftPoint, bottomRight);
             var command = new draw2d.command.CommandAdd(canvas, rect, rect.getX(), rect.getY());
             canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(rect);
             this.topLeftPoint = null;
             this.setToolText("Select first corner of rectangle");
 
@@ -3688,6 +3733,7 @@ shape_designer.policy.CircleToolPolicy = shape_designer.policy.AbstractToolPolic
             var rect =new shape_designer.figure.PolyCircle(this.center,dx);
             var command = new draw2d.command.CommandAdd(canvas, rect, rect.getX(), rect.getY());
             canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(rect);
             this.center = null;
             this.setToolText(this.MESSAGE_STEP1);
 
@@ -3788,6 +3834,7 @@ shape_designer.policy.TextToolPolicy = shape_designer.policy.AbstractToolPolicy.
            
             var command = new draw2d.command.CommandAdd(canvas, this.newFigure, parseInt(x),parseInt(y));
             canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(this.newFigure);
             
             // start inplace editing
             //
@@ -3856,6 +3903,7 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
         if(this.mouseDownElement===null || !(this.mouseDownElement instanceof shape_designer.figure.ExtPort)){
             var command = new draw2d.command.CommandAdd(canvas, new shape_designer.figure.ExtPort(), x, y);
             canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(command.figure);
         }
         else{
             this._super(canvas,x,y);
@@ -3990,6 +4038,7 @@ shape_designer.policy.LineToolPolicy = shape_designer.policy.AbstractToolPolicy.
             this.lineFigure.setEndPoint(x, y);
             var command = new draw2d.command.CommandAdd(this.canvas, this.lineFigure);
             this.canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(this.lineFigure);
         }
         else {
             this.lineFigure.addVertex(x, y);

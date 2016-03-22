@@ -1,0 +1,33 @@
+.portDirectionOption {
+  height: 60px;
+  text-align: center;
+}
+.portDirectionOption label > input {
+  /* HIDE RADIO */
+  display: none;
+}
+.portDirectionOption label > input + span {
+  /* IMAGE STYLES */
+  cursor: pointer;
+  color: gray !important;
+  padding-right: 5px;
+}
+.portDirectionOption label > input:checked + span {
+  /* (CHECKED) IMAGE STYLES */
+  color: #4285f4 !important;
+}
+#tool_shape:hover #tool_shape_caret {
+  color: #4285f4;
+}
+#tool_shape .tool_shape_entry {
+  text-align: left;
+}
+#tool_shape #tool_shape_caret {
+  border-top: 20px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 4px solid transparent;
+  border-left: 2px solid transparent;
+}
+#tool_shape #tool_shape_caret > span {
+  margin-top: 21px;
+}
