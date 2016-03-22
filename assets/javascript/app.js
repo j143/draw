@@ -149,38 +149,43 @@ shape_designer.Application = Class.extend(
  	   }
  	},
  	
-	fileOpen: function( successCallback, errorCallback, abortCallback){
+	fileNew: function(){
+        this.view.clear();
+        this.currentFile = null;
+    },
+
+    fileOpen: function( successCallback, errorCallback, abortCallback){
         this.storage.pickFileAndLoad(
-          // file pattern
-          "draw2d",
-          
-          // success callback
-          //
-          $.proxy(function(file, fileData){
-            try{
-                this.view.clear();
-                var reader = new draw2d.io.json.Reader();
-                reader.unmarshal(this.view, fileData);
-                this.currentFile = file;
-                document.title = file.title;
-                this.view.getCommandStack().markSaveLocation();
-                successCallback();
-            }
-            catch(e){
-                this.view.reset();
-                errorCallback();
-            }
-          },this),
-          
-          // error callback
-          //
-          errorCallback,
-          
-          // abort callback
-          //
-          abortCallback);
-	},
-	
+            // file pattern
+            "draw2d",
+
+            // success callback
+            //
+            $.proxy(function(file, fileData){
+                try{
+                    this.view.clear();
+                    var reader = new draw2d.io.json.Reader();
+                    reader.unmarshal(this.view, fileData);
+                    this.currentFile = file;
+                    document.title = file.title;
+                    this.view.getCommandStack().markSaveLocation();
+                    successCallback();
+                }
+                catch(e){
+                    this.view.reset();
+                    errorCallback();
+                }
+            },this),
+
+            // error callback
+            //
+            errorCallback,
+
+            // abort callback
+            //
+            abortCallback);
+    },
+
 	fileSave: function(successCallback, errorCallback, abortCallback){
 		var _this = this;
 		this.storage.save(this.view, this.currentFile, 
@@ -564,9 +569,19 @@ shape_designer.Toolbar = Class.extend({
 
         this.toolbarDiv=$("<div class=\"toolbarGroup pull-right\"></div>");
         this.html.append(this.toolbarDiv);
-        
+
+
         var buttonGroup=$("<div class=\"btn-group\"></div>");
         this.toolbarDiv.append(buttonGroup);
+
+        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
+        buttonGroup.append(this.loginButton);
+        // Button: Connect to GITHUB
+        //
+        $("#githubButton").on("click",function(){
+            window.location.href='https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo';
+        });
+
         this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_download.png"></button>');
         buttonGroup.append(this.openButton);
         this.openButton.on("click",$.proxy(function(){
@@ -626,15 +641,12 @@ shape_designer.Toolbar = Class.extend({
         Mousetrap.bind("ctrl+s", $.proxy(function (event) {this.saveButton.click();return false;},this));
         this.saveButton.hide();
 
-
-
-        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
-        buttonGroup.append(this.loginButton);
-        // Button: Connect to GITHUB
-        //
-        $("#githubButton").on("click",function(){
-            window.location.href='https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo';
-        });
+        this.newButton  = $('<button  data-toggle="tooltip" title="New Document <span class=\'highlight\'> [ Ctrl+N ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_new.png"></button>');
+        buttonGroup.append(this.newButton);
+        this.newButton.on("click",$.proxy(function(){
+            app.fileNew();
+        },this));
+        Mousetrap.bind("ctrl+n", $.proxy(function (event) {this.undoButton.click();return false;},this));
 
 
         // Inject the UNDO Button and the callbacks
@@ -873,9 +885,11 @@ shape_designer.dialog.FigureTest = Class.extend(
 		writer.marshal(app.view, "testShape",function(js){
 		    eval(js);
 	        var splash = $(
+				'<div>'+
 	                '<div id="test_canvas">'+
 	                '</div>'+
-	                ' <div id="test_close"><img src="./assets/images/dialog_close.png"/></div>'
+	                ' <div id="test_close"><img src="./assets/images/dialog_close.png"/></div>'+
+				'<div>'
 	                );
 	        splash.hide();
 	        // fadeTo MUSS leider sein. Man kann mit raphael keine paper.text elemente einfügen
