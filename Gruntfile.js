@@ -25,7 +25,6 @@ module.exports = function (grunt) {
                     './bower_components/draw2d/dist/json2.js',
                     './bower_components/draw2d/dist/pathfinding-browser.min.js',
                     './bower_components/draw2d/dist/draw2d.js',
-                    './bower_components/google-code-prettify/src/prettify.js',
                     './lib/jquery.browser.js',
                     './bower_components/jquery-ui/ui/minified/jquery-ui.min.js',
                     './lib/jquery.bootstrap-growl.js',
@@ -147,6 +146,12 @@ module.exports = function (grunt) {
                 cwd: 'bower_components/bootstrap/dist',
                 src: ['**/*'],
                 dest: 'dist/lib/bootstrap'
+            },
+            prettify:{
+                expand: true,
+                cwd: 'bower_components/google-code-prettify/',
+                src: ['**/*'],
+                dest: 'dist/lib/prettify'
             }
         },
 
@@ -191,7 +196,7 @@ module.exports = function (grunt) {
 
             less: {
                 files: [
-                    "./src/assets/stylesheets/**/*.less"
+                    "./src/assets/less/**/*.less"
                 ],
                 tasks: ['less'],
                 options: {
