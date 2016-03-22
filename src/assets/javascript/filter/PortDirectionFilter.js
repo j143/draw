@@ -10,40 +10,57 @@ shape_designer.filter.PortDirectionFilter = shape_designer.filter.Filter.extend(
 	},
 	
 	insertPane: function(figure, $parent){
-	   var _this = this; 
-       var dir2label ={"0":"Up","1":"Right","2":"Down","3":"Left", "null":"Calculated"};
+	   var _this = this;
+	   var dir = figure.getConnectionDirection();
 	   $parent.append('<div id="'+this.cssScope+'_container" class="panel panel-default">'+
                 	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#'+this.cssScope+'_panel">'+
-                	   '     Port Direction'+
+                	   '     Connection Direction'+
                 	   '</div>'+
                 	   
                 	   ' <div class="panel-body collapse in" id="'+this.cssScope+'_panel">'+
-                	   '   <div class="form-group">'+
+                	   '   <div class="form-group portDirectionOption">'+
                        '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
-                       '      <div class="btn-group dropdown">'+
-                       '         <button id="'+this.cssScope+'_button" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">'+
-                       '              <span id="'+this.cssScope+'_label">'+dir2label[""+figure.getConnectionDirection()]+'</span>        '+
-                       '              <span class="caret"></span></button>     '+
-                       '              <ul class="dropdown-menu" id="select_'+this.cssScope+'_menu">'+
-                       '                 <li><a href="#" data-dir="0">Up</a></li>'+
-                       '                 <li><a href="#" data-dir="1">Right</a></li>'+
-                       '                 <li><a href="#" data-dir="2">Down</a></li>'+
-                       '                 <li><a href="#" data-dir="3">Left</a></li>'+
-                       '                 <li><a href="#" data-dir="null">Calculated</a></li>'+
-                       '              </ul>'+
-                       '         </button>'+
-                       '       </div>'+
+
+		               '<label>'+
+					   '  <input '+(dir==0?' checked="checked"':'')+' type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="0" />'+
+		               '  <span  title="up" class="glyphicon glyphicon-arrow-up"></span>'+
+					   '</label>'+
+
+                       '<br>'+
+
+                       '<label>'+
+                       '  <input '+(dir==3?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="3" />'+
+                       '  <span  title="left" class="glyphicon glyphicon-arrow-left"></span>'+
+                       '</label>'+
+
+                       '<label>'+
+                       '  <input '+(dir==null?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="null" />'+
+                       '  <span title="automatic" class="glyphicon glyphicon-screenshot"></span>'+
+                       '</label>'+
+
+					   '<label>'+
+					   '  <input '+(dir==1?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="1" />'+
+					   '  <span title="right"  class="glyphicon glyphicon-arrow-right"></span>'+
+					   '</label>'+
+
+                       '<br>'+
+
+					   '<label>'+
+					   '  <input '+(dir==2?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-dir="2" />'+
+					   '  <span  title="down" class="glyphicon glyphicon-arrow-down"></span>'+
+					   '</label>'+
+
+
+		               '       </div>'+
                        '   </div>'+
                        ' </div>'+
                 	   '</div>');
 
-	       $("#select_"+_this.cssScope+"_menu a").on("click", function(){
-	           var $this = $(this);
-               var dir = $this.data("dir");
-               var label = dir2label[""+dir];
-	           figure.setConnectionDirection(dir);
-	           $("#"+_this.cssScope+"_label").text(label);
-	       });
+		   $("#"+_this.cssScope+"_panel .portDirectionOption input").on("change", function(){
+			   var $this = $(this);
+			   var dir = $this.data("dir");
+			   figure.setConnectionDirection(dir);
+		   });
 	   },
 	   
 	    

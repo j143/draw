@@ -9,10 +9,11 @@ shape_designer.View = draw2d.Canvas.extend({
 		
 		this.currentDropConnection = null;
 		
-        this.installEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy(20,1,"#FF4981"));
+        this.installEditPolicy( new draw2d.policy.canvas.ShowGridEditPolicy(20));
         this.installEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
-        this.installEditPolicy( new draw2d.policy.canvas.FadeoutDecorationPolicy());
-        
+        this.installEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
+        this.installEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
+
         Mousetrap.bind(['ctrl+c', 'command+c'], $.proxy(function (event) {
             var primarySelection = this.getSelection().getPrimary();
             if(primarySelection!==null){

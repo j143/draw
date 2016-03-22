@@ -105,6 +105,7 @@ shape_designer.policy.RectangleToolPolicy = shape_designer.policy.AbstractToolPo
             var rect =new shape_designer.figure.PolyRect(this.topLeftPoint, bottomRight);
             var command = new draw2d.command.CommandAdd(canvas, rect, rect.getX(), rect.getY());
             canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(rect);
             this.topLeftPoint = null;
             this.setToolText("Select first corner of rectangle");
 

@@ -106,6 +106,7 @@ shape_designer.policy.CircleToolPolicy = shape_designer.policy.AbstractToolPolic
             var rect =new shape_designer.figure.PolyCircle(this.center,dx);
             var command = new draw2d.command.CommandAdd(canvas, rect, rect.getX(), rect.getY());
             canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(rect);
             this.center = null;
             this.setToolText(this.MESSAGE_STEP1);
 

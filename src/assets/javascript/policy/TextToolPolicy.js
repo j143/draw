@@ -83,6 +83,7 @@ shape_designer.policy.TextToolPolicy = shape_designer.policy.AbstractToolPolicy.
            
             var command = new draw2d.command.CommandAdd(canvas, this.newFigure, parseInt(x),parseInt(y));
             canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(this.newFigure);
             
             // start inplace editing
             //

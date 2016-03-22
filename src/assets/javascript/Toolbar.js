@@ -151,7 +151,7 @@ shape_designer.Toolbar = Class.extend({
         this.deleteButton  = $('<button  data-toggle="tooltip" title="Delete <span class=\'highlight\'> [ Del ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_delete.png"></button>');
         this.toolbarDiv.append(this.deleteButton);
         this.deleteButton.on("click",$.proxy(function(){
-            var node = this.view.getCurrentSelection();
+            var node = this.view.getPrimarySelection();
             var command= new draw2d.command.CommandDelete(node);
             this.view.getCommandStack().execute(command);
         },this)).button( "option", "disabled", true );
@@ -161,10 +161,18 @@ shape_designer.Toolbar = Class.extend({
         this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
         this.toolbarDiv.append(this.delimiter);
 
-        
-       
+
+
         buttonGroup=$('<div class="btn-group" data-toggle="buttons"></div>');
         this.toolbarDiv.append(buttonGroup);
+
+
+        this.selectButton = $('<label data-toggle="tooltip" title="Select mode <span class=\'highlight\'> [ spacebar ]</span>" class="btn btn-sm btn-primary active"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/tools/SELECT_TOOL_032.png"></label>');
+        buttonGroup.append(this.selectButton);
+        this.selectButton.on("click",$.proxy(function(){
+            this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
+        },this));
+        Mousetrap.bind("space", $.proxy(function (event) {this.selectButton.click();return false;},this));
 
         this.shapeButton = $(
                              '<label id="tool_shape" class="dropdown btn btn-sm btn-primary">'+
@@ -215,19 +223,7 @@ shape_designer.Toolbar = Class.extend({
             $('*[data-policy="shape_designer.policy.LineToolPolicy"]').click();
             return false;
         },this));
-        
-        
-        this.selectButton = $('<label data-toggle="tooltip" title="Select mode <span class=\'highlight\'> [ spacebar ]</span>" class="btn btn-sm btn-primary active"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/tools/SELECT_TOOL_032.png"></label>');
-        buttonGroup.append(this.selectButton);
-        this.selectButton.on("click",$.proxy(function(){
-            this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
-        },this));
-        Mousetrap.bind("space", $.proxy(function (event) {this.selectButton.click();return false;},this));
 
-        buttonGroup.find(".btn").button();
-        buttonGroup=$('<div class="btn-group" data-toggle="buttons"></div>');
-        
-        this.toolbarDiv.append(buttonGroup);
         this.unionButton = $('<label data-toggle="tooltip" title="Polygon Union <span class=\'highlight\'> [ U ]</span>" class="btn btn-sm btn-primary"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/toolbar_union.png"></label>');
         buttonGroup.append(this.unionButton);
         this.unionButton.on("click",$.proxy(function(){

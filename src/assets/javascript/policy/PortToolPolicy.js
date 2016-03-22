@@ -51,6 +51,7 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
         if(this.mouseDownElement===null || !(this.mouseDownElement instanceof shape_designer.figure.ExtPort)){
             var command = new draw2d.command.CommandAdd(canvas, new shape_designer.figure.ExtPort(), x, y);
             canvas.getCommandStack().execute(command);
+            canvas.setCurrentSelection(command.figure);
         }
         else{
             this._super(canvas,x,y);

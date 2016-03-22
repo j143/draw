@@ -25,7 +25,37 @@ shape_designer.dialog.FigureTest = Class.extend(
 	        splash.fadeIn( function(){
 	            var canvas    = new draw2d.Canvas("test_canvas");
 	            canvas.installEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy(20,1,"#FF4981"));
-	            
+				var router = new draw2d.layout.connection.InteractiveManhattanConnectionRouter();
+				canvas.installEditPolicy( new draw2d.policy.connection.ComposedConnectionCreatePolicy(
+						[
+							// create a connection via Drag&Drop of ports
+							//
+							new draw2d.policy.connection.DragConnectionCreatePolicy({
+								createConnection:function(){
+									return new draw2d.Connection({
+										radius:3,
+										stroke:2,
+										color: "#129CE4",
+										outlineStroke:1,
+										outlineColor:"#ffffff",
+										router: router});
+								}
+							}),
+							// or via click and point
+							//
+							new draw2d.policy.connection.OrthogonalConnectionCreatePolicy({
+								createConnection:function(){
+									return new draw2d.Connection({
+										radius:3,
+										stroke:2,
+										color: "#129CE4",
+										outlineStroke:1,
+										outlineColor:"#ffffff",
+										router: router});
+								}
+							})
+						])
+				);
 	            var test = new testShape();
 	            canvas.add( test,400,160);
 	          
