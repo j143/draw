@@ -9,6 +9,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     {
       this.blur=0;
       this.isExtFigure = true;
+
       this._super(attr, setter, getter);
  
       this.setUserData({name:"Polygon"});
@@ -52,6 +53,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         this.filters.each($.proxy(function(i,e){
             alreadyIn = alreadyIn || (e.NAME===filter.NAME);
         },this));
+
         if(alreadyIn===true){
             return; // silently
         }
@@ -107,7 +109,14 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
             filter.apply(this, attributes);
         },this));
 
-//        this.shape.blur(this.blur===0?-1:this.blur);
+        //this.shape.blur(this.blur===0?-1:this.blur);
+/*
+        if(this.filter)
+        this.filter = this.canvas.paper.createFilter();
+        filter.addShiftToColor("red");
+        filter.addBlur(7);
+        this.shape.filter(filter);
+*/
         this._super(attributes);
     },
 

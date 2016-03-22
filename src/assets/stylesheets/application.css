@@ -1,12 +1,4 @@
-#githubNavigation{
-    height:300px;
-    overflow:scroll;
-}
 
-#githubFilePreview{
-    max-width: 200px;
-    max-height: 200px;
-}
 #modal-background{
     display: block;
     position: fixed;
@@ -336,11 +328,12 @@ background-color:transparent;
 #toolbar .btn-group,
 #toolbar .btn {
   padding:4px;
-  background-image: none !important;
-  background-color: transparent !important;
-  border:1px solid transparent !important;
-  box-shadow:none !important;
+  background-image: none;
+  background-color: transparent;
+  border:1px solid transparent;
+  box-shadow:none;
 }
+
 
 #canvas_zoom button:hover ,
 #toolbar .btn:hover{
@@ -526,4 +519,23 @@ border-bottom: 1px solid #202525;
  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
  /* For IE 5.5 - 7 */
  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
+}
+
+
+
+
+#githubNavigation{
+    height:300px;
+    overflow:scroll;
+}
+
+#githubFilePreview{
+    max-width: 200px;
+    max-height: 200px;
+}
+
+#githubButton{
+    color:white;
+    background-color:#24c85b !important;
+    border:1px solid #4285f4  !important;
 }

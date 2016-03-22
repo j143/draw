@@ -98,7 +98,7 @@ shape_designer.Toolbar = Class.extend({
 
 
 
-        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.png">Connect to Github</button>');
+        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
         buttonGroup.append(this.loginButton);
         // Button: Connect to GITHUB
         //

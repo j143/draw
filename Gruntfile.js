@@ -176,9 +176,8 @@ module.exports = function (grunt) {
                 files: [
                     './src/**/*.html',
                     './src/**/*.css'
-
                 ],
-                tasks: ['copy']
+                tasks: ['concat:css','copy']
             },
             js: {
                 files: [
@@ -203,6 +202,7 @@ module.exports = function (grunt) {
         'gh-pages': {
             options: {
                 base: 'dist'
+
             },
             src: ['**']
         }

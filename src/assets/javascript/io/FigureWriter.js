@@ -41,7 +41,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
             var attr = {};
             figure.svgPathString=null;
             figure.translate(-x,-y);
-            figure.repaint();
+            // paint the element and fill the "attr" object with the current
+            // settings
+            figure.repaint(attr);
             delete attr.path;
             delete attr.x;
             delete attr.y;
