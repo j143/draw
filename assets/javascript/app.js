@@ -3,12 +3,7 @@ if(typeof String.prototype.endsWith ==="undefined") {
         return this.indexOf(suffix, this.length - suffix.length) !== -1;
     };
 }
-var Configuration = {
-        backend: {
-            "localhost"     : "../../../../backend/",
-            "www.draw2d.org": "http://www.draw2d.org/backend/"
-        }
-};
+
 
 
 // the smallest jquery plugin ever
@@ -204,13 +199,17 @@ shape_designer.Application = Class.extend(
 shape_designer.View = draw2d.Canvas.extend({
 	
 	init:function(app, id){
+        var _this = this;
+
 		this._super(id, 2000,2000);
 		this.clippboardFigure=null;
+        this.grid =  new draw2d.policy.canvas.ShowGridEditPolicy(20);
+
 		this.setScrollArea("#"+id);
 		
 		this.currentDropConnection = null;
 		
-        this.installEditPolicy( new draw2d.policy.canvas.ShowGridEditPolicy(20));
+        this.installEditPolicy( this.grid);
         this.installEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
@@ -258,16 +257,17 @@ shape_designer.View = draw2d.Canvas.extend({
         $("#canvas_zoom_out").on("click",$.proxy(function(){
             setZoom(0.8);
         },this));
-        
-        $("#canvas_config_grid").bootstrapSwitch();
-        $('#canvas_config_grid').on('switchChange', $.proxy(function (e, data) {
-           if(data.value){
-                this.installEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy(20,1,"#FF4981"));
+
+  //      $('#canvas_config_grid').bootstrapToggle();
+        console.log( $('#canvas_config_grid'));
+        $('#canvas_config_grid').on('change', function (e) {
+           if($(this).prop('checked')){
+                _this.installEditPolicy( _this.grid);
             }
             else{
-                this.uninstallEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy(20,1,"#FF4981"));
+                _this.uninstallEditPolicy( _this.grid);
             }
-          },this));
+          });
 
         $("#canvas_config_items").on("click",$.proxy(function(e){
             e.stopPropagation();
