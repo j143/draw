@@ -31,19 +31,16 @@ module.exports = function (grunt) {
                     './bower_components/mousetrap/mousetrap.min.js',
                     './bower_components/bootstrap/dist/js/bootstrap.min.js',
                     './bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js',
+                    './bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js',
                     './bower_components/jsts/lib/javascript.util.js',
                     './bower_components/jsts/lib/jsts.js',
-                    './bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js',
                     './bower_components/anglepicker/ui.anglepicker.js',
                     './bower_components/ladda/dist/spin.min.js',
                     './bower_components/ladda/dist/ladda.min.js',
                     './bower_components/bootbox/bootbox.js',
                     './bower_components/hogan/web/1.0.0/hogan.min.js',
                     './bower_components/octokat/dist/octokat.js',
-                    './lib/Blob.js',
-                    './bower_components/bootstrap-tagsinput/dist/boostrap-tagsinput.min.js'
-
-
+                    './lib/Blob.js'
                 ],
                 dest: './dist/assets/javascript/dependencies.js'
             },
@@ -51,7 +48,6 @@ module.exports = function (grunt) {
                 src: [
 
                     './src/assets/javascript/polyfill.js',
-                    './src/assets/javascript/Configuration.js',
                     './src/assets/javascript/Application.js',
                     './src/assets/javascript/View.js',
                     './src/assets/javascript/Layer.js',
@@ -106,9 +102,8 @@ module.exports = function (grunt) {
                 src:[
                     './src/assets/stylesheets/application.css',
                     './bower_components/anglepicker/ui.anglepicker.css',
-                    './bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css',
-                    './bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
                     './bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css',
+                    './bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css',
                     './bower_components/ladda/dist/ladda-themeless.min.css',
                     './bower_components/ladda/dist/ladda-themeless.min.css'
                 ],

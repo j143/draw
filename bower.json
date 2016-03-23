@@ -12,17 +12,15 @@
     "hogan": "~3.0.2",
     "mousetrap": "1.4.6",
     "jquery-ui": "1.10.3",
-    "bootstrap-material-design": "~0.3.0",
     "bootstrap-touchspin": "3.1.1",
     "bootbox": "4.1.0",
     "jscolor": "1.4.2",
     "ladda": "0.9.2",
     "anglepicker": "1.0.0",
     "google-code-prettify": "1.0.1",
-    "bootstrap-switch": "3.0.0",
-    "bootstrap-tagsinput": "0.4.2",
     "jsts": "0.13.2",
-    "octokat": "^0.4.17"
+    "octokat": "^0.4.17",
+    "bootstrap-toggle": "^2.2.2"
   },
   "private": true,
   "resolutions": {
