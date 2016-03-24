@@ -39,39 +39,20 @@ shape_designer.Toolbar = Class.extend({
         var buttonGroup=$("<div class=\"btn-group\"></div>");
         this.toolbarDiv.append(buttonGroup);
 
+
         this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
         buttonGroup.append(this.loginButton);
-        // Button: Connect to GITHUB
-        //
-        $("#githubButton").on("click",function(){
-            window.location.href='https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo';
+        this.loginButton.on("click",function(){
+            window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scopes=public_repo';
         });
+
 
         this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_download.png"></button>');
         buttonGroup.append(this.openButton);
         this.openButton.on("click",$.proxy(function(){
             var button = this.openButton;
             button.tooltip("hide");
-            button.addClass("ladda-button");
-            var l = Ladda.create(  button[0]  );
-            l.start();
-            app.fileOpen(
-                   // success 
-                   function(){
-                       l.stop();
-                       setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                    },
-                    // error
-                    function(){
-                        l.stop();
-                        setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                        alert("Unable to load file");
-                    },
-                    // abort
-                    function(){
-                        l.stop();
-                        setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                    });
+            app.fileOpen();
         },this));
         Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
         this.openButton.hide();
@@ -81,27 +62,7 @@ shape_designer.Toolbar = Class.extend({
         this.saveButton.on("click",$.proxy(function(){
             var button = this.saveButton;
             button.tooltip("hide");
-            button.addClass("ladda-button");
-        	var l = Ladda.create(  button[0]  );
-        	l.start();
-        	app.fileSave(
-        	        // success callback
-        	        $.proxy(function(){
-                         l.stop();
-                         setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                	},this),
-                	// error callback
-                	function(){
-                        l.stop();
-                        setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                        alert("unable to save document");
-       	            },
-       	            // abort callback
-       	            function(){
-                        l.stop();
-                        setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-       	            }
-        	        );
+        	app.fileSave();
         },this));
         Mousetrap.bind("ctrl+s", $.proxy(function (event) {this.saveButton.click();return false;},this));
         this.saveButton.hide();

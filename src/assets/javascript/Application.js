@@ -50,9 +50,11 @@ shape_designer.Application = Class.extend(
         var url = window.location.href;
         var code = this.getParam("code");
         if (code!==null) {
-            $.getJSON('https://draw2d.herokuapp.com/authenticate/'+code, function(data) {
-                _this.login(data.token);
-            });
+           $.getJSON(conf.githubAuthenticateCallback+code, function(data) {
+               _this.storage.login(data.token, $.proxy(function(success){
+                   _this.toolbar.onLogginStatusChanged(success);
+               },this));
+           });
         }
         about.hide();
  	},
@@ -68,73 +70,43 @@ shape_designer.Application = Class.extend(
       
       return results[1];
     },
-
-    login:function(githubToken)
-    {
-        this.storage.login(githubToken, $.proxy(function(success){
-            this.toolbar.onLogginStatusChanged(success);
-        },this));
-    },
- 	
- 	isLoggedIn: function( callback)
-    {
- 	   if(this.storage.requiresLogin()){
- 	       this.storage.isLoggedIn(function(result){
- 	           callback(result);
- 	       });
- 	   }
- 	   else{
- 	       callback(true);
- 	   }
- 	},
  	
 	fileNew: function( successCallback, errorCallback, abortCallback)
     {
         this.view.clear();
-        this.currentFile = null;
-        this.fileSave(successCallback, errorCallback, abortCallback);
+        this.storage.currentFile = null;
+        this.storage.fileNew(
+            // success callback
+            //
+            $.proxy(function(file){
+                this.currentFile = file;
+                document.title = file.title;
+                alert("Created");
+            },this),
+            errorCallback,
+            abortCallback);
     },
 
-    fileOpen: function( successCallback, errorCallback, abortCallback){
-        this.storage.pickFileAndLoad(
+    fileOpen: function()
+    {
+        new shape_designer.dialog.FileOpen(this.storage).show(
 
-          // success callback
-            //
-            $.proxy(function(file, fileData){
+            // success callback
+            $.proxy(function(fileData){
                 try{
                     this.view.clear();
                     var reader = new draw2d.io.json.Reader();
                     reader.unmarshal(this.view, fileData);
-                    this.currentFile = file;
-                    document.title = file.title;
                     this.view.getCommandStack().markSaveLocation();
-                    successCallback();
                 }
                 catch(e){
                     this.view.reset();
-                    errorCallback();
                 }
-            },this),
-
-            // error callback
-            //
-            errorCallback,
-
-            // abort callback
-            //
-            abortCallback);
+            },this));
     },
 
-	fileSave: function(successCallback, errorCallback, abortCallback)
+	fileSave: function()
     {
-		var _this = this;
-		this.storage.save(this.view, this.currentFile, 
-				function(fileHandle){
-					_this.currentFile = fileHandle;
-					successCallback();
-				}, 
-				errorCallback, 
-				abortCallback
-		);
+        new shape_designer.dialog.FileSave(this.storage).show(this.view);
 	}
 });

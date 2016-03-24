@@ -35,8 +35,6 @@ module.exports = function (grunt) {
                     './bower_components/jsts/lib/javascript.util.js',
                     './bower_components/jsts/lib/jsts.js',
                     './bower_components/anglepicker/ui.anglepicker.js',
-                    './bower_components/ladda/dist/spin.min.js',
-                    './bower_components/ladda/dist/ladda.min.js',
                     './bower_components/bootbox/bootbox.js',
                     './bower_components/hogan/web/1.0.0/hogan.min.js',
                     './bower_components/octokat/dist/octokat.js',
@@ -48,6 +46,7 @@ module.exports = function (grunt) {
                 src: [
 
                     './src/assets/javascript/polyfill.js',
+                    './src/assets/javascript/Configuration.js',
                     './src/assets/javascript/Application.js',
                     './src/assets/javascript/View.js',
                     './src/assets/javascript/Layer.js',
@@ -57,6 +56,8 @@ module.exports = function (grunt) {
                     './src/assets/javascript/dialog/About.js',
                     './src/assets/javascript/dialog/FigureTest.js',
                     './src/assets/javascript/dialog/FigureCode.js',
+                    './src/assets/javascript/dialog/FileOpen.js',
+                    './src/assets/javascript/dialog/FileSave.js',
 
                     './src/assets/javascript/filter/Filter.js',
                     './src/assets/javascript/filter/StrokeFilter.js',
@@ -103,9 +104,7 @@ module.exports = function (grunt) {
                     './src/assets/stylesheets/application.css',
                     './bower_components/anglepicker/ui.anglepicker.css',
                     './bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css',
-                    './bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css',
-                    './bower_components/ladda/dist/ladda-themeless.min.css',
-                    './bower_components/ladda/dist/ladda-themeless.min.css'
+                    './bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css'
                 ],
                 dest: './dist/assets/stylesheets/application.css'
             }
