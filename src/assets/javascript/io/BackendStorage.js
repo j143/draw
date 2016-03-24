@@ -130,6 +130,8 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
         };
 
         if(this.currentRepository===null){
+
+            $('#githubFileNewDialog').modal('show');
             this.fetchRepositories(
                 function(){
                     // success
@@ -139,7 +141,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                 },
                 function(){
                     // abort
-                })
+                });
         }
         else{
             showFileSaveDialog();
@@ -175,7 +177,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
             var compiled = Hogan.compile(
                 '         {{#repos}}'+
                 '         <a href="#" class="list-group-item repository text-nowrap" data-type="repository" data-id="{{id}}">'+
-                '         <small><span class="glyphicon mdi-content-archive"></span></small>'+
+                '         <small><span class="glyphicon glyphicon-hdd"></span></small>'+
                 '         {{{name}}}'+
                 '         </a>'+
                 '         {{/repos}}'
@@ -221,7 +223,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
             _this.currentPath = newPath;
             var compiled = Hogan.compile(
                 '         <a href="#" class="list-group-item githubPath" data-type="{{parentType}}" data-path="{{parentPath}}" >'+
-                '             <small><span class="glyphicon mdi-navigation-arrow-back"></span></small>'+
+                '             <small><span class="glyphicon glyphicon-menu-left"></span></small>'+
                 '             ..'+
                 '         </a>'+
                 '         {{#files}}'+
@@ -244,9 +246,9 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                 },
                 icon: function(){
                     if(this.name.endsWith(".draw2d")){
-                        return "mdi-editor-mode-edit";
+                        return "glyphicon-edit";
                     }
-                    return this.type==="dir"?"mdi-file-folder":"mdi-image-crop-portrait";
+                    return this.type==="dir"?"glyphicon-folder-open":"glyphicon-file";
                 }
             });
             $("#githubNavigation").html($(output));
