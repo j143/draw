@@ -10,17 +10,17 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
 
         this.octo=null;
         this.repositories = null;
-        this.githubToken = null;
         this.currentRepository = null;
         this.currentPath = "";
-        this.initDone = true;
     },
     
-    requiresLogin: function(){
+    requiresLogin: function()
+    {
         return true;
     },
 
-    login: function(token, callback){
+    login: function(token, callback)
+    {
         this.octo = new Octokat({
             token: token
         });
@@ -35,7 +35,8 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
         });
     },
 
-    isLoggedIn: function(callback){
+    isLoggedIn: function(callback)
+    {
 
         if (this.octo === null) {
             callback(false);
@@ -61,88 +62,100 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
      * 
      * Open the file picker and load the selected file.<br>
      * 
-     * Example usage:
-     * 
-     *      this.openButton.on("click",$.proxy(function(){
-     *         this.filePicker.pickFileAndLoad("*.draw2d", $.proxy(function(file, fileData){
-     *            // save the fileHandle for further save operations
-     *            this.file = file;
-     *          
-     *            // cleanup the canvas 
-     *            this.canvas.clear();
-     *          
-     *            // load the JSON into the canvas
-     *            var reader = new draw2d.io.json.Reader();
-     *            reader.unmarshal(canvas, JSON.parse(fileData));
-     *        },this));
-     *     },this));
-     *     
-     * @param {String} filenameFilter the file picker set a file name filter with the given pattern. Only files which contains the given string will be loaded    
      * @param {Function} successCallback callback method if the user select a file and the content is loaded
      * @param {Function} errorCallback method to call if any error happens
      * 
      * @since 4.0.0
      */
-    pickFileAndLoad: function(filenameFilter, successCallback, errorCallback, abortCallback) {
-        if(this.currentRepository ===null) {
-            this.fetchRepositories(filenameFilter, successCallback, errorCallback, abortCallback);
+    pickFileAndLoad: function(successCallback, errorCallback, abortCallback)
+    {
+        // Select first a ROOT repository if we didn'T have before
+        if(this.currentRepository===null) {
+            this.fetchRepositories(successCallback, errorCallback, abortCallback);
         }
+        // else reopen the already selected directory
         else{
-            this.fetchPathContent(this.currentPath,filenameFilter, successCallback, errorCallback, abortCallback);
+            this.fetchPathContent(this.currentPath,successCallback, errorCallback, abortCallback);
         }
 
         $('#githubFileSelectDialog').modal('show');
     },
 
-    save: function(view, currentFileHandle, successCallback, errorCallback, abortCallback){
+    save: function(canvas, currentFileHandle, successCallback, errorCallback, abortCallback)
+    {
         var _this = this;
         
     	if(currentFileHandle===null){
     		currentFileHandle= {
-    		    title:"DocumentName"
+    		    title:"DocumentName",
+                sha:null
     		};
     	}
-        // generate the PNG file
+
+        // generate the PNG preview and oben the save dialog
         //
-        new draw2d.io.png.Writer().marshal(view, $.proxy(function(imageDataUrl){
+        var showFileSaveDialog= function() {
+            new draw2d.io.png.Writer().marshal(canvas, function (imageDataUrl) {
 
-            $("#githubFilePreview").attr("src", imageDataUrl);
-            $("#githubFileName")
-                .val(currentFileHandle.title)
-                .removeClass("empty");
+                $("#githubFilePreview").attr("src", imageDataUrl);
+                $("#githubFileName")
+                    .val(currentFileHandle.title)
+                    .removeClass("empty");
 
-            $('#githubSaveFileDialog').on('shown.bs.modal', function() {
-                $(this).find('input:first').focus();
-            });
-            $("#githubSaveFileDialog").modal("show");
-
-            abortCallback();
-
-            // Button: Commit to GitHub
-            //
-            $("#commitToGithub").on("click",function(){
-                var writer = new draw2d.io.json.Writer();
-                writer.marshal(view,function(json, base64){
-                    var config = {
-                        message: $("#githubCommitMessage").val(),
-                        content: base64,
-                        sha: currentFileHandle.sha
-                    };
-
-                    _this.currentRepository.contents(currentFileHandle.path).add(config)
-                        .then(function(info) {
-                            currentFileHandle.sha =  info.content.sha;
-                            $('#githubSaveFileDialog').modal('hide');
-                        });
+                $('#githubSaveFileDialog').on('shown.bs.modal', function () {
+                    $(this).find('input:first').focus();
                 });
-            });
+                $("#githubSaveFileDialog").modal("show");
 
-        },this), view.getBoundingBox().scale(10,10));     
+                // Button: Commit to GitHub
+                //
+                $("#commitToGithub").on("click", function () {
+                    var writer = new draw2d.io.json.Writer();
+                    writer.marshal(canvas, function (json, base64) {
+                        var config = {
+                            message: $("#githubCommitMessage").val(),
+                            content: base64,
+                            sha: currentFileHandle.sha
+                        };
+
+                        _this.currentRepository.contents(currentFileHandle.path).add(config)
+                            .then(function (info) {
+                                currentFileHandle.sha = info.content.sha;
+                                $('#githubSaveFileDialog').modal('hide');
+                            });
+                    });
+                });
+
+            }, canvas.getBoundingBox().scale(10, 10));
+        };
+
+        if(this.currentRepository===null){
+            this.fetchRepositories(
+                function(){
+                    // success
+                },
+                function(){
+                    // error
+                },
+                function(){
+                    // abort
+                })
+        }
+        else{
+            showFileSaveDialog();
+        }
     },
 
 
-
-    fetchRepositories: function(filenameFilter, successCallback, errorCallback, abortCallback){
+    /**
+     * @private
+     *
+     * @param successCallback
+     * @param errorCallback
+     * @param abortCallback
+     */
+    fetchRepositories: function(successCallback, errorCallback, abortCallback)
+    {
         var _this = this;
 
         // fetch all repositories of the related user
@@ -161,7 +174,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
             _this.repositories = repos;
             var compiled = Hogan.compile(
                 '         {{#repos}}'+
-                '         <a href="#" class="list-group-item repository withripple text-nowrap" data-type="repository" data-id="{{id}}">'+
+                '         <a href="#" class="list-group-item repository text-nowrap" data-type="repository" data-id="{{id}}">'+
                 '         <small><span class="glyphicon mdi-content-archive"></span></small>'+
                 '         {{{name}}}'+
                 '         </a>'+
@@ -172,18 +185,18 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                 repos: repos
             });
             $("#githubNavigation").html($(output));
-            $.material.init();
 
             $(".repository").on("click", function(){
                 var $this = $(this);
                 var repositoryId = $this.data("id");
                 _this.currentRepository = $.grep(_this.repositories, function(repo){return repo.id === repositoryId;})[0];
-                _this.fetchPathContent("", filenameFilter, successCallback, errorCallback, abortCallback);
+                _this.fetchPathContent("", successCallback, errorCallback, abortCallback);
             });
         });
     },
 
-    fetchPathContent: function( newPath, filenameFilter, successCallback, errorCallback, abortCallback ){
+    fetchPathContent: function( newPath, successCallback, errorCallback, abortCallback )
+    {
         var _this = this;
 
         this.currentRepository.contents(newPath).fetch(function(param, files){
@@ -207,12 +220,12 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
 
             _this.currentPath = newPath;
             var compiled = Hogan.compile(
-                '         <a href="#" class="list-group-item githubPath withripple" data-type="{{parentType}}" data-path="{{parentPath}}" >'+
+                '         <a href="#" class="list-group-item githubPath" data-type="{{parentType}}" data-path="{{parentPath}}" >'+
                 '             <small><span class="glyphicon mdi-navigation-arrow-back"></span></small>'+
                 '             ..'+
                 '         </a>'+
                 '         {{#files}}'+
-                '           <a href="#" data-draw2d="{{draw2d}}" class="list-group-item githubPath withripple text-nowrap" data-type="{{type}}" data-path="{{currentPath}}{{name}}" data-id="{{id}}" data-sha="{{sha}}">'+
+                '           <a href="#" data-draw2d="{{draw2d}}" class="list-group-item githubPath text-nowrap" data-type="{{type}}" data-path="{{currentPath}}{{name}}" data-id="{{id}}" data-sha="{{sha}}">'+
                 '              <small><span class="glyphicon {{icon}}"></span></small>'+
                 '              {{{name}}}'+
                 '           </a>'+
@@ -237,18 +250,17 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                 }
             });
             $("#githubNavigation").html($(output));
-            $.material.init();
 
             //we are in a folder. Create of a file is possible now
             //
             $("#newFileButton").show();
 
             $(".githubPath[data-type='repository']").on("click", function(){
-                _this.fetchRepositories(filenameFilter, successCallback, errorCallback, abortCallback);
+                _this.fetchRepositories(successCallback, errorCallback, abortCallback);
             });
 
             $(".githubPath[data-type='dir']").on("click", function(){
-                _this.fetchPathContent( $(this).data("path"), filenameFilter, successCallback, errorCallback, abortCallback);
+                _this.fetchPathContent( $(this).data("path"), successCallback, errorCallback, abortCallback);
             });
 
             $(".githubPath[data-type='file']").on("click", function(){
@@ -270,7 +282,8 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
 
 
 
-   dirname: function(path) {
+   dirname: function(path)
+   {
        if (path.length === 0)
            return "";
 

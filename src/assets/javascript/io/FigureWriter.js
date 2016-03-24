@@ -108,10 +108,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
          '//                                                        \n'+       
          '// '+new Date()+'                                         \n'+       
          '//                                                        \n'+       
-         '// Go to the Designer http://www.draw2d.org/designer      \n'+       
+         '// Go to the Designer http://www.draw2d.org               \n'+
          '// to design your own shape or download user generated    \n'+       
-         '// shapes on the galerie at http://www.draw2d.org/backend/galerie \n'+       
-         '//                                                        \n'+       
+         '//                                                        \n'+
          'var {{{className}}} = draw2d.SetFigure.extend({           \n'+
          '                                                          \n'+       
          '       NAME: "{{{className}}}",                           \n'+

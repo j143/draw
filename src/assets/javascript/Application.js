@@ -36,11 +36,6 @@ shape_designer.Application = Class.extend(
      */
     init : function()
     {
-        draw2d.Configuration.factory.createResizeHandle=function(forShape, type){
-            return new draw2d.ResizeHandle(forShape, type).attr({"bgColor":"#26b4a8"});
-        };
-      
-     
         this.currentFile = null;
         
         this.storage = new shape_designer.storage.BackendStorage();
@@ -56,12 +51,10 @@ shape_designer.Application = Class.extend(
         var code = this.getParam("code");
         if (code!==null) {
             $.getJSON('https://draw2d.herokuapp.com/authenticate/'+code, function(data) {
-                 console.log(data.token);
                 _this.login(data.token);
             });
         }
         about.hide();
-
  	},
  	
     getParam: function( name )
@@ -76,13 +69,15 @@ shape_designer.Application = Class.extend(
       return results[1];
     },
 
-    login:function(githubToken){
+    login:function(githubToken)
+    {
         this.storage.login(githubToken, $.proxy(function(success){
             this.toolbar.onLogginStatusChanged(success);
         },this));
     },
  	
- 	isLoggedIn: function( callback){
+ 	isLoggedIn: function( callback)
+    {
  	   if(this.storage.requiresLogin()){
  	       this.storage.isLoggedIn(function(result){
  	           callback(result);
@@ -93,17 +88,17 @@ shape_designer.Application = Class.extend(
  	   }
  	},
  	
-	fileNew: function(){
+	fileNew: function( successCallback, errorCallback, abortCallback)
+    {
         this.view.clear();
         this.currentFile = null;
+        this.fileSave(successCallback, errorCallback, abortCallback);
     },
 
     fileOpen: function( successCallback, errorCallback, abortCallback){
         this.storage.pickFileAndLoad(
-            // file pattern
-            "draw2d",
 
-            // success callback
+          // success callback
             //
             $.proxy(function(file, fileData){
                 try{
@@ -130,7 +125,8 @@ shape_designer.Application = Class.extend(
             abortCallback);
     },
 
-	fileSave: function(successCallback, errorCallback, abortCallback){
+	fileSave: function(successCallback, errorCallback, abortCallback)
+    {
 		var _this = this;
 		this.storage.save(this.view, this.currentFile, 
 				function(fileHandle){

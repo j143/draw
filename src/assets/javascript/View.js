@@ -63,7 +63,6 @@ shape_designer.View = draw2d.Canvas.extend({
         },this));
 
   //      $('#canvas_config_grid').bootstrapToggle();
-        console.log( $('#canvas_config_grid'));
         $('#canvas_config_grid').on('change', function (e) {
            if($(this).prop('checked')){
                 _this.installEditPolicy( _this.grid);
