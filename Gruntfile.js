@@ -146,6 +146,12 @@ module.exports = function (grunt) {
                 cwd: 'bower_components/google-code-prettify/',
                 src: ['**/*'],
                 dest: 'dist/lib/prettify'
+            },
+            localdeploy:{
+                expand: true,
+                cwd: 'dist/',
+                src: ['**/*'],
+                dest: '/Users/andherz/Sites/Designer'
             }
         },
 

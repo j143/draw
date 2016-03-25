@@ -1,8 +1,8 @@
 var conf=null;
 if (window.location.hostname === "localhost") {
     conf = {
-        githubClientId: "80b7ed215a5ec8471ff4",
-        githubAuthenticateCallback: "http://localhost/~andherz/githubCallback.php?code="
+        githubClientId: "4ec60d86b7e1eef385b3",
+        githubAuthenticateCallback: "https://localhost/~andherz/githubCallback.php?code="
     };
 }
 else{
