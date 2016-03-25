@@ -31,3 +31,44 @@
 #tool_shape #tool_shape_caret > span {
   margin-top: 21px;
 }
+
+.githubFileDialog .githubNavigation *[data-draw2d="true"] {
+  font-weight: bold;
+  color: #4285f4;
+}
+.githubFileDialog .githubNavigation .glyphicon,
+.githubFileDialog .githubNavigation .fa {
+  font-size: 20px;
+  padding-right: 10px;
+  color: #4285f4;
+}
+.githubFileDialog .githubNavigation a.list-group-item:hover {
+  text-decoration: underline;
+}
+.githubFileDialog .githubNavigation *[data-draw2d="false"][data-type="file"] {
+  color: gray;
+  cursor: default;
+  text-decoration: none !important;
+}
+.githubFileDialog .githubNavigation *[data-draw2d="false"][data-type="file"] .fa {
+  color: gray;
+}
+
+#githubFileSelectDialog .githubNavigation {
+  height: 300px;
+  overflow: scroll;
+}
+
+#githubSaveFileDialog .githubFilePreview {
+  max-width: 200px;
+  max-height: 200px;
+}
+
+#githubFileSaveAsDialog .githubFilePreview {
+  max-width: 200px;
+  max-height: 200px;
+}
+#githubFileSaveAsDialog .githubNavigation {
+  height: 250px;
+  overflow: scroll;
+}
