@@ -49,6 +49,20 @@ jQuery.fn.reverse = [].reverse;
 }(Date));
 
 
+var conf=null;
+if (window.location.hostname === "localhost") {
+    conf = {
+        githubClientId: "4ec60d86b7e1eef385b3",
+        githubAuthenticateCallback: "https://localhost/~andherz/githubCallback.php?code="
+    };
+}
+else{
+    conf = {
+        githubClientId: "20a3f1473dd7d17fcbcf",
+        ithubAuthenticateCallback: "https://draw2d.herokuapp.com/authenticate/"
+    };
+}
+
 // declare the namespace for this example
 var shape_designer = {
 		figure:{
@@ -101,9 +115,11 @@ shape_designer.Application = Class.extend(
         var url = window.location.href;
         var code = this.getParam("code");
         if (code!==null) {
-            $.getJSON('https://draw2d.herokuapp.com/authenticate/'+code, function(data) {
-                _this.login(data.token);
-            });
+           $.getJSON(conf.githubAuthenticateCallback+code, function(data) {
+               _this.storage.login(data.token, $.proxy(function(success){
+                   _this.toolbar.onLogginStatusChanged(success);
+               },this));
+           });
         }
         about.hide();
  	},
@@ -119,74 +135,44 @@ shape_designer.Application = Class.extend(
       
       return results[1];
     },
-
-    login:function(githubToken)
-    {
-        this.storage.login(githubToken, $.proxy(function(success){
-            this.toolbar.onLogginStatusChanged(success);
-        },this));
-    },
- 	
- 	isLoggedIn: function( callback)
-    {
- 	   if(this.storage.requiresLogin()){
- 	       this.storage.isLoggedIn(function(result){
- 	           callback(result);
- 	       });
- 	   }
- 	   else{
- 	       callback(true);
- 	   }
- 	},
  	
 	fileNew: function( successCallback, errorCallback, abortCallback)
     {
         this.view.clear();
-        this.currentFile = null;
-        this.fileSave(successCallback, errorCallback, abortCallback);
+        this.storage.currentFile = null;
+        this.storage.fileNew(
+            // success callback
+            //
+            $.proxy(function(file){
+                this.currentFile = file;
+                document.title = file.title;
+                alert("Created");
+            },this),
+            errorCallback,
+            abortCallback);
     },
 
-    fileOpen: function( successCallback, errorCallback, abortCallback){
-        this.storage.pickFileAndLoad(
+    fileOpen: function()
+    {
+        new shape_designer.dialog.FileOpen(this.storage).show(
 
-          // success callback
-            //
-            $.proxy(function(file, fileData){
+            // success callback
+            $.proxy(function(fileData){
                 try{
                     this.view.clear();
                     var reader = new draw2d.io.json.Reader();
                     reader.unmarshal(this.view, fileData);
-                    this.currentFile = file;
-                    document.title = file.title;
                     this.view.getCommandStack().markSaveLocation();
-                    successCallback();
                 }
                 catch(e){
                     this.view.reset();
-                    errorCallback();
                 }
-            },this),
-
-            // error callback
-            //
-            errorCallback,
-
-            // abort callback
-            //
-            abortCallback);
+            },this));
     },
 
-	fileSave: function(successCallback, errorCallback, abortCallback)
+	fileSave: function()
     {
-		var _this = this;
-		this.storage.save(this.view, this.currentFile, 
-				function(fileHandle){
-					_this.currentFile = fileHandle;
-					successCallback();
-				}, 
-				errorCallback, 
-				abortCallback
-		);
+        new shape_designer.dialog.FileSave(this.storage).show(this.view);
 	}
 });
 
@@ -569,39 +555,20 @@ shape_designer.Toolbar = Class.extend({
         var buttonGroup=$("<div class=\"btn-group\"></div>");
         this.toolbarDiv.append(buttonGroup);
 
+
         this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
         buttonGroup.append(this.loginButton);
-        // Button: Connect to GITHUB
-        //
-        $("#githubButton").on("click",function(){
-            window.location.href='https://github.com/login/oauth/authorize?client_id=20a3f1473dd7d17fcbcf&scopes=public_repo';
+        this.loginButton.on("click",function(){
+            window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scopes=public_repo';
         });
+
 
         this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_download.png"></button>');
         buttonGroup.append(this.openButton);
         this.openButton.on("click",$.proxy(function(){
             var button = this.openButton;
             button.tooltip("hide");
-            button.addClass("ladda-button");
-            var l = Ladda.create(  button[0]  );
-            l.start();
-            app.fileOpen(
-                   // success 
-                   function(){
-                       l.stop();
-                       setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                    },
-                    // error
-                    function(){
-                        l.stop();
-                        setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                        alert("Unable to load file");
-                    },
-                    // abort
-                    function(){
-                        l.stop();
-                        setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                    });
+            app.fileOpen();
         },this));
         Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
         this.openButton.hide();
@@ -611,27 +578,7 @@ shape_designer.Toolbar = Class.extend({
         this.saveButton.on("click",$.proxy(function(){
             var button = this.saveButton;
             button.tooltip("hide");
-            button.addClass("ladda-button");
-        	var l = Ladda.create(  button[0]  );
-        	l.start();
-        	app.fileSave(
-        	        // success callback
-        	        $.proxy(function(){
-                         l.stop();
-                         setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                	},this),
-                	// error callback
-                	function(){
-                        l.stop();
-                        setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-                        alert("unable to save document");
-       	            },
-       	            // abort callback
-       	            function(){
-                        l.stop();
-                        setTimeout( function() {  button.removeClass("ladda-button");}, 1000);
-       	            }
-        	        );
+        	app.fileSave();
         },this));
         Mousetrap.bind("ctrl+s", $.proxy(function (event) {this.saveButton.click();return false;},this));
         this.saveButton.hide();
@@ -993,6 +940,253 @@ shape_designer.dialog.FigureCode = Class.extend(
 
       
 });  
+shape_designer.dialog.FileOpen = Class.extend({
+
+    /**
+     * @constructor
+     *
+     */
+    init:function(storage){
+        this.storage=storage;
+
+    },
+
+    /**
+     * @method
+     *
+     * Open the file picker and load the selected file.<br>
+     *
+     * @param {Function} successCallback callback method if the user select a file and the content is loaded
+     * @param {Function} errorCallback method to call if any error happens
+     *
+     * @since 4.0.0
+     */
+    show: function(successCallback)
+    {
+        // Select first a ROOT repository if we didn'T have before
+        if(this.storage.currentRepository===null) {
+            this.fetchRepositories(successCallback);
+        }
+        // else reopen the already selected directory
+        else{
+            this.fetchPathContent(this.storage.currentPath, successCallback);
+        }
+
+        $('#githubFileSelectDialog').modal('show');
+    },
+
+    /**
+     * @private
+     *
+     * @param successCallback
+     * @param errorCallback
+     * @param abortCallback
+     */
+    fetchRepositories: function(successCallback)
+    {
+        var _this = this;
+
+        // fetch all repositories of the related user
+        //
+        this.storage.octo.user.repos.fetch(function(param, repos){
+
+            repos.sort(function(a, b)
+            {
+                if ( a.name.toLowerCase() < b.name.toLowerCase() )
+                    return -1;
+                if ( a.name.toLowerCase() > b.name.toLowerCase() )
+                    return 1;
+                return 0;
+            });
+
+            _this.storage.repositories = repos;
+            var compiled = Hogan.compile(
+                '         {{#repos}}'+
+                '         <a href="#" class="list-group-item repository text-nowrap" data-type="repository" data-id="{{id}}">'+
+                '         <small><span class="glyphicon glyphicon-hdd"></span></small>'+
+                '         {{{name}}}'+
+                '         </a>'+
+                '         {{/repos}}'
+            );
+
+            var output = compiled.render({
+                repos: repos
+            });
+            $("#githubNavigation").html($(output));
+
+            $(".repository").on("click", function(){
+                var $this = $(this);
+                var repositoryId = $this.data("id");
+                _this.storage.currentRepository = $.grep(_this.storage.repositories, function(repo){return repo.id === repositoryId;})[0];
+                _this.fetchPathContent("",successCallback);
+            });
+        });
+    },
+
+    fetchPathContent: function( newPath, successCallback )
+    {
+        var _this = this;
+
+        this.storage.currentRepository.contents(newPath).fetch(function(param, files){
+            // sort the reusult
+            // Directories are always on top
+            //
+            files.sort(function(a, b)
+            {
+                if(a.type===b.type) {
+                    if (a.name.toLowerCase() < b.name.toLowerCase())
+                        return -1;
+                    if (a.name.toLowerCase() > b.name.toLowerCase())
+                        return 1;
+                    return 0;
+                }
+                if(a.type==="dir"){
+                    return -1;
+                }
+                return 1;
+            });
+
+            _this.storage.currentPath = newPath;
+            var compiled = Hogan.compile(
+                '         <a href="#" class="list-group-item githubPath" data-type="{{parentType}}" data-path="{{parentPath}}" >'+
+                '             <small><span class="glyphicon glyphicon-menu-left"></span></small>'+
+                '             ..'+
+                '         </a>'+
+                '         {{#files}}'+
+                '           <a href="#" data-draw2d="{{draw2d}}" class="list-group-item githubPath text-nowrap" data-type="{{type}}" data-path="{{currentPath}}{{name}}" data-id="{{id}}" data-sha="{{sha}}">'+
+                '              <small><span class="glyphicon {{icon}}"></span></small>'+
+                '              {{{name}}}'+
+                '           </a>'+
+                '         {{/files}}'
+            );
+
+
+            var parentPath =  _this.dirname(newPath);
+            var output = compiled.render({
+                parentType: parentPath===newPath?"repository":"dir",
+                parentPath: parentPath,
+                currentPath: _this.storage.currentPath.length===0?_this.storage.currentPath:_this.storage.currentPath+"/",
+                files: files,
+                draw2d:function(){
+                    return this.name.endsWith(".draw2d");
+                },
+                icon: function(){
+                    if(this.name.endsWith(".draw2d")){
+                        return "glyphicon-edit";
+                    }
+                    return this.type==="dir"?"glyphicon-folder-open":"glyphicon-file";
+                }
+            });
+            $("#githubNavigation").html($(output));
+
+            //we are in a folder. Create of a file is possible now
+            //
+            $("#newFileButton").show();
+
+            $(".githubPath[data-type='repository']").on("click", function(){
+                _this.fetchRepositories(successCallback);
+            });
+
+            $(".githubPath[data-type='dir']").on("click", function(){
+                _this.fetchPathContent( $(this).data("path"), successCallback);
+            });
+
+            $(".githubPath[data-type='file']").on("click", function(){
+                var path = $(this).data("path");
+                var sha  = $(this).data("sha");
+                _this.storage.currentRepository.contents(path).read(function(param, content){
+                    _this.storage.currentFileHandle={
+                        path : path,
+                        title: path.split(/[\\/]/).pop(), // basename
+                        sha  : sha,
+                        content : content
+                    };
+                    successCallback(content);
+                    $('#githubFileSelectDialog').modal('hide');
+                });
+            });
+        });
+    },
+
+
+
+
+    dirname: function(path)
+    {
+        if (path.length === 0)
+            return "";
+
+        var segments = path.split("/");
+        if (segments.length <= 1)
+            return "";
+        return segments.slice(0, -1).join("/");
+    }
+
+});
+shape_designer.dialog.FileSave = Class.extend({
+
+    /**
+     * @constructor
+     *
+     */
+    init:function(storage){
+        this.storage=storage;
+    },
+
+    /**
+     * @method
+     *
+     * Open the file picker and load the selected file.<br>
+     *
+     * @param {Function} successCallback callback method if the user select a file and the content is loaded
+     * @param {Function} errorCallback method to call if any error happens
+     *
+     * @since 4.0.0
+     */
+    show: function(canvas, successCallback, errorCallback, abortCallback)
+    {
+        var _this = this;
+
+        if(this.storage.currentFileHandle===null){
+            this.storage.currentFileHandle= {
+                title:"DocumentName",
+                sha:null
+            };
+        }
+
+        new draw2d.io.png.Writer().marshal(canvas, function (imageDataUrl) {
+
+            $("#githubFilePreview").attr("src", imageDataUrl);
+            $("#githubFileName").val(_this.storage.currentFileHandle.title);
+
+            $('#githubSaveFileDialog').on('shown.bs.modal', function () {
+                $(this).find('input:first').focus();
+            });
+            $("#githubSaveFileDialog").modal("show");
+
+            // Button: Commit to GitHub
+            //
+            $("#commitToGithub").on("click", function () {
+                var writer = new draw2d.io.json.Writer();
+                writer.marshal(canvas, function (json, base64) {
+                    var config = {
+                        message: $("#githubCommitMessage").val(),
+                        content: base64,
+                        sha: _this.storage.currentFileHandle.sha
+                    };
+
+                    _this.storage.currentRepository.contents(_this.storage.currentFileHandle.path).add(config)
+                        .then(function (info) {
+                            _this.storage.currentFileHandle.sha = info.content.sha;
+                            $('#githubSaveFileDialog').modal('hide');
+                        });
+                });
+            });
+
+        }, canvas.getBoundingBox().scale(10, 10));
+    }
+
+});
 
 shape_designer.filter.Filter = Class.extend({
     NAME : "shape_designer.filter.Filter",
@@ -2750,26 +2944,20 @@ shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
     }
 });
 
-shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
-    NAME : "shape_designer.storage.BackendStorage",
+shape_designer.storage.BackendStorage = Class.extend({
 
     /**
      * @constructor
      * 
      */
     init:function(){
-        this._super();
-
         this.octo=null;
         this.repositories = null;
         this.currentRepository = null;
         this.currentPath = "";
+        this.currentFileHandle = null;
     },
     
-    requiresLogin: function()
-    {
-        return true;
-    },
 
     login: function(token, callback)
     {
@@ -2785,269 +2973,7 @@ shape_designer.storage.BackendStorage = draw2d.storage.FileStorage.extend({
                 callback(false);
             }
         });
-    },
-
-    isLoggedIn: function(callback)
-    {
-
-        if (this.octo === null) {
-            callback(false);
-            return;
-        }
-
-        // fetch all repositories of the related user
-        //
-        this.octo.user.fetch(function(param0, user){
-            if(user){
-                callback(true);
-            }
-            else {
-                callback(false);
-            }
-        });
-
-    },
-    
-    
-    /**
-     * @method
-     * 
-     * Open the file picker and load the selected file.<br>
-     * 
-     * @param {Function} successCallback callback method if the user select a file and the content is loaded
-     * @param {Function} errorCallback method to call if any error happens
-     * 
-     * @since 4.0.0
-     */
-    pickFileAndLoad: function(successCallback, errorCallback, abortCallback)
-    {
-        // Select first a ROOT repository if we didn'T have before
-        if(this.currentRepository===null) {
-            this.fetchRepositories(successCallback, errorCallback, abortCallback);
-        }
-        // else reopen the already selected directory
-        else{
-            this.fetchPathContent(this.currentPath,successCallback, errorCallback, abortCallback);
-        }
-
-        $('#githubFileSelectDialog').modal('show');
-    },
-
-    save: function(canvas, currentFileHandle, successCallback, errorCallback, abortCallback)
-    {
-        var _this = this;
-        
-    	if(currentFileHandle===null){
-    		currentFileHandle= {
-    		    title:"DocumentName",
-                sha:null
-    		};
-    	}
-
-        // generate the PNG preview and oben the save dialog
-        //
-        var showFileSaveDialog= function() {
-            new draw2d.io.png.Writer().marshal(canvas, function (imageDataUrl) {
-
-                $("#githubFilePreview").attr("src", imageDataUrl);
-                $("#githubFileName")
-                    .val(currentFileHandle.title)
-                    .removeClass("empty");
-
-                $('#githubSaveFileDialog').on('shown.bs.modal', function () {
-                    $(this).find('input:first').focus();
-                });
-                $("#githubSaveFileDialog").modal("show");
-
-                // Button: Commit to GitHub
-                //
-                $("#commitToGithub").on("click", function () {
-                    var writer = new draw2d.io.json.Writer();
-                    writer.marshal(canvas, function (json, base64) {
-                        var config = {
-                            message: $("#githubCommitMessage").val(),
-                            content: base64,
-                            sha: currentFileHandle.sha
-                        };
-
-                        _this.currentRepository.contents(currentFileHandle.path).add(config)
-                            .then(function (info) {
-                                currentFileHandle.sha = info.content.sha;
-                                $('#githubSaveFileDialog').modal('hide');
-                            });
-                    });
-                });
-
-            }, canvas.getBoundingBox().scale(10, 10));
-        };
-
-        if(this.currentRepository===null){
-
-            $('#githubFileNewDialog').modal('show');
-            this.fetchRepositories(
-                function(){
-                    // success
-                },
-                function(){
-                    // error
-                },
-                function(){
-                    // abort
-                });
-        }
-        else{
-            showFileSaveDialog();
-        }
-    },
-
-
-    /**
-     * @private
-     *
-     * @param successCallback
-     * @param errorCallback
-     * @param abortCallback
-     */
-    fetchRepositories: function(successCallback, errorCallback, abortCallback)
-    {
-        var _this = this;
-
-        // fetch all repositories of the related user
-        //
-        this.octo.user.repos.fetch(function(param, repos){
-
-            repos.sort(function(a, b)
-            {
-                if ( a.name.toLowerCase() < b.name.toLowerCase() )
-                    return -1;
-                if ( a.name.toLowerCase() > b.name.toLowerCase() )
-                    return 1;
-                return 0;
-            });
-
-            _this.repositories = repos;
-            var compiled = Hogan.compile(
-                '         {{#repos}}'+
-                '         <a href="#" class="list-group-item repository text-nowrap" data-type="repository" data-id="{{id}}">'+
-                '         <small><span class="glyphicon glyphicon-hdd"></span></small>'+
-                '         {{{name}}}'+
-                '         </a>'+
-                '         {{/repos}}'
-            );
-
-            var output = compiled.render({
-                repos: repos
-            });
-            $("#githubNavigation").html($(output));
-
-            $(".repository").on("click", function(){
-                var $this = $(this);
-                var repositoryId = $this.data("id");
-                _this.currentRepository = $.grep(_this.repositories, function(repo){return repo.id === repositoryId;})[0];
-                _this.fetchPathContent("", successCallback, errorCallback, abortCallback);
-            });
-        });
-    },
-
-    fetchPathContent: function( newPath, successCallback, errorCallback, abortCallback )
-    {
-        var _this = this;
-
-        this.currentRepository.contents(newPath).fetch(function(param, files){
-            // sort the reusult
-            // Directories are always on top
-            //
-            files.sort(function(a, b)
-            {
-                if(a.type===b.type) {
-                    if (a.name.toLowerCase() < b.name.toLowerCase())
-                        return -1;
-                    if (a.name.toLowerCase() > b.name.toLowerCase())
-                        return 1;
-                    return 0;
-                }
-                if(a.type==="dir"){
-                    return -1;
-                }
-                return 1;
-            });
-
-            _this.currentPath = newPath;
-            var compiled = Hogan.compile(
-                '         <a href="#" class="list-group-item githubPath" data-type="{{parentType}}" data-path="{{parentPath}}" >'+
-                '             <small><span class="glyphicon glyphicon-menu-left"></span></small>'+
-                '             ..'+
-                '         </a>'+
-                '         {{#files}}'+
-                '           <a href="#" data-draw2d="{{draw2d}}" class="list-group-item githubPath text-nowrap" data-type="{{type}}" data-path="{{currentPath}}{{name}}" data-id="{{id}}" data-sha="{{sha}}">'+
-                '              <small><span class="glyphicon {{icon}}"></span></small>'+
-                '              {{{name}}}'+
-                '           </a>'+
-                '         {{/files}}'
-            );
-
-
-            var parentPath =  _this.dirname(newPath);
-            var output = compiled.render({
-                parentType: parentPath===newPath?"repository":"dir",
-                parentPath: parentPath,
-                currentPath: _this.currentPath.length===0?_this.currentPath:_this.currentPath+"/",
-                files: files,
-                draw2d:function(){
-                    return this.name.endsWith(".draw2d");
-                },
-                icon: function(){
-                    if(this.name.endsWith(".draw2d")){
-                        return "glyphicon-edit";
-                    }
-                    return this.type==="dir"?"glyphicon-folder-open":"glyphicon-file";
-                }
-            });
-            $("#githubNavigation").html($(output));
-
-            //we are in a folder. Create of a file is possible now
-            //
-            $("#newFileButton").show();
-
-            $(".githubPath[data-type='repository']").on("click", function(){
-                _this.fetchRepositories(successCallback, errorCallback, abortCallback);
-            });
-
-            $(".githubPath[data-type='dir']").on("click", function(){
-                _this.fetchPathContent( $(this).data("path"), successCallback, errorCallback, abortCallback);
-            });
-
-            $(".githubPath[data-type='file']").on("click", function(){
-                var path = $(this).data("path");
-                var sha  = $(this).data("sha");
-                _this.currentRepository.contents(path).read(function(param, content){
-                    successCallback({
-                        path : path,
-                        title: path.split(/[\\/]/).pop(), // basename
-                        sha  : sha,
-                        content : content
-                    }, content);
-                    $('#githubFileSelectDialog').modal('hide');
-                });
-            });
-        });
-    },
-
-
-
-
-   dirname: function(path)
-   {
-       if (path.length === 0)
-           return "";
-
-       var segments = path.split("/");
-       if (segments.length <= 1)
-           return "";
-       return segments.slice(0, -1).join("/");
-   }
-
-
+    }
 });
 
 shape_designer.FigureWriter = draw2d.io.Writer.extend({
