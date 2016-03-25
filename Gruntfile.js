@@ -17,7 +17,6 @@ module.exports = function (grunt) {
                     './bower_components/draw2d/dist/patched_raphael.js',
                     './bower_components/jquery/jquery.min.js',
                     './bower_components/draw2d/dist/jquery.autoresize.js',
-                    './bower_components/draw2d/dist/jquery-touch_punch.js',
                     './bower_components/draw2d/dist/jquery.contextmenu.js',
                     './bower_components/draw2d/dist/rgbcolor.js',
                     './bower_components/draw2d/dist/patched_canvg.js',
@@ -27,6 +26,8 @@ module.exports = function (grunt) {
                     './bower_components/draw2d/dist/draw2d.js',
                     './lib/jquery.browser.js',
                     './bower_components/jquery-ui/ui/minified/jquery-ui.min.js',
+                    // must be after jquery-ui
+                    './bower_components/draw2d/dist/jquery-touch_punch.js',
                     './lib/jquery.bootstrap-growl.js',
                     './bower_components/mousetrap/mousetrap.min.js',
                     './bower_components/bootstrap/dist/js/bootstrap.min.js',
