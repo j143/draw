@@ -14,18 +14,6 @@
     z-index: 1000;
 }
 
-#fileOpenDialog{
-    background-color: white;
-    display: block;
-    height: 300px;
-    left: 50%;
-    margin: -120px 0 0 -160px;
-    position: absolute;
-    top: 50%;
-    width: 420px;
-    z-index: 1000;
-}
-
 
 .modal-dialog{
     border-radius: 2px;
@@ -36,9 +24,6 @@
     border-radius: 2px !important;
 }
 
-#fileSaveDialog .bootstrap-tagsinput{
-   width:100%;
-}
 
 
 /***BOOTSTRAP****/
@@ -507,18 +492,6 @@ border-bottom: 1px solid #202525;
  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
 }
 
-
-
-
-#githubNavigation{
-    height:300px;
-    overflow:scroll;
-}
-
-#githubFilePreview{
-    max-width: 200px;
-    max-height: 200px;
-}
 
 #githubButton{
     color:white;

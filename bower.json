@@ -18,7 +18,7 @@
     "anglepicker": "1.0.0",
     "google-code-prettify": "1.0.1",
     "jsts": "0.13.2",
-    "octokat": "0.4.10",
+    "octokat": "~0.4.10",
     "bootstrap-toggle": "^2.2.2"
   },
   "private": true,

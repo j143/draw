@@ -73,6 +73,7 @@ shape_designer.Toolbar = Class.extend({
             app.fileNew();
         },this));
         Mousetrap.bind("ctrl+n", $.proxy(function (event) {this.undoButton.click();return false;},this));
+        this.newButton.hide();
 
 
         // Inject the UNDO Button and the callbacks
@@ -230,11 +231,13 @@ shape_designer.Toolbar = Class.extend({
             this.loginButton.hide();
             this.openButton.show();
             this.saveButton.show();
+            this.newButton.show();
         }
         else{
             this.loginButton.show();
             this.openButton.hide();
             this.saveButton.hide();
+            this.newButton.hide();
         }
     },
 

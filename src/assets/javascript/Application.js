@@ -74,17 +74,7 @@ shape_designer.Application = Class.extend(
 	fileNew: function( successCallback, errorCallback, abortCallback)
     {
         this.view.clear();
-        this.storage.currentFile = null;
-        this.storage.fileNew(
-            // success callback
-            //
-            $.proxy(function(file){
-                this.currentFile = file;
-                document.title = file.title;
-                alert("Created");
-            },this),
-            errorCallback,
-            abortCallback);
+        this.storage.currentFileHandle = null;
     },
 
     fileOpen: function()
@@ -107,6 +97,11 @@ shape_designer.Application = Class.extend(
 
 	fileSave: function()
     {
-        new shape_designer.dialog.FileSave(this.storage).show(this.view);
+        if(this.storage.currentFileHandle===null) {
+            new shape_designer.dialog.FileSaveAs(this.storage).show(this.view);
+        }
+        else{
+            new shape_designer.dialog.FileSave(this.storage).show(this.view);
+        }
 	}
 });

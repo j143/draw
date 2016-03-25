@@ -11,3 +11,5 @@ else{
         githubAuthenticateCallback: "https://draw2d.herokuapp.com/authenticate/"
     };
 }
+
+conf.fileSuffix = ".shape";

@@ -10,9 +10,12 @@
 
     <link type="text/css" rel="stylesheet" href="./lib/jquery-ui/jquery-ui.min.css" />
     <link type="text/css" rel="stylesheet" href="./lib/bootstrap/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="./lib/awesome/css/font-awesome.css" />
     <link type="text/css" rel="stylesheet" href="./lib/prettify/src/prettify.css" />
     <link type="text/css" rel="stylesheet" href="./assets/stylesheets/application.css" />
     <link type="text/css" rel="stylesheet" href="./assets/stylesheets/main.css" />
+
+
 
     <SCRIPT src="./assets/javascript/dependencies.js"></SCRIPT>
     <SCRIPT src="./assets/javascript/app.js"></SCRIPT>
@@ -87,20 +90,20 @@
   #
   #
 -->
-<div id="githubSaveFileDialog" class="modal fade" tabindex="-1">
+<div id="githubSaveFileDialog" class="modal fade githubFileDialog" tabindex="-1">
     <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="media-heading">Save on GitHub</h4>
             </div>
             <div class="modal-body">
                 <div class="media">
                     <div class="media-left media-middle">
                         <a href="#">
-                            <img class="media-object" id="githubFilePreview" src="assets/images/octocat.svg">
+                            <img class="media-object githubFilePreview" src="assets/images/octocat.svg">
                         </a>
                     </div>
                     <div class="media-body">
-                        <h4 class="media-heading">Commit to GitHub</h4>
 
                         <form class="form-horizontal">
                             <br>
@@ -109,18 +112,16 @@
                                 <div class="form-group">
                                     <div class="col-lg-12">
                                         <input type="text"
-                                               class="form-control floating-label"
-                                               id="githubFileName"
+                                               class="form-control floating-label githubFileName"
                                                value=""
-                                               placeholder="enter filename"
+                                               disabled="true"
                                                 >
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-lg-12">
                                         <input type="text"
-                                               class="form-control floating-label"
-                                               id="githubCommitMessage"
+                                               class="form-control floating-label githubCommitMessage"
                                                value=""
                                                autofocus
                                                placeholder="commit message"
@@ -136,7 +137,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal">Abort</button>
-                <button class="btn btn-primary" id="commitToGithub"><span>Save</span></button>
+                <button class="btn btn-primary okButton"><span>Save</span></button>
             </div>
         </div>
     </div>
@@ -147,15 +148,16 @@
   # GitHub File select/open dialog
   #
   -->
-<div id="githubFileSelectDialog" class="modal fade" tabindex="-1">
+<div id="githubFileSelectDialog" class="modal fade githubFileDialog" tabindex="-1">
     <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="media-heading">File Open...</h4>
             </div>
             <div class="modal-body">
 
 
-                <div class="list-group" id="githubNavigation">
+                <div class="list-group githubNavigation">
                     <!-- FileList here -->
                 </div>
 
@@ -163,11 +165,76 @@
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal">Abort</button>
-                <button class="btn btn-primary" id="githubFileOpenButton"><span>Open</span></button>
+                <button class="btn btn-primary okButton"><span>Open</span></button>
             </div>
         </div>
     </div>
 </div>
+
+
+   <!--
+     # FileSaveAs Dialog
+     #
+     -->
+   <div id="githubFileSaveAsDialog" class="modal fade githubFileDialog" tabindex="-1">
+       <div class="modal-dialog ">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <h4 class="media-heading">Save on GitHub</h4>
+               </div>
+               <div class="modal-body">
+
+                   <div class="list-group githubNavigation">
+                       <!-- FileList here -->
+                   </div>
+
+
+                   <div class="media">
+                       <div class="media-left media-middle">
+                           <a href="#">
+                               <img class="media-object githubFilePreview" src="assets/images/octocat.svg">
+                           </a>
+                       </div>
+                       <div class="media-body">
+
+                           <form class="form-horizontal">
+                               <br>
+                               <br>
+                               <fieldset>
+                                   <div class="form-group">
+                                       <div class="col-lg-12">
+                                           <input type="text"
+                                                  class="form-control floating-label githubFileName"
+                                                  value=""
+                                                  placeholder="enter filename"
+                                                   >
+                                       </div>
+                                   </div>
+                                   <div class="form-group">
+                                       <div class="col-lg-12">
+                                           <input type="text"
+                                                  class="form-control floating-label githubCommitMessage"
+                                                  value=""
+                                                  autofocus
+                                                  placeholder="commit message"
+                                                   >
+                                       </div>
+                                   </div>
+                               </fieldset>
+                               <div class="row"></div>
+
+                           </form>
+                       </div>
+                   </div>
+               </div>
+
+               <div class="modal-footer">
+                   <button class="btn" data-dismiss="modal">Abort</button>
+                   <button class="btn btn-primary okButton"><span>Save</span></button>
+               </div>
+           </div>
+       </div>
+   </div>
 
 </body>
 </html>

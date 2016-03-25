@@ -21,6 +21,8 @@ shape_designer.dialog.FileOpen = Class.extend({
      */
     show: function(successCallback)
     {
+        $('#githubFileSelectDialog').modal('show');
+
         // Select first a ROOT repository if we didn'T have before
         if(this.storage.currentRepository===null) {
             this.fetchRepositories(successCallback);
@@ -29,8 +31,6 @@ shape_designer.dialog.FileOpen = Class.extend({
         else{
             this.fetchPathContent(this.storage.currentPath, successCallback);
         }
-
-        $('#githubFileSelectDialog').modal('show');
     },
 
     /**
@@ -61,7 +61,7 @@ shape_designer.dialog.FileOpen = Class.extend({
             var compiled = Hogan.compile(
                 '         {{#repos}}'+
                 '         <a href="#" class="list-group-item repository text-nowrap" data-type="repository" data-id="{{id}}">'+
-                '         <small><span class="glyphicon glyphicon-hdd"></span></small>'+
+                '         <span class="fa fa-github"></span>'+
                 '         {{{name}}}'+
                 '         </a>'+
                 '         {{/repos}}'
@@ -70,7 +70,9 @@ shape_designer.dialog.FileOpen = Class.extend({
             var output = compiled.render({
                 repos: repos
             });
-            $("#githubNavigation").html($(output));
+            console.log("here");
+            $("#githubFileSelectDialog .githubNavigation").html($(output));
+            $("#githubFileSelectDialog .githubNavigation").scrollTop(0);
 
             $(".repository").on("click", function(){
                 var $this = $(this);
@@ -107,12 +109,12 @@ shape_designer.dialog.FileOpen = Class.extend({
             _this.storage.currentPath = newPath;
             var compiled = Hogan.compile(
                 '         <a href="#" class="list-group-item githubPath" data-type="{{parentType}}" data-path="{{parentPath}}" >'+
-                '             <small><span class="glyphicon glyphicon-menu-left"></span></small>'+
+                '             <span class="glyphicon glyphicon-menu-left"></span>'+
                 '             ..'+
                 '         </a>'+
                 '         {{#files}}'+
                 '           <a href="#" data-draw2d="{{draw2d}}" class="list-group-item githubPath text-nowrap" data-type="{{type}}" data-path="{{currentPath}}{{name}}" data-id="{{id}}" data-sha="{{sha}}">'+
-                '              <small><span class="glyphicon {{icon}}"></span></small>'+
+                '              <span class="glyphicon {{icon}}"></span>'+
                 '              {{{name}}}'+
                 '           </a>'+
                 '         {{/files}}'
@@ -126,20 +128,18 @@ shape_designer.dialog.FileOpen = Class.extend({
                 currentPath: _this.storage.currentPath.length===0?_this.storage.currentPath:_this.storage.currentPath+"/",
                 files: files,
                 draw2d:function(){
-                    return this.name.endsWith(".draw2d");
+                    return this.name.endsWith(conf.fileSuffix);
                 },
                 icon: function(){
-                    if(this.name.endsWith(".draw2d")){
-                        return "glyphicon-edit";
+                    if(this.name.endsWith(conf.fileSuffix)){
+                        return "fa fa-object-group";
                     }
-                    return this.type==="dir"?"glyphicon-folder-open":"glyphicon-file";
+                    return this.type==="dir"?"fa fa-folder-o":"fa fa-file-o";
                 }
             });
-            $("#githubNavigation").html($(output));
 
-            //we are in a folder. Create of a file is possible now
-            //
-            $("#newFileButton").show();
+            $("#githubFileSelectDialog .githubNavigation").html($(output));
+            $("#githubFileSelectDialog .githubNavigation").scrollTop(0);
 
             $(".githubPath[data-type='repository']").on("click", function(){
                 _this.fetchRepositories(successCallback);
@@ -149,7 +149,7 @@ shape_designer.dialog.FileOpen = Class.extend({
                 _this.fetchPathContent( $(this).data("path"), successCallback);
             });
 
-            $(".githubPath[data-type='file']").on("click", function(){
+            $('.githubPath*[data-draw2d="true"][data-type="file"]').on("click", function(){
                 var path = $(this).data("path");
                 var sha  = $(this).data("sha");
                 _this.storage.currentRepository.contents(path).read(function(param, content){

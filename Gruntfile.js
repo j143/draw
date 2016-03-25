@@ -58,6 +58,7 @@ module.exports = function (grunt) {
                     './src/assets/javascript/dialog/FigureCode.js',
                     './src/assets/javascript/dialog/FileOpen.js',
                     './src/assets/javascript/dialog/FileSave.js',
+                    './src/assets/javascript/dialog/FileSaveAs.js',
 
                     './src/assets/javascript/filter/Filter.js',
                     './src/assets/javascript/filter/StrokeFilter.js',
@@ -117,6 +118,12 @@ module.exports = function (grunt) {
                 src: ['**/*.html', 'assets/images/**/*'],
                 dest: 'dist/'
             },
+            awesome:{
+                expand: true,
+                cwd: 'bower_components/components-font-awesome/',
+                src: ['./css/font-awesome.css','./fonts/*'],
+                dest: './dist/lib/awesome'
+            },
             jscolor:{
                 expand: true,
                 cwd: 'bower_components/jscolor/',
@@ -146,12 +153,6 @@ module.exports = function (grunt) {
                 cwd: 'bower_components/google-code-prettify/',
                 src: ['**/*'],
                 dest: 'dist/lib/prettify'
-            },
-            localdeploy:{
-                expand: true,
-                cwd: 'dist/',
-                src: ['**/*'],
-                dest: '/Users/andherz/Sites/Designer'
             }
         },
 
@@ -161,7 +162,13 @@ module.exports = function (grunt) {
                     compress: false
                 },
                 files: {
-                    "./dist/assets/stylesheets/main.css": ["./src/assets/less/main.less"]
+                    "./dist/assets/stylesheets/main.css": [
+                        "./src/assets/less/main.less",
+                        "./src/assets/less/file_dialog.less",
+                        "./src/assets/less/file_open_dialog.less",
+                        "./src/assets/less/file_save_dialog.less",
+                        "./src/assets/less/file_saveas_dialog.less"
+                    ]
                 }
             }
         },

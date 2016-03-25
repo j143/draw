@@ -18,7 +18,7 @@ shape_designer.dialog.FileSave = Class.extend({
      *
      * @since 4.0.0
      */
-    show: function(canvas, successCallback, errorCallback, abortCallback)
+    show: function(canvas)
     {
         var _this = this;
 
@@ -31,8 +31,8 @@ shape_designer.dialog.FileSave = Class.extend({
 
         new draw2d.io.png.Writer().marshal(canvas, function (imageDataUrl) {
 
-            $("#githubFilePreview").attr("src", imageDataUrl);
-            $("#githubFileName").val(_this.storage.currentFileHandle.title);
+            $("#githubSaveFileDialog .githubFilePreview").attr("src", imageDataUrl);
+            $("#githubSaveFileDialog .githubFileName").val(_this.storage.currentFileHandle.title);
 
             $('#githubSaveFileDialog').on('shown.bs.modal', function () {
                 $(this).find('input:first').focus();
@@ -41,11 +41,11 @@ shape_designer.dialog.FileSave = Class.extend({
 
             // Button: Commit to GitHub
             //
-            $("#commitToGithub").on("click", function () {
+            $("#githubSaveFileDialog .okButton").on("click", function () {
                 var writer = new draw2d.io.json.Writer();
                 writer.marshal(canvas, function (json, base64) {
                     var config = {
-                        message: $("#githubCommitMessage").val(),
+                        message: $("#githubSaveFileDialog .githubCommitMessage").val(),
                         content: base64,
                         sha: _this.storage.currentFileHandle.sha
                     };
