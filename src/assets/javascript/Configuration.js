@@ -8,6 +8,6 @@ if (window.location.hostname === "localhost") {
 else{
     conf = {
         githubClientId: "20a3f1473dd7d17fcbcf",
-        ithubAuthenticateCallback: "https://draw2d.herokuapp.com/authenticate/"
+        githubAuthenticateCallback: "https://draw2d.herokuapp.com/authenticate/"
     };
 }
