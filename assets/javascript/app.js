@@ -559,7 +559,7 @@ shape_designer.Toolbar = Class.extend({
         this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
         buttonGroup.append(this.loginButton);
         this.loginButton.on("click",function(){
-            window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scopes=public_repo';
+            window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
         });
 
 
