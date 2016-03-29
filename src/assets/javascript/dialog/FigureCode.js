@@ -61,7 +61,7 @@ shape_designer.dialog.FigureCode = Class.extend(
 					"hideEasing": "linear",
 					"showMethod": "fadeIn",
 					"hideMethod": "fadeOut"
-				}
+				};
 
 				toastr.info("Code copied to clipboard");
 			});
