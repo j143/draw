@@ -103,12 +103,17 @@ shape_designer.Application = Class.extend(
     init : function()
     {
         this.currentFile = null;
-        
+        // attached to the very first shape
+        this.documentConfiguration = {
+            baseClass:"draw2d.SetFigure"
+        };
+
         this.storage = new shape_designer.storage.BackendStorage();
         this.view    = new shape_designer.View(this, "canvas");
         this.toolbar = new shape_designer.Toolbar(this, "toolbar",  this.view );
         this.layer   = new shape_designer.Layer(this, "layer_elements", this.view );
         this.filter  = new shape_designer.FilterPane(this, "filter_actions", this.view );
+        this.breadcrumb  = new shape_designer.Breadcrumb(this,"breadcrumb" );
         this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
 
         // Get the authorization code from the url that was returned by GitHub
@@ -123,7 +128,10 @@ shape_designer.Application = Class.extend(
            });
         }
         about.hide();
- 	},
+
+        this.breadcrumb.update(this.storage);
+
+    },
  	
     getParam: function( name )
     {
@@ -137,14 +145,19 @@ shape_designer.Application = Class.extend(
       return results[1];
     },
  	
-	fileNew: function( successCallback, errorCallback, abortCallback)
+	fileNew: function()
     {
         this.view.clear();
         this.storage.currentFileHandle = null;
+        this.documentConfiguration = {
+            baseClass:"draw2d.SetFigure"
+        };
     },
 
     fileOpen: function()
     {
+        this.fileNew();
+
         new shape_designer.dialog.FileOpen(this.storage).show(
 
             // success callback
@@ -153,7 +166,9 @@ shape_designer.Application = Class.extend(
                     this.view.clear();
                     var reader = new draw2d.io.json.Reader();
                     reader.unmarshal(this.view, fileData);
+                    this.getConfiguration();
                     this.view.getCommandStack().markSaveLocation();
+                    this.breadcrumb.update(this.storage);
                 }
                 catch(e){
                     this.view.reset();
@@ -163,13 +178,34 @@ shape_designer.Application = Class.extend(
 
 	fileSave: function()
     {
+        this.setConfiguration();
         if(this.storage.currentFileHandle===null) {
             new shape_designer.dialog.FileSaveAs(this.storage).show(this.view);
         }
         else{
             new shape_designer.dialog.FileSave(this.storage).show(this.view);
         }
-	}
+	},
+
+
+    getConfiguration: function()
+    {
+        var figures = this.view.getExtFigures();
+        if(figures.getSize()>0){
+            this.documentConfiguration = $.extend({},  this.documentConfiguration, figures.first().getUserData());
+        }
+
+        return this.documentConfiguration;
+    },
+
+    setConfiguration: function(conf )
+    {
+        this.documentConfiguration = $.extend({},  this.documentConfiguration, conf);
+        var figures = this.view.getExtFigures();
+        if(figures.getSize()>0) {
+            figures.first().setUserData( this.documentConfiguration);
+        }
+    }
 });
 
 
@@ -261,7 +297,8 @@ shape_designer.View = draw2d.Canvas.extend({
             this.html.css("cursor","default");
 	    }
 	},
-	
+
+
 	/**
 	 * @method
 	 * Reset the view/canvas and starts with a clean and new document with default decorations
@@ -559,7 +596,7 @@ shape_designer.Toolbar = Class.extend({
         });
 
 
-        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_download.png"></button>');
+        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_load.png"></button>');
         buttonGroup.append(this.openButton);
         this.openButton.on("click",$.proxy(function(){
             var button = this.openButton;
@@ -569,7 +606,7 @@ shape_designer.Toolbar = Class.extend({
         Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
         this.openButton.hide();
         
-        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_upload.png"></button>');
+        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_save.png"></button>');
         buttonGroup.append(this.saveButton);
         this.saveButton.on("click",$.proxy(function(){
             var button = this.saveButton;
@@ -596,7 +633,7 @@ shape_designer.Toolbar = Class.extend({
         buttonGroup.append(this.undoButton);
         this.undoButton.on("click",$.proxy(function(){
                this.view.getCommandStack().undo();
-        },this)).button( "option", "disabled", true );
+        },this)).prop( "disabled", true );
         Mousetrap.bind("ctrl+z", $.proxy(function (event) {this.undoButton.click();return false;},this));
 
         
@@ -606,7 +643,7 @@ shape_designer.Toolbar = Class.extend({
         buttonGroup.append(this.redoButton);
         this.redoButton.on("click",$.proxy(function(){
             this.view.getCommandStack().redo();
-        },this)).button( "option", "disabled", true );
+        },this)).prop( "disabled", true );
         Mousetrap.bind("ctrl+y", $.proxy(function (event) {this.redoButton.click();return false;},this));
         
         this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
@@ -635,7 +672,7 @@ shape_designer.Toolbar = Class.extend({
             var node = this.view.getPrimarySelection();
             var command= new draw2d.command.CommandDelete(node);
             this.view.getCommandStack().execute(command);
-        },this)).button( "option", "disabled", true );
+        },this)).prop( "disabled", true );
         Mousetrap.bind(["del"], $.proxy(function (event) {this.deleteButton.click();return false;},this));
 
         
@@ -744,7 +781,7 @@ shape_designer.Toolbar = Class.extend({
             this.openButton.show();
             this.saveButton.show();
             this.newButton.show();
-        }
+       }
         else{
             this.loginButton.show();
             this.openButton.hide();
@@ -761,7 +798,7 @@ shape_designer.Toolbar = Class.extend({
      * @param {draw2d.Figure} figure
      */
     onSelectionChanged : function(emitter, event){
-        this.deleteButton.button( "option", "disabled", event===null || event.figure===null );
+        this.deleteButton.prop( "disabled", event.figure===null );
     },
     
     /**
@@ -775,11 +812,49 @@ shape_designer.Toolbar = Class.extend({
      **/
     stackChanged:function(event)
     {
-        this.undoButton.button( "option", "disabled", !event.getStack().canUndo() );
-        this.redoButton.button( "option", "disabled", !event.getStack().canRedo() );
+        this.undoButton.prop("disabled", !event.getStack().canUndo() );
+        this.redoButton.prop("disabled", !event.getStack().canRedo() );
     }
     
 });
+/* jshint evil:true */
+
+shape_designer.Breadcrumb = Class.extend({
+	
+
+	init:function(app, elementId)
+	{
+		this.html = $("#"+elementId);
+	},
+
+	/**
+	 * @method
+	 * Called if the selection in the canvas has been changed. You must register this
+	 * class on the canvas to receive this event.
+	 * 
+     * @param {draw2d.Canvas} canvas the emitter of the event. In this case it is the canvas.
+     * @param {draw2d.Figure} figure
+	 */
+	update : function(storage)
+	{
+		var path="UnsavedDocument.shape";
+		if(storage.currentFileHandle!==null) {
+			path = storage.currentPath.replace(/\//g, "<span class='separator'>/</span>");
+			path = path + "<span class='separator'>/</span><span class='filename'>" + storage.currentFileHandle.title + "</span>";
+			path = "<span class='separator'>/</span>	<span class='ion-social-github'>&nbsp;</span>" + storage.currentRepository.name + "<span class='separator'>/</span>" + path;
+		}
+		path = path + "<span class='icon ion-ios-gear-outline'></span>";
+		this.html.html(path);
+
+		$("#breadcrumb .icon").on("click",function(){
+			new shape_designer.dialog.ShapeSettings().show(app);
+		});
+
+	}
+});
+
+
+
 shape_designer.dialog.About = Class.extend(
 {
     NAME : "shape_designer.dialog.About", 
@@ -905,9 +980,10 @@ shape_designer.dialog.FigureCode = Class.extend(
     NAME : "shape_designer.dialog.FigureCode", 
 
     init:function(){
-     },
+	},
 
 	show:function(){
+
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
@@ -941,7 +1017,6 @@ shape_designer.dialog.FigureCode = Class.extend(
 				var copyElement = document.createElement('textarea');
 			//	copyElement.setAttribute('type', 'text');
 				copyElement.innerHTML=js;
-				console.log(js);
 				copyElement = document.body.appendChild(copyElement);
 				copyElement.select();
 				document.execCommand('copy');
@@ -1439,6 +1514,46 @@ shape_designer.dialog.FileSaveAs = Class.extend({
         if (segments.length <= 1)
             return "";
         return segments.slice(0, -1).join("/");
+    }
+
+});
+shape_designer.dialog.ShapeSettings = Class.extend({
+
+    /**
+     * @constructor
+     *
+     */
+    init:function(){
+
+    },
+
+    /**
+     * @method
+     *
+     * Open the file picker and load the selected file.<br>
+     *
+     * @param {Function} successCallback callback method if the user select a file and the content is loaded
+     * @param {Function} errorCallback method to call if any error happens
+     *
+     * @since 4.0.0
+     */
+    show: function(app)
+    {
+        var _this = this;
+        var baseClass = app.getConfiguration().baseClass;
+
+        $("#shapeSettingsDialog").modal("show");
+
+        $("#shapeSettingsDialog .shapeBaseClass input[type='radio'][data-class='"+baseClass+"']").prop("checked",true);
+
+        // Button: Commit to GitHub
+        //
+        $("#shapeSettingsDialog .okButton").on("click", function () {
+            var baseClass = ($("#shapeSettingsDialog .shapeBaseClass input[type='radio']:checked").data("class"));
+            app.setConfiguration({baseClass:baseClass});
+            console.log(app.getConfiguration());
+            $('#shapeSettingsDialog').modal('hide');
+        });
     }
 
 });
@@ -3253,11 +3368,10 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
      * @param {Function} resultCallback the method to call on success. The first argument is the result object, the second the base64 representation of the file content
      */
     marshal: function(canvas, className, resultCallback){
-       
+        var baseClass = app.getConfiguration().baseClass;
         var figures = canvas.getExtFigures();
         var b = canvas.getBoundingBox();
 
-     
         var x = b.x;
         var y = b.y;
         
@@ -3343,13 +3457,13 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
          '// Go to the Designer http://www.draw2d.org               \n'+
          '// to design your own shape or download user generated    \n'+       
          '//                                                        \n'+
-         'var {{{className}}} = draw2d.SetFigure.extend({           \n'+
+         'var {{{className}}} = {{{baseClass}}}.extend({            \n'+
          '                                                          \n'+       
          '       NAME: "{{{className}}}",                           \n'+
          '                                                          \n'+       
          '       init:function(attr, setter, getter)                \n'+
          '       {                                                  \n'+
-         '         this._super( $.extend({width:{{width}},height:{{height}}},attr), setter, getter);\n'+
+         '         this._super( $.extend({stroke:0, bgColor:null, width:{{width}},height:{{height}}},attr), setter, getter);\n'+
          '         var port;                                        \n'+
          '         {{#ports}}                                       \n'+
          '         // {{{name}}}                                    \n'+
@@ -3389,6 +3503,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
         var compiled = Hogan.compile(template);
         var output = compiled.render({
             className: className,
+            baseClass: baseClass,
             figures: shapes,
             ports: ports,
             width: b.w,

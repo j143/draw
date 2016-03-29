@@ -32,6 +32,283 @@
   margin-top: 21px;
 }
 
+#canvas {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  position: absolute;
+  top: 120px;
+  right: 200px;
+  left: 200px;
+  bottom: 0px;
+  overflow: scroll;
+  background-color: #FFFFFF;
+}
+#canvas_zoom {
+  position: fixed;
+  bottom: 20px;
+  right: 220px;
+  background-color: transparent;
+}
+#canvas_zoom button {
+  background-color: transparent;
+  font-weight: 300;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px solid transparent;
+}
+#canvas_zoom button:hover {
+  border: 1px solid #4285f4 !important;
+}
+#canvas_config {
+  position: fixed;
+  font-size: 25px;
+  top: 125px;
+  left: 205px;
+  cursor: pointer;
+}
+#canvas_config:hover {
+  color: #4285f4;
+}
+#canvas_config_items {
+  position: fixed;
+  top: 150px;
+  left: 205px;
+  cursor: pointer;
+  padding: 10px;
+  white-space: nowrap;
+  min-width: 250px;
+}
+
+#toolbar {
+  margin: 0;
+  padding-top: 3px;
+  padding-right: 10px;
+  top: 0;
+  left: 0;
+  height: 120px;
+  width: 100%;
+  overflow: visible !important;
+  z-index: 1000 !important;
+  /* Safari 5.1, iOS 5.0-6.1, Chrome 10-25, Android 4.0-4.3 */
+  background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0.025), rgba(255, 255, 255, 0.05) 44%, rgba(0, 0, 0, 0.05) 100%);
+  /* Firefox 3.6 - 15 */
+  background-image: -moz-linear-gradient(rgba(0, 0, 0, 0.025), rgba(255, 255, 255, 0.05) 44%, rgba(0, 0, 0, 0.05) 100%);
+  /* Opera 11.1 - 12 */
+  background-image: -o-linear-gradient(rgba(0, 0, 0, 0.025), rgba(255, 255, 255, 0.05) 44%, rgba(0, 0, 0, 0.05) 100%);
+  /* Opera 15+, Chrome 25+, IE 10+, Firefox 16+, Safari 6.1+, iOS 7+, Android 4.4+ */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.025), rgba(255, 255, 255, 0.05) 44%, rgba(0, 0, 0, 0.05) 100%);
+  border-bottom: 10px solid #4285f4;
+}
+#toolbar .toolbarGroup {
+  background-image: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  margin-top: 45px;
+}
+#toolbar .toolbarGroup .btn:focus,
+#toolbar .toolbarGroup .btn-default,
+#toolbar .toolbarGroup .btn-group,
+#toolbar .toolbarGroup .btn {
+  padding: 4px;
+  background-image: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+  transition: all 0.5s ease;
+}
+#toolbar .toolbarGroup .btn:hover {
+  border: 1px solid #4285f4 !important;
+  transition: all 0.5s ease;
+}
+#toolbar .toolbarGroup .btn.active {
+  border: 1px solid #4285f4 !important;
+  border-radius: 1px;
+  transition: all 0.5s ease;
+}
+#toolbar .toolbarGroup .btn.disabled,
+#toolbar .toolbarGroup .btn[disabled] {
+  opacity: 0.1;
+  border: 1px solid transparent !important;
+  cursor: default;
+}
+#toolbar #currentTool_container {
+  margin: 0px;
+  margin-top: 20px;
+  margin-left: 15px;
+  position: absolute;
+  width: 500px;
+}
+#toolbar #currentTool_heading {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 25px;
+  color: #4285f4;
+}
+#toolbar #currentTool_image {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+#toolbar #currentTool_message {
+  font-size: 12px;
+  color: #404040;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+#githubButton {
+  color: white;
+  background-color: #24c85b !important;
+  border: 1px solid #4285f4 !important;
+}
+
+#layer {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  position: absolute;
+  top: 120px;
+  left: 0px;
+  bottom: 0px;
+  width: 200px;
+  background-color: #1E1E26;
+  text-align: center;
+}
+#layer .panetitle {
+  position: fixed;
+  height: 30px;
+  width: 200px;
+  top: 120px;
+  border-bottom: 1px solid #222222;
+  border-top: 1px solid #111111;
+  font-weight: 500;
+  font-size: 12px;
+  padding-top: 5px;
+  letter-spacing: 5px;
+  text-align: center;
+  -webkit-box-shadow: 0 2px 2px -2px #101010;
+  -moz-box-shadow: 0 2px 2px -2px #101010;
+  box-shadow: 0 2px 2px -2px #101010;
+}
+#layer_elements {
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  position: fixed;
+  top: 150px;
+  left: 0px;
+  bottom: 0px;
+  width: 200px;
+  overflow: auto;
+}
+.layerElement {
+  color: #dddddd;
+  cursor: move;
+  font-weight: 400;
+  letter-spacing: 1px;
+  padding: 4px 4px 4px 20px;
+  text-align: left;
+}
+.layerElement img {
+  cursor: pointer;
+  padding-top: 4px;
+  padding-right: 4px;
+}
+.layerSelectedElement {
+  color: white;
+  padding: 4px;
+  padding-left: 20px;
+  background: #4285f4;
+}
+
+#filter {
+  position: absolute;
+  top: 120px;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  border: 0;
+  background-color: #1E1E26;
+  background-image: none;
+}
+#filter .panel-default {
+  margin: 0;
+  border-radius: 0;
+  background-color: #26262F;
+  border: 0;
+  border-top: 1px solid #303030;
+  border-bottom: 1px solid #202525;
+}
+#filter .panetitle {
+  position: fixed;
+  height: 30px;
+  width: 200px;
+  top: 120px;
+  border-bottom: 1px solid #222222;
+  border-top: 1px solid #111111;
+  font-weight: 500;
+  font-size: 12px;
+  padding-top: 5px;
+  letter-spacing: 5px;
+  text-align: center;
+  -webkit-box-shadow: 0 2px 2px -2px #101010;
+  -moz-box-shadow: 0 2px 2px -2px #101010;
+  box-shadow: 0 2px 2px -2px #101010;
+}
+#filter_toolbar {
+  overflow: visible;
+  border: 0;
+  padding: 3px;
+  padding-left: 10px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  height: 30px;
+}
+.filter-heading {
+  color: #DDDDDD !important;
+  font-size: 12px;
+  padding-right: 10px !important;
+  padding-top: 1px !important;
+  padding-bottom: 0px !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0px !important;
+}
+#filter_actions {
+  position: fixed;
+  top: 150px;
+  bottom: 30px;
+  width: 200px;
+  border: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+#filter_actions .panel-body {
+  padding: 7px !important;
+}
+#filter_actions > .panel {
+  margin-bottom: 8px;
+  border-left: 3px solid #26B4A8;
+}
+#filter_actions .form-group {
+  margin-bottom: 2px !important;
+}
+#filter_actions .form-group > .input-group {
+  margin-bottom: 10px;
+}
+#filter_actions .form-group > .input-group:last-child {
+  margin-bottom: 0px;
+}
+#filter_actions .glyphicon {
+  top: -5px;
+  color: #26B4A8;
+}
+
 .githubFileDialog .githubNavigation *[data-draw2d="true"] {
   font-weight: bold;
   color: #4285f4;
@@ -71,4 +348,30 @@
 #githubFileSaveAsDialog .githubNavigation {
   height: 250px;
   overflow: scroll;
+}
+
+#breadcrumb {
+  position: absolute;
+  right: 0px;
+  padding: 5px;
+  font-size: 15px;
+  color: rgba(0, 0, 0, 0.2);
+  padding-right: 25px;
+}
+#breadcrumb .separator {
+  padding: 5px;
+}
+#breadcrumb .filename {
+  font-weight: 500;
+}
+#breadcrumb .icon {
+  font-size: 22px;
+  padding-left: 10px;
+  top: 4px;
+  position: relative;
+  color: black;
+  cursor: pointer;
+}
+#breadcrumb .icon:hover {
+  color: #4285f4;
 }
