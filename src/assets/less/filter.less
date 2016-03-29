@@ -1,0 +1,108 @@
+@import "colors.less";
+@import "layout.less";
+
+
+
+#filter {
+  position:absolute;
+  top:@toolbarHeight;
+  right:0;
+  bottom:0;
+  width:200px;
+
+  padding:0;
+  margin:0;
+  border-radius:0;
+  border:0;
+  background-color : #1E1E26;
+  background-image:none;
+
+  .panel-default {
+    margin: 0;
+    border-radius: 0;
+    margin: 0;
+    border-radius: 0;
+    background-color: #26262F;
+    border: 0;
+    border-top: 1px solid #303030;
+    border-bottom: 1px solid #202525;
+  }
+
+
+  .panetitle {
+    position: fixed;
+    height: @paneTitleHeight;
+    width: 200px;
+    top:@toolbarHeight;
+    border-bottom: 1px solid #222222;
+    border-top: 1px solid #111111;
+    font-weight: 500;
+    font-size: 12px;
+    padding-top: 5px;
+    letter-spacing: 5px;
+    text-align: center;
+    -webkit-box-shadow: 0 2px 2px -2px #101010;
+    -moz-box-shadow: 0 2px 2px -2px #101010;
+    box-shadow: 0 2px 2px -2px #101010;
+  }
+}
+
+
+#filter_toolbar{
+  overflow:visible;
+  border:0;
+  padding:3px;
+  padding-left:10px;
+  position:absolute;
+  bottom:0;
+  right:0;
+  width:200px;
+  height:30px;
+}
+
+.filter-heading{
+  color: #DDDDDD !important;
+  font-size: 12px;
+  padding-right:10px !important;
+  padding-top:1px !important;
+  padding-bottom:0px !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0px !important;
+}
+
+#filter_actions{
+  position:fixed;
+  top:@toolbarHeight+30;
+  bottom:30px;
+  width:200px;
+  border:0;
+  padding:0;
+  overflow-y: auto;
+
+  .panel-body{
+    padding:7px !important;
+  }
+
+  > .panel{
+    margin-bottom: 8px;
+    border-left: 3px solid #26B4A8;
+  }
+
+  .form-group{
+    margin-bottom: 2px !important;
+
+    > .input-group{
+      margin-bottom: 10px;
+    }
+
+    > .input-group:last-child{
+      margin-bottom: 0px;
+    }
+  }
+
+  .glyphicon {
+    top: -5px;
+    color: #26B4A8;
+  }
+}

@@ -21,11 +21,10 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
      * @param {Function} resultCallback the method to call on success. The first argument is the result object, the second the base64 representation of the file content
      */
     marshal: function(canvas, className, resultCallback){
-       
+        var baseClass = app.getConfiguration().baseClass;
         var figures = canvas.getExtFigures();
         var b = canvas.getBoundingBox();
 
-     
         var x = b.x;
         var y = b.y;
         
@@ -111,13 +110,13 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
          '// Go to the Designer http://www.draw2d.org               \n'+
          '// to design your own shape or download user generated    \n'+       
          '//                                                        \n'+
-         'var {{{className}}} = draw2d.SetFigure.extend({           \n'+
+         'var {{{className}}} = {{{baseClass}}}.extend({            \n'+
          '                                                          \n'+       
          '       NAME: "{{{className}}}",                           \n'+
          '                                                          \n'+       
          '       init:function(attr, setter, getter)                \n'+
          '       {                                                  \n'+
-         '         this._super( $.extend({width:{{width}},height:{{height}}},attr), setter, getter);\n'+
+         '         this._super( $.extend({stroke:0, bgColor:null, width:{{width}},height:{{height}}},attr), setter, getter);\n'+
          '         var port;                                        \n'+
          '         {{#ports}}                                       \n'+
          '         // {{{name}}}                                    \n'+
@@ -157,6 +156,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
         var compiled = Hogan.compile(template);
         var output = compiled.render({
             className: className,
+            baseClass: baseClass,
             figures: shapes,
             ports: ports,
             width: b.w,

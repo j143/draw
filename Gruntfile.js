@@ -15,7 +15,7 @@ module.exports = function (grunt) {
                 src: [
                     './bower_components/shifty/dist/shifty.min.js',
                     './bower_components/draw2d/dist/patched_raphael.js',
-                    './bower_components/jquery/jquery.min.js',
+                    './bower_components/jquery/dist/jquery.min.js',
                     './bower_components/draw2d/dist/jquery.autoresize.js',
                     './bower_components/draw2d/dist/jquery.contextmenu.js',
                     './bower_components/draw2d/dist/rgbcolor.js',
@@ -54,6 +54,7 @@ module.exports = function (grunt) {
                     './src/assets/javascript/Layer.js',
                     './src/assets/javascript/FilterPane.js',
                     './src/assets/javascript/Toolbar.js',
+                    './src/assets/javascript/Breadcrumb.js',
 
                     './src/assets/javascript/dialog/About.js',
                     './src/assets/javascript/dialog/FigureTest.js',
@@ -61,6 +62,7 @@ module.exports = function (grunt) {
                     './src/assets/javascript/dialog/FileOpen.js',
                     './src/assets/javascript/dialog/FileSave.js',
                     './src/assets/javascript/dialog/FileSaveAs.js',
+                    './src/assets/javascript/dialog/ShapeSettings.js',
 
                     './src/assets/javascript/filter/Filter.js',
                     './src/assets/javascript/filter/StrokeFilter.js',
@@ -167,10 +169,15 @@ module.exports = function (grunt) {
                 files: {
                     "./dist/assets/stylesheets/main.css": [
                         "./src/assets/less/main.less",
+                        "./src/assets/less/canvas.less",
+                        "./src/assets/less/toolbar.less",
+                        "./src/assets/less/layer.less",
+                        "./src/assets/less/filter.less",
                         "./src/assets/less/file_dialog.less",
                         "./src/assets/less/file_open_dialog.less",
                         "./src/assets/less/file_save_dialog.less",
-                        "./src/assets/less/file_saveas_dialog.less"
+                        "./src/assets/less/file_saveas_dialog.less",
+                        "./src/assets/less/breadcrumb.less"
                     ]
                 }
             }

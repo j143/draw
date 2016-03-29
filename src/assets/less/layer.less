@@ -1,0 +1,70 @@
+@import "colors.less";
+@import "layout.less";
+
+
+
+#layer{
+  padding:0px;
+  margin:0px;
+  border:0px;
+  position:absolute;
+  top:@toolbarHeight;
+  left:0px;
+  bottom:0px;
+  width:200px;
+  background-color : #1E1E26;
+  text-align: center;
+
+  .panetitle {
+    position: fixed;
+    height: @paneTitleHeight;
+    width: 200px;
+    top:@toolbarHeight;
+    border-bottom: 1px solid #222222;
+    border-top: 1px solid #111111;
+    font-weight: 500;
+    font-size: 12px;
+    padding-top: 5px;
+    letter-spacing: 5px;
+    text-align: center;
+    -webkit-box-shadow: 0 2px 2px -2px #101010;
+    -moz-box-shadow: 0 2px 2px -2px #101010;
+    box-shadow: 0 2px 2px -2px #101010;
+  }
+
+}
+
+#layer_elements{
+  padding:0px;
+  margin:0px;
+  border:0px;
+  position:fixed;
+  top:@toolbarHeight+@paneTitleHeight;
+  left:0px;
+  bottom:0px;
+  width:200px;
+  overflow:auto;
+}
+
+
+.layerElement{
+  color: #dddddd;
+  cursor: move;
+  font-weight: 400;
+  letter-spacing: 1px;
+  padding: 4px 4px 4px 20px;
+  text-align: left;
+}
+
+.layerElement img{
+  cursor:pointer;
+  padding-top:4px;
+  padding-right:4px;
+}
+
+.layerSelectedElement{
+  color:white;
+  padding:4px;
+  padding-left:20px;
+  background: @tintColor;
+}

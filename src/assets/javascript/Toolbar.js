@@ -47,7 +47,7 @@ shape_designer.Toolbar = Class.extend({
         });
 
 
-        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_download.png"></button>');
+        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_load.png"></button>');
         buttonGroup.append(this.openButton);
         this.openButton.on("click",$.proxy(function(){
             var button = this.openButton;
@@ -57,7 +57,7 @@ shape_designer.Toolbar = Class.extend({
         Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
         this.openButton.hide();
         
-        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_upload.png"></button>');
+        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_save.png"></button>');
         buttonGroup.append(this.saveButton);
         this.saveButton.on("click",$.proxy(function(){
             var button = this.saveButton;
@@ -84,7 +84,7 @@ shape_designer.Toolbar = Class.extend({
         buttonGroup.append(this.undoButton);
         this.undoButton.on("click",$.proxy(function(){
                this.view.getCommandStack().undo();
-        },this)).button( "option", "disabled", true );
+        },this)).prop( "disabled", true );
         Mousetrap.bind("ctrl+z", $.proxy(function (event) {this.undoButton.click();return false;},this));
 
         
@@ -94,7 +94,7 @@ shape_designer.Toolbar = Class.extend({
         buttonGroup.append(this.redoButton);
         this.redoButton.on("click",$.proxy(function(){
             this.view.getCommandStack().redo();
-        },this)).button( "option", "disabled", true );
+        },this)).prop( "disabled", true );
         Mousetrap.bind("ctrl+y", $.proxy(function (event) {this.redoButton.click();return false;},this));
         
         this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
@@ -123,7 +123,7 @@ shape_designer.Toolbar = Class.extend({
             var node = this.view.getPrimarySelection();
             var command= new draw2d.command.CommandDelete(node);
             this.view.getCommandStack().execute(command);
-        },this)).button( "option", "disabled", true );
+        },this)).prop( "disabled", true );
         Mousetrap.bind(["del"], $.proxy(function (event) {this.deleteButton.click();return false;},this));
 
         
@@ -232,7 +232,7 @@ shape_designer.Toolbar = Class.extend({
             this.openButton.show();
             this.saveButton.show();
             this.newButton.show();
-        }
+       }
         else{
             this.loginButton.show();
             this.openButton.hide();
@@ -249,7 +249,7 @@ shape_designer.Toolbar = Class.extend({
      * @param {draw2d.Figure} figure
      */
     onSelectionChanged : function(emitter, event){
-        this.deleteButton.button( "option", "disabled", event===null || event.figure===null );
+        this.deleteButton.prop( "disabled", event.figure===null );
     },
     
     /**
@@ -263,8 +263,8 @@ shape_designer.Toolbar = Class.extend({
      **/
     stackChanged:function(event)
     {
-        this.undoButton.button( "option", "disabled", !event.getStack().canUndo() );
-        this.redoButton.button( "option", "disabled", !event.getStack().canRedo() );
+        this.undoButton.prop("disabled", !event.getStack().canUndo() );
+        this.redoButton.prop("disabled", !event.getStack().canRedo() );
     }
     
 });

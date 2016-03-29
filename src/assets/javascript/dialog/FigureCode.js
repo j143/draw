@@ -3,9 +3,10 @@ shape_designer.dialog.FigureCode = Class.extend(
     NAME : "shape_designer.dialog.FigureCode", 
 
     init:function(){
-     },
+	},
 
 	show:function(){
+
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
@@ -39,7 +40,6 @@ shape_designer.dialog.FigureCode = Class.extend(
 				var copyElement = document.createElement('textarea');
 			//	copyElement.setAttribute('type', 'text');
 				copyElement.innerHTML=js;
-				console.log(js);
 				copyElement = document.body.appendChild(copyElement);
 				copyElement.select();
 				document.execCommand('copy');

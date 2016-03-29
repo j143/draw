@@ -23,8 +23,5 @@
     "Ionicons": "ionicons#^2.0.1",
     "toastr": "^2.1.2"
   },
-  "private": true,
-  "resolutions": {
-    "jquery": "~1.10.2"
-  }
+  "private": true
 }

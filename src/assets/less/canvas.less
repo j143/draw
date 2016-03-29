@@ -1,0 +1,62 @@
+@import "colors.less";
+@import "layout.less";
+
+
+#canvas {
+  padding:0px;
+  margin:0px;
+  border:0px;
+  position: absolute;
+  top: @toolbarHeight;
+  right: 200px;
+  left: 200px;
+  bottom: 0px;
+  overflow: scroll;
+  background-color:#FFFFFF;
+
+}
+
+
+
+#canvas_zoom{
+  position: fixed;
+  bottom: 20px;
+  right: 220px;
+  background-color:transparent;
+
+  button {
+    background-color:transparent;
+    font-weight:300;
+    padding:5px;
+    padding-left:10px;
+    padding-right:10px;
+    border:1px solid transparent;
+  }
+  button:hover {
+    border:1px solid @tintColor  !important;
+  }
+}
+
+
+#canvas_config{
+  position: fixed;
+  font-size:25px;
+  top:@toolbarHeight+5;
+  left:205px;
+  cursor:pointer;
+}
+
+#canvas_config:hover{
+  color:@tintColor;
+}
+
+
+#canvas_config_items{
+  position: fixed;
+  top:@toolbarHeight+30;
+  left:205px;
+  cursor:pointer;
+  padding:10px;
+  white-space:nowrap;
+  min-width:250px;
+}

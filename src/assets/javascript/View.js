@@ -87,7 +87,8 @@ shape_designer.View = draw2d.Canvas.extend({
             this.html.css("cursor","default");
 	    }
 	},
-	
+
+
 	/**
 	 * @method
 	 * Reset the view/canvas and starts with a clean and new document with default decorations

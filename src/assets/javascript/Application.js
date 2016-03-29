@@ -37,12 +37,17 @@ shape_designer.Application = Class.extend(
     init : function()
     {
         this.currentFile = null;
-        
+        // attached to the very first shape
+        this.documentConfiguration = {
+            baseClass:"draw2d.SetFigure"
+        };
+
         this.storage = new shape_designer.storage.BackendStorage();
         this.view    = new shape_designer.View(this, "canvas");
         this.toolbar = new shape_designer.Toolbar(this, "toolbar",  this.view );
         this.layer   = new shape_designer.Layer(this, "layer_elements", this.view );
         this.filter  = new shape_designer.FilterPane(this, "filter_actions", this.view );
+        this.breadcrumb  = new shape_designer.Breadcrumb(this,"breadcrumb" );
         this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
 
         // Get the authorization code from the url that was returned by GitHub
@@ -57,7 +62,10 @@ shape_designer.Application = Class.extend(
            });
         }
         about.hide();
- 	},
+
+        this.breadcrumb.update(this.storage);
+
+    },
  	
     getParam: function( name )
     {
@@ -71,14 +79,19 @@ shape_designer.Application = Class.extend(
       return results[1];
     },
  	
-	fileNew: function( successCallback, errorCallback, abortCallback)
+	fileNew: function()
     {
         this.view.clear();
         this.storage.currentFileHandle = null;
+        this.documentConfiguration = {
+            baseClass:"draw2d.SetFigure"
+        };
     },
 
     fileOpen: function()
     {
+        this.fileNew();
+
         new shape_designer.dialog.FileOpen(this.storage).show(
 
             // success callback
@@ -87,7 +100,9 @@ shape_designer.Application = Class.extend(
                     this.view.clear();
                     var reader = new draw2d.io.json.Reader();
                     reader.unmarshal(this.view, fileData);
+                    this.getConfiguration();
                     this.view.getCommandStack().markSaveLocation();
+                    this.breadcrumb.update(this.storage);
                 }
                 catch(e){
                     this.view.reset();
@@ -97,11 +112,32 @@ shape_designer.Application = Class.extend(
 
 	fileSave: function()
     {
+        this.setConfiguration();
         if(this.storage.currentFileHandle===null) {
             new shape_designer.dialog.FileSaveAs(this.storage).show(this.view);
         }
         else{
             new shape_designer.dialog.FileSave(this.storage).show(this.view);
         }
-	}
+	},
+
+
+    getConfiguration: function()
+    {
+        var figures = this.view.getExtFigures();
+        if(figures.getSize()>0){
+            this.documentConfiguration = $.extend({},  this.documentConfiguration, figures.first().getUserData());
+        }
+
+        return this.documentConfiguration;
+    },
+
+    setConfiguration: function(conf )
+    {
+        this.documentConfiguration = $.extend({},  this.documentConfiguration, conf);
+        var figures = this.view.getExtFigures();
+        if(figures.getSize()>0) {
+            figures.first().setUserData( this.documentConfiguration);
+        }
+    }
 });

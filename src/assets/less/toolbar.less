@@ -1,0 +1,101 @@
+@import "colors.less";
+@import "layout.less";
+
+#toolbar {
+  margin:0;
+  padding-top:3px;
+  padding-right:10px;
+  top:0;
+  left:0;
+  height:@toolbarHeight;
+  width:100%;
+  overflow: visible !important;
+  z-index:1000 !important;
+  background-image:-webkit-linear-gradient(hsla(0,0%,0%,.025), hsla(0,0%,100%,.05) 44%, hsla(0,0%,0%,.05) 100%);
+
+  /* Safari 5.1, iOS 5.0-6.1, Chrome 10-25, Android 4.0-4.3 */
+  background-image: -webkit-linear-gradient(hsla(0,0%,0%,.025), hsla(0,0%,100%,.05) 44%, hsla(0,0%,0%,.05) 100%);
+  /* Firefox 3.6 - 15 */
+  background-image: -moz-linear-gradient(hsla(0,0%,0%,.025), hsla(0,0%,100%,.05) 44%, hsla(0,0%,0%,.05) 100%);
+  /* Opera 11.1 - 12 */
+  background-image: -o-linear-gradient(hsla(0,0%,0%,.025), hsla(0,0%,100%,.05) 44%, hsla(0,0%,0%,.05) 100%);
+  /* Opera 15+, Chrome 25+, IE 10+, Firefox 16+, Safari 6.1+, iOS 7+, Android 4.4+ */
+  background-image: linear-gradient(hsla(0,0%,0%,.025), hsla(0,0%,100%,.05) 44%, hsla(0,0%,0%,.05) 100%);
+  border-bottom: 10px solid #4285f4;
+
+  .toolbarGroup {
+    background-image: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    margin-top: 45px;
+
+    .btn:focus,
+    .btn-default,
+    .btn-group,
+    .btn {
+      padding: 4px;
+      background-image: none;
+      background-color: transparent;
+      border: 1px solid transparent;
+      box-shadow: none;
+      transition: all 0.5s ease;
+    }
+
+    .btn:hover {
+      border: 1px solid @tintColor !important;
+      transition: all 0.5s ease;
+    }
+
+    .btn.active {
+      border: 1px solid @tintColor !important;
+      border-radius: 1px;
+      transition: all 0.5s ease;
+    }
+
+    .btn.disabled,
+    .btn[disabled] {
+      opacity: 0.1;
+      border: 1px solid transparent !important;
+      cursor: default;
+    }
+  }
+
+
+
+  #currentTool_container{
+    margin:0px;
+    margin-top:20px;
+    margin-left:15px;
+    position:absolute;
+    width: 500px;
+  }
+
+  #currentTool_heading{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 25px;
+    color:@tintColor;
+  }
+
+  #currentTool_image{
+    border-right: 1px solid rgba(0,0,0,0.1);
+  }
+
+  #currentTool_message{
+    font-size:12px;
+    color:#404040;
+    font-family:  'Roboto', sans-serif ;
+    font-weight:400;
+    letter-spacing: 0.1em;
+  }
+
+}
+
+
+
+
+#githubButton{
+  color:white;
+  background-color:#24c85b !important;
+  border:1px solid @tintColor  !important;
+}

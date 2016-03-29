@@ -42,48 +42,55 @@
 
 <body id="container">
 
-   <div id="toolbar" class="navbar-default">
-   
+   <div id="breadcrumb">
+       dir / test / blubber
    </div>
-       <div id="layer" class="">
-         <div id="layer_elements"></div>
-         <div id="layer_header" class="highlight panetitle blackgradient">Scene</div>
+
+   <div id="toolbar" class="navbar-default">
+   </div>
+
+   <div id="layer" class="">
+     <div id="layer_elements"></div>
+     <div id="layer_header" class="highlight panetitle blackgradient">Scene</div>
+   </div>
+
+   <div id="canvas" class="" >
+   </div>
+
+   <div id="canvas_zoom" class="btn-group">
+     <button type="button" id="canvas_zoom_in"     class="btn highlight">&#8213;</button>
+     <button type="button" id="canvas_zoom_normal" class="btn highlight">100%</button>
+     <button type="button" id="canvas_zoom_out"    class="btn highlight">&#xFF0B</button>
+   </div>
+
+    <div class="btn-group dropdown">
+       <span id="canvas_config" class="ion-ios-toggle dropdown-toggle " data-toggle="dropdown"></span>
+       <div class="dropdown-menu" id="canvas_config_items">
+          <div class="">
+            <label class="">Grid
+                <input id="canvas_config_grid" type="checkbox" checked="checked" data-toggle="toggle" >
+            </label>
+          </div>
        </div>
-       <div id="canvas" class="" >
-        </div>
-           <div id="canvas_zoom" class="btn-group">
-             <button type="button" id="canvas_zoom_in"     class="btn highlight">&#8213;</button>
-             <button type="button" id="canvas_zoom_normal" class="btn highlight">100%</button>
-             <button type="button" id="canvas_zoom_out"    class="btn highlight">&#xFF0B</button>
-           </div>
-            <div class="btn-group dropdown">
-               <span id="canvas_config" class="glyphicon glyphicon-cog dropdown-toggle " data-toggle="dropdown"></span>
-               <div class="dropdown-menu" id="canvas_config_items">
-                  <div class="">
-                    <label class="">Grid
-                        <input id="canvas_config_grid" type="checkbox" checked="checked" data-toggle="toggle" >
-                    </label>
-                  </div>
-               </div>
-            </div>
-       
-       <div id="filter" class="navbar-default">
-           <div id="filter_actions" ></div>
-           <div id="filter_header" class="highlight panetitle blackgradient">Properties</div>
-           <div id="filter_toolbar" class="blackgradient" >
+    </div>
 
-			<div class="btn-group dropup">
-				<button id="add_filter_button" class="disabled btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
- 				        <span class="glyphicon glyphicon-plus-sign"></span>
-				    Add 
-				<span class="caret"></span></button>
-				<ul class="dropdown-menu" id="add_filter_action_menu">
-					
-				</ul>
-			</div>
+   <div id="filter" class="navbar-default">
+       <div id="filter_actions" ></div>
+       <div id="filter_header" class="highlight panetitle blackgradient">Properties</div>
+       <div id="filter_toolbar" class="blackgradient" >
 
-		</div>
+        <div class="btn-group dropup">
+            <button id="add_filter_button" class="disabled btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+                Add
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu" id="add_filter_action_menu">
+
+            </ul>
         </div>
+
+    </div>
+</div>
 
 
 <!--
@@ -145,10 +152,50 @@
 </div>
 
 
-<!--
-  # GitHub File select/open dialog
+   <!--
+  # General shape settings
   #
   -->
+   <div id="shapeSettingsDialog" class="modal fade" tabindex="-1">
+       <div class="modal-dialog ">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <h4 class="media-heading">General Shape Settings</h4>
+               </div>
+               <div class="modal-body">
+
+
+                   <fieldset class="form-group">
+                   <label>Shape Base Class</label><br>
+                   <div class="btn-group shapeBaseClass" data-toggle="buttons">
+                       <label class="btn btn-primary active">
+                           <input data-class="draw2d.SetFigure" type="radio" name="shapeBaseClass" > Basic Node
+                       </label>
+
+                       <label class="btn btn-primary">
+                           <input data-class="draw2d.shape.composite.Raft" type="radio" name="shapeBaseClass" > Raft
+                       </label>
+
+                       <label class="btn btn-primary">
+                           <input data-class="draw2d.shape.composite.Jailhouse" type="radio" name="shapeBaseClass"> Jail House
+                       </label>
+                   </div>
+                   </fieldset>
+
+               </div>
+               <div class="modal-footer">
+                   <button class="btn" data-dismiss="modal">Abort</button>
+                   <button class="btn btn-primary okButton"><span>Close</span></button>
+               </div>
+           </div>
+       </div>
+   </div>
+
+
+   <!--
+     # GitHub File select/open dialog
+     #
+     -->
 <div id="githubFileSelectDialog" class="modal fade githubFileDialog" tabindex="-1">
     <div class="modal-dialog ">
         <div class="modal-content">
