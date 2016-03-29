@@ -120,7 +120,7 @@ module.exports = function (grunt) {
             application: {
                 expand: true,
                 cwd: 'src/',
-                src: ['**/*.html', 'assets/images/**/*'],
+                src: ['**/*.html', 'assets/images/**/*', 'assets/shapes/**/*'],
                 dest: 'dist/'
             },
             awesome:{
