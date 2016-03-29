@@ -102,6 +102,7 @@ shape_designer.Application = Class.extend(
      */
     init : function()
     {
+        var _this = this;
         this.currentFile = null;
         // attached to the very first shape
         this.documentConfiguration = {
@@ -117,7 +118,6 @@ shape_designer.Application = Class.extend(
         this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
 
         // Get the authorization code from the url that was returned by GitHub
-        var _this = this;
         var url = window.location.href;
         var code = this.getParam("code");
         if (code!==null) {
@@ -131,6 +131,9 @@ shape_designer.Application = Class.extend(
 
         this.breadcrumb.update(this.storage);
 
+        $.getJSON("./assets/shapes/Basic.shape",function(document){
+            _this.fileNew(document);
+        });
     },
  	
     getParam: function( name )
@@ -145,13 +148,17 @@ shape_designer.Application = Class.extend(
       return results[1];
     },
  	
-	fileNew: function()
+	fileNew: function(shapeTemplate)
     {
         this.view.clear();
         this.storage.currentFileHandle = null;
         this.documentConfiguration = {
             baseClass:"draw2d.SetFigure"
         };
+        if(shapeTemplate){
+            var reader = new draw2d.io.json.Reader();
+            reader.unmarshal(this.view, shapeTemplate);
+        }
     },
 
     fileOpen: function()
