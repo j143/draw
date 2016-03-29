@@ -19,7 +19,9 @@
     "google-code-prettify": "1.0.1",
     "jsts": "0.13.2",
     "octokat": "~0.4.10",
-    "bootstrap-toggle": "^2.2.2"
+    "bootstrap-toggle": "^2.2.2",
+    "Ionicons": "ionicons#^2.0.1",
+    "toastr": "^2.1.2"
   },
   "private": true,
   "resolutions": {

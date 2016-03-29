@@ -16,7 +16,7 @@ shape_designer.dialog.FigureTest = Class.extend(
 				'<div>'+
 	                '<div id="test_canvas">'+
 	                '</div>'+
-	                ' <div id="test_close"><img src="./assets/images/dialog_close.png"/></div>'+
+	                ' <div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'+
 				'<div>'
 	                );
 	        splash.hide();

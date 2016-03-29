@@ -30,5 +30,6 @@
     "grunt-contrib-watch": "~0.6.1",
     "grunt-gh-pages": "^0.10.0",
     "jshint-stylish": "latest"
-  }
+  },
+  "dependencies": {}
 }

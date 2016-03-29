@@ -131,15 +131,35 @@ body{
 	z-index:10000;
 }
 #test_close{
-	position:fixed;
-	right:10px;
-	top:10px;
-	width:32px;
-	height:32px;
-	border:1px solid #f0f0f0;
-	z-index:10000;
-	cursor:pointer;
+    position: fixed;
+    right: 40px;
+    top: 10px;
+    width: 32px;
+    height: 32px;
+    z-index: 10000;
+    cursor: pointer;
+    font-size: 50px;
 }
+
+#test_close:hover{
+    color:#4285F4;
+}
+
+
+#test_clipboard{
+    position: fixed;
+    right: 100px;
+    top: 10px;
+    width: 32px;
+    height: 32px;
+    z-index: 10000;
+    cursor: pointer;
+    font-size: 50px;
+}
+#test_clipboard:hover{
+    color:#4285F4;
+}
+
 
 input{
  background: none repeat scroll 0 0 #f8f8f8;

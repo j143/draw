@@ -39,6 +39,7 @@ module.exports = function (grunt) {
                     './bower_components/bootbox/bootbox.js',
                     './bower_components/hogan/web/1.0.0/hogan.min.js',
                     './bower_components/octokat/dist/octokat.js',
+                    './bower_components/toastr/toastr.min.js',
                     './lib/Blob.js'
                 ],
                 dest: './dist/assets/javascript/dependencies.js'
@@ -104,6 +105,7 @@ module.exports = function (grunt) {
             css:{
                 src:[
                     './src/assets/stylesheets/application.css',
+                    './bower_components/toastr/toastr.min.css',
                     './bower_components/anglepicker/ui.anglepicker.css',
                     './bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css',
                     './bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css'
@@ -131,11 +133,11 @@ module.exports = function (grunt) {
                 src: ['**/*'],
                 dest: './dist/lib/jscolor'
             },
-            material:{
+            ionicons:{
                 expand: true,
-                cwd: 'bower_components/bootstrap-material-design/dist/',
-                src: ['**/*'],
-                dest: './dist/lib/material'
+                cwd: 'bower_components/Ionicons/',
+                src: ['./css/*', "./fonts/*"],
+                dest: './dist/lib/ionicons'
             },
             jquery:{
                 expand: true,
