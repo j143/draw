@@ -66,6 +66,8 @@ else{
 
 conf.fileSuffix = ".shape";
 conf.repository="https://raw.githubusercontent.com/freegroup/draw2d_js.shapes/master/shapes/org/";
+/*jshint sub:true*/
+
 // declare the namespace for this example
 var shape_designer = {
 		figure:{
@@ -104,6 +106,8 @@ shape_designer.Application = Class.extend(
      */
     init : function()
     {
+        var _this = this;
+
         this.localStorage = [];
         try {
             if( 'localStorage' in window && window.localStorage !== null){
@@ -113,7 +117,6 @@ shape_designer.Application = Class.extend(
 
         }
 
-        var _this = this;
         this.currentFile = null;
         // attached to the very first shape
         this.documentConfiguration = {
@@ -149,16 +152,37 @@ shape_designer.Application = Class.extend(
         var file = this.getParam("file");
         if(file){
             shapeUrl = conf.repository + file.replace(/_/g,"/");
+            // cleaup the localStorage if the user comes with a fresh file request
+            this.localStorage.removeItem("json");
         }
 
-        $.getJSON(shapeUrl,function(document){
-            _this.fileNew(document);
-        });
+        // restore the previews document from asession before
+        //
+        if(this.localStorage["json"]) {
+            _this.fileNew(this.localStorage["json"]);
+        }
+        // or load the requested document
+        //
+        else {
+            $.getJSON(shapeUrl, function (document) {
+                _this.fileNew(document);
+            });
+        }
+
+        // save the document in the local storage if the user leave the page
+        //
+        window.onbeforeunload = function (e) {
+            var writer = new draw2d.io.json.Writer();
+            writer.marshal(_this.view, function (json, base64) {
+                _this.localStorage["json"]=JSON.stringify(json);
+            });
+        };
     },
 
     login:function()
     {
-        // check if the user has modified
+   //     var _this = this;
+
         window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
     },
 
@@ -177,6 +201,7 @@ shape_designer.Application = Class.extend(
 	fileNew: function(shapeTemplate)
     {
         this.view.clear();
+        this.localStorage.removeItem("json");
         this.storage.currentFileHandle = null;
         this.documentConfiguration = {
             baseClass:"draw2d.SetFigure"
@@ -403,14 +428,14 @@ shape_designer.View = draw2d.Canvas.extend({
 	},
 
 	hideDecoration: function(){
-        this.uninstallEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy());
+        this.uninstallEditPolicy( this.grid);
         this.getFigures().each( function(index, figure){ 
             figure.unselect();
         });
     },
     
     showDecoration: function(){
-        this.installEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy());
+        this.installEditPolicy( this.grid);
     }
 });
 
