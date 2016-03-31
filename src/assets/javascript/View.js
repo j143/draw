@@ -160,14 +160,14 @@ shape_designer.View = draw2d.Canvas.extend({
 	},
 
 	hideDecoration: function(){
-        this.uninstallEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy());
+        this.uninstallEditPolicy( this.grid);
         this.getFigures().each( function(index, figure){ 
             figure.unselect();
         });
     },
     
     showDecoration: function(){
-        this.installEditPolicy( new draw2d.policy.canvas.ShowDotEditPolicy());
+        this.installEditPolicy( this.grid);
     }
 });
 
