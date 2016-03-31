@@ -53,7 +53,8 @@ var conf=null;
 if (window.location.hostname === "localhost") {
     conf = {
         githubClientId: "4ec60d86b7e1eef385b3",
-        githubAuthenticateCallback: "https://localhost/~andherz/githubCallback.php?code="
+        githubAuthenticateCallback: "https://localhost/~andherz/githubCallback.php?code=",
+
     };
 }
 else{
@@ -64,6 +65,7 @@ else{
 }
 
 conf.fileSuffix = ".shape";
+conf.repository="https://raw.githubusercontent.com/freegroup/draw2d_js.shapes/master/shapes/org/";
 // declare the namespace for this example
 var shape_designer = {
 		figure:{
@@ -102,6 +104,15 @@ shape_designer.Application = Class.extend(
      */
     init : function()
     {
+        this.localStorage = [];
+        try {
+            if( 'localStorage' in window && window.localStorage !== null){
+                this.localStorage = localStorage;
+            }
+        } catch(e) {
+
+        }
+
         var _this = this;
         this.currentFile = null;
         // attached to the very first shape
@@ -131,11 +142,26 @@ shape_designer.Application = Class.extend(
 
         this.breadcrumb.update(this.storage);
 
-        $.getJSON("./assets/shapes/Basic.shape",function(document){
+        // check if the user has added a "file" parameter. In this case we load the shape from
+        // the draw2d.shape github repository
+        //
+        var shapeUrl = "./assets/shapes/Basic.shape";
+        var file = this.getParam("file");
+        if(file){
+            shapeUrl = conf.repository + file.replace(/_/g,"/");
+        }
+
+        $.getJSON(shapeUrl,function(document){
             _this.fileNew(document);
         });
     },
- 	
+
+    login:function()
+    {
+        // check if the user has modified
+        window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
+    },
+
     getParam: function( name )
     {
       name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
@@ -599,7 +625,7 @@ shape_designer.Toolbar = Class.extend({
         this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
         buttonGroup.append(this.loginButton);
         this.loginButton.on("click",function(){
-            window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
+            app.login();
         });
 
 
@@ -629,8 +655,9 @@ shape_designer.Toolbar = Class.extend({
             app.fileNew();
         },this));
         Mousetrap.bind("ctrl+n", $.proxy(function (event) {this.undoButton.click();return false;},this));
-        this.newButton.hide();
 
+        this.galleryButton  = $('<a  target="gallery" href="http://freegroup.github.io/draw2d_js.shapes/" data-toggle="tooltip" title="Shape Gallery</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_gallery.png"></a>');
+        buttonGroup.append(this.galleryButton);
 
         // Inject the UNDO Button and the callbacks
         //
@@ -661,7 +688,7 @@ shape_designer.Toolbar = Class.extend({
         this.testButton.on("click",$.proxy(function(){
             new shape_designer.dialog.FigureTest().show();
         },this));
-  
+
         this.codeButton  = $('<button  data-toggle="tooltip" title="JS Code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_js.png"></button>');
         this.toolbarDiv.append(this.codeButton);
         this.codeButton.on("click",$.proxy(function(){
@@ -787,13 +814,11 @@ shape_designer.Toolbar = Class.extend({
             this.loginButton.hide();
             this.openButton.show();
             this.saveButton.show();
-            this.newButton.show();
        }
         else{
             this.loginButton.show();
             this.openButton.hide();
             this.saveButton.hide();
-            this.newButton.hide();
         }
     },
 
