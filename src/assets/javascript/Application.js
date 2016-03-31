@@ -36,6 +36,15 @@ shape_designer.Application = Class.extend(
      */
     init : function()
     {
+        this.localStorage = [];
+        try {
+            if( 'localStorage' in window && window['localStorage'] !== null){
+                this.localStorage = localStorage;
+            }
+        } catch(e) {
+
+        }
+
         var _this = this;
         this.currentFile = null;
         // attached to the very first shape
@@ -65,11 +74,26 @@ shape_designer.Application = Class.extend(
 
         this.breadcrumb.update(this.storage);
 
-        $.getJSON("./assets/shapes/Basic.shape",function(document){
+        // check if the user has added a "file" parameter. In this case we load the shape from
+        // the draw2d.shape github repository
+        //
+        var url = "./assets/shapes/Basic.shape";
+        var file = this.getParam("file");
+        if(file){
+            url = conf.repository + file.replace(/_/g,"/");
+        }
+
+        $.getJSON(url,function(document){
             _this.fileNew(document);
         });
     },
- 	
+
+    login:function()
+    {
+        // check if the user has modified
+        window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
+    },
+
     getParam: function( name )
     {
       name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");

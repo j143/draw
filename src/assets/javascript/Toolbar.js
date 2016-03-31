@@ -43,7 +43,7 @@ shape_designer.Toolbar = Class.extend({
         this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
         buttonGroup.append(this.loginButton);
         this.loginButton.on("click",function(){
-            window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
+            app.login();
         });
 
 
@@ -73,8 +73,9 @@ shape_designer.Toolbar = Class.extend({
             app.fileNew();
         },this));
         Mousetrap.bind("ctrl+n", $.proxy(function (event) {this.undoButton.click();return false;},this));
-        this.newButton.hide();
 
+        this.galleryButton  = $('<a  target="gallery" href="http://freegroup.github.io/draw2d_js.shapes/" data-toggle="tooltip" title="Shape Gallery</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_gallery.png"></a>');
+        buttonGroup.append(this.galleryButton);
 
         // Inject the UNDO Button and the callbacks
         //
@@ -105,7 +106,7 @@ shape_designer.Toolbar = Class.extend({
         this.testButton.on("click",$.proxy(function(){
             new shape_designer.dialog.FigureTest().show();
         },this));
-  
+
         this.codeButton  = $('<button  data-toggle="tooltip" title="JS Code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_js.png"></button>');
         this.toolbarDiv.append(this.codeButton);
         this.codeButton.on("click",$.proxy(function(){
@@ -231,13 +232,11 @@ shape_designer.Toolbar = Class.extend({
             this.loginButton.hide();
             this.openButton.show();
             this.saveButton.show();
-            this.newButton.show();
        }
         else{
             this.loginButton.show();
             this.openButton.hide();
             this.saveButton.hide();
-            this.newButton.hide();
         }
     },
 

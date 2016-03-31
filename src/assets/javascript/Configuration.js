@@ -2,7 +2,8 @@ var conf=null;
 if (window.location.hostname === "localhost") {
     conf = {
         githubClientId: "4ec60d86b7e1eef385b3",
-        githubAuthenticateCallback: "https://localhost/~andherz/githubCallback.php?code="
+        githubAuthenticateCallback: "https://localhost/~andherz/githubCallback.php?code=",
+
     };
 }
 else{
@@ -13,3 +14,4 @@ else{
 }
 
 conf.fileSuffix = ".shape";
+conf.repository="https://raw.githubusercontent.com/freegroup/draw2d_js.shapes/master/shapes/org/";
