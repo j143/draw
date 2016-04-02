@@ -60,7 +60,8 @@ if (window.location.hostname === "localhost") {
 else{
     conf = {
         githubClientId: "20a3f1473dd7d17fcbcf",
-        githubAuthenticateCallback: "https://draw2d.herokuapp.com/authenticate/"
+  //      githubAuthenticateCallback: "https://draw2d.herokuapp.com/authenticate/"
+        githubAuthenticateCallback: "http://www.draw2d.org/githubCallback.php?app=designer&code="
     };
 }
 
@@ -136,7 +137,7 @@ shape_designer.Application = Class.extend(
         var code = this.getParam("code");
         if (code!==null) {
            $.getJSON(conf.githubAuthenticateCallback+code, function(data) {
-               _this.storage.login(data.token, $.proxy(function(success){
+               _this.storage.connect(data.token, $.proxy(function(success){
                    _this.toolbar.onLogginStatusChanged(success);
                },this));
            });
@@ -3386,7 +3387,7 @@ shape_designer.storage.BackendStorage = Class.extend({
     },
     
 
-    login: function(token, callback)
+    connect: function(token, callback)
     {
         this.octo = new Octokat({
             token: token
