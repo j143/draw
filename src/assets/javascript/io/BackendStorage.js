@@ -13,7 +13,7 @@ shape_designer.storage.BackendStorage = Class.extend({
     },
     
 
-    login: function(token, callback)
+    connect: function(token, callback)
     {
         this.octo = new Octokat({
             token: token

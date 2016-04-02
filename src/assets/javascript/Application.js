@@ -68,7 +68,7 @@ shape_designer.Application = Class.extend(
         var code = this.getParam("code");
         if (code!==null) {
            $.getJSON(conf.githubAuthenticateCallback+code, function(data) {
-               _this.storage.login(data.token, $.proxy(function(success){
+               _this.storage.connect(data.token, $.proxy(function(success){
                    _this.toolbar.onLogginStatusChanged(success);
                },this));
            });
