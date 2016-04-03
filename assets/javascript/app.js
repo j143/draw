@@ -53,14 +53,13 @@ var conf=null;
 if (window.location.hostname === "localhost") {
     conf = {
         githubClientId: "4ec60d86b7e1eef385b3",
-        githubAuthenticateCallback: "https://localhost/~andherz/githubCallback.php?code=",
+        githubAuthenticateCallback: "http://localhost/~andherz/githubCallback.php?app=designer&code=",
 
     };
 }
 else{
     conf = {
         githubClientId: "20a3f1473dd7d17fcbcf",
-  //      githubAuthenticateCallback: "https://draw2d.herokuapp.com/authenticate/"
         githubAuthenticateCallback: "http://www.draw2d.org/githubCallback.php?app=designer&code="
     };
 }
@@ -133,7 +132,6 @@ shape_designer.Application = Class.extend(
         this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
 
         // Get the authorization code from the url that was returned by GitHub
-        var url = window.location.href;
         var code = this.getParam("code");
         if (code!==null) {
            $.getJSON(conf.githubAuthenticateCallback+code, function(data) {
@@ -3527,8 +3525,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
          '         // {{{name}}}                                    \n'+
          '         port = this.createPort("{{type}}", new draw2d.layout.locator.XYRelPortLocator({{x}}, {{y}})); \n'+       
          '         port.setConnectionDirection({{direction}});      \n'+       
-         '         port.setBackgroundColor("{{color}}");            \n'+       
+         '         port.setBackgroundColor("{{color}}");            \n'+
          '         {{/ports}}                                       \n'+
+         '         this.persistPorts=false;                         \n'+
          '       },                                                 \n'+
          '                                                          \n'+       
          '       createShapeElement : function()                    \n'+       
