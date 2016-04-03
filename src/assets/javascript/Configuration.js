@@ -2,14 +2,13 @@ var conf=null;
 if (window.location.hostname === "localhost") {
     conf = {
         githubClientId: "4ec60d86b7e1eef385b3",
-        githubAuthenticateCallback: "https://localhost/~andherz/githubCallback.php?code=",
+        githubAuthenticateCallback: "http://localhost/~andherz/githubCallback.php?app=designer&code=",
 
     };
 }
 else{
     conf = {
         githubClientId: "20a3f1473dd7d17fcbcf",
-  //      githubAuthenticateCallback: "https://draw2d.herokuapp.com/authenticate/"
         githubAuthenticateCallback: "http://www.draw2d.org/githubCallback.php?app=designer&code="
     };
 }

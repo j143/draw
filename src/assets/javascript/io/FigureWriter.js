@@ -122,8 +122,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
          '         // {{{name}}}                                    \n'+
          '         port = this.createPort("{{type}}", new draw2d.layout.locator.XYRelPortLocator({{x}}, {{y}})); \n'+       
          '         port.setConnectionDirection({{direction}});      \n'+       
-         '         port.setBackgroundColor("{{color}}");            \n'+       
+         '         port.setBackgroundColor("{{color}}");            \n'+
          '         {{/ports}}                                       \n'+
+         '         this.persistPorts=false;                         \n'+
          '       },                                                 \n'+
          '                                                          \n'+       
          '       createShapeElement : function()                    \n'+       

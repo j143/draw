@@ -64,7 +64,6 @@ shape_designer.Application = Class.extend(
         this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
 
         // Get the authorization code from the url that was returned by GitHub
-        var url = window.location.href;
         var code = this.getParam("code");
         if (code!==null) {
            $.getJSON(conf.githubAuthenticateCallback+code, function(data) {
