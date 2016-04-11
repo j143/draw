@@ -722,59 +722,18 @@ shape_designer.Toolbar = Class.extend({
         this.html.append(this.toolbarDiv);
 
 
-        var buttonGroup=$("<div class=\"btn-group\"></div>");
-        this.toolbarDiv.append(buttonGroup);
-
-
-        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
-        buttonGroup.append(this.loginButton);
-        this.loginButton.on("click",function(){
-            app.login();
-        });
-
-
-        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_load.png"></button>');
-        buttonGroup.append(this.openButton);
-        this.openButton.on("click",$.proxy(function(){
-            var button = this.openButton;
-            button.tooltip("hide");
-            app.fileOpen();
-        },this));
-        Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
-        this.openButton.hide();
-        
-        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_save.png"></button>');
-        buttonGroup.append(this.saveButton);
-        this.saveButton.on("click",$.proxy(function(){
-            var button = this.saveButton;
-            button.tooltip("hide");
-        	app.fileSave();
-        },this));
-        Mousetrap.bind("ctrl+s", $.proxy(function (event) {this.saveButton.click();return false;},this));
-        this.saveButton.hide();
-
-        this.newButton  = $('<button  data-toggle="tooltip" title="New Document <span class=\'highlight\'> [ Ctrl+N ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_new.png"></button>');
-        buttonGroup.append(this.newButton);
-        this.newButton.on("click",$.proxy(function(){
-            app.fileNew();
-        },this));
-        Mousetrap.bind("ctrl+n", $.proxy(function (event) {this.undoButton.click();return false;},this));
-
-        this.galleryButton  = $('<a  target="gallery" href="http://freegroup.github.io/draw2d_js.shapes/" data-toggle="tooltip" title="Shape Gallery</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_gallery.png"></a>');
-        buttonGroup.append(this.galleryButton);
-
         // Inject the UNDO Button and the callbacks
         //
-        buttonGroup=$('<div class="btn-group" ></div>');
+        buttonGroup=$('<div class="btn-group" title="Undo / Redo"></div>');
         this.toolbarDiv.append(buttonGroup);
         this.undoButton  = $('<button  data-toggle="tooltip" title="Undo <span class=\'highlight\'> [ Ctrl+Z ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_undo.png"></button>');
         buttonGroup.append(this.undoButton);
         this.undoButton.on("click",$.proxy(function(){
-               this.view.getCommandStack().undo();
+            this.view.getCommandStack().undo();
         },this)).prop( "disabled", true );
         Mousetrap.bind("ctrl+z", $.proxy(function (event) {this.undoButton.click();return false;},this));
 
-        
+
         // Inject the REDO Button and the callback
         //
         this.redoButton  = $('<button data-toggle="tooltip" title="Redo <span class=\'highlight\'> [ Ctrl+Y ]</span>"  class=\"btn btn-default\" ><img src="./assets/images/toolbar_redo.png"></button>');
@@ -783,44 +742,22 @@ shape_designer.Toolbar = Class.extend({
             this.view.getCommandStack().redo();
         },this)).prop( "disabled", true );
         Mousetrap.bind("ctrl+y", $.proxy(function (event) {this.redoButton.click();return false;},this));
-        
-        this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
-        this.toolbarDiv.append(this.delimiter);
-        
-        this.testButton  = $('<button  data-toggle="tooltip" title="Test</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_test.png"></button>');
-        this.toolbarDiv.append(this.testButton);
-        this.testButton.on("click",$.proxy(function(){
-            new shape_designer.dialog.FigureTest().show();
-        },this));
 
-        this.codeButton  = $('<button  data-toggle="tooltip" title="JS Code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_js.png"></button>');
-        this.toolbarDiv.append(this.codeButton);
-        this.codeButton.on("click",$.proxy(function(){
-            new shape_designer.dialog.FigureCodeEdit().show();
-        },this));
 
-        this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
-        this.toolbarDiv.append(this.delimiter);
+        buttonGroup=$('<div class="btn-group" data-toggle="buttons"  title="Tools and Shape"></div>');
+        this.toolbarDiv.append(buttonGroup);
+
 
         // Inject the DELETE Button
         //
         this.deleteButton  = $('<button  data-toggle="tooltip" title="Delete <span class=\'highlight\'> [ Del ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_delete.png"></button>');
-        this.toolbarDiv.append(this.deleteButton);
+        buttonGroup.append(this.deleteButton);
         this.deleteButton.on("click",$.proxy(function(){
             var node = this.view.getPrimarySelection();
             var command= new draw2d.command.CommandDelete(node);
             this.view.getCommandStack().execute(command);
         },this)).prop( "disabled", true );
         Mousetrap.bind(["del"], $.proxy(function (event) {this.deleteButton.click();return false;},this));
-
-        
-        this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
-        this.toolbarDiv.append(this.delimiter);
-
-
-
-        buttonGroup=$('<div class="btn-group" data-toggle="buttons"></div>');
-        this.toolbarDiv.append(buttonGroup);
 
 
         this.selectButton = $('<label data-toggle="tooltip" title="Select mode <span class=\'highlight\'> [ spacebar ]</span>" class="btn btn-sm btn-primary active"><input type="radio" name="selected_tool" id="tool1" class="btn-default btn" ><img src="./assets/images/tools/SELECT_TOOL_032.png"></label>');
@@ -904,8 +841,73 @@ shape_designer.Toolbar = Class.extend({
        },this));
        Mousetrap.bind(["I", "i"], $.proxy(function (event) {this.intersectionButton.click();return false;},this));
 
-       buttonGroup.find(".btn").button();
-       
+
+        var buttonGroup=$("<div class='btn-group'  title='File Operations'></div>");
+        this.toolbarDiv.append(buttonGroup);
+
+
+        this.loginButton  = $('<button class="btn" data-toggle="modal" id="githubButton"><img height="32" src="assets/images/octocat.svg">Login with Github</button>');
+        buttonGroup.append(this.loginButton);
+        this.loginButton.on("click",function(){
+            app.login();
+        });
+
+
+        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_load.png"></button>');
+        buttonGroup.append(this.openButton);
+        this.openButton.on("click",$.proxy(function(){
+            var button = this.openButton;
+            button.tooltip("hide");
+            app.fileOpen();
+        },this));
+        Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
+        this.openButton.hide();
+
+        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_save.png"></button>');
+        buttonGroup.append(this.saveButton);
+        this.saveButton.on("click",$.proxy(function(){
+            var button = this.saveButton;
+            button.tooltip("hide");
+            app.fileSave();
+        },this));
+        Mousetrap.bind("ctrl+s", $.proxy(function (event) {this.saveButton.click();return false;},this));
+        this.saveButton.hide();
+
+        this.newButton  = $('<button  data-toggle="tooltip" title="New Document <span class=\'highlight\'> [ Ctrl+N ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_new.png"></button>');
+        buttonGroup.append(this.newButton);
+        this.newButton.on("click",$.proxy(function(){
+            app.fileNew();
+        },this));
+        Mousetrap.bind("ctrl+n", $.proxy(function (event) {this.undoButton.click();return false;},this));
+
+        buttonGroup=$('<div class="btn-group"  title="Test and Coding"></div>');
+        this.toolbarDiv.append(buttonGroup);
+        this.testButton  = $('<button  data-toggle="tooltip" title="Test</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_test.png"></button>');
+        buttonGroup.append(this.testButton);
+        this.testButton.on("click",$.proxy(function(){
+            new shape_designer.dialog.FigureTest().show();
+        },this));
+
+        this.codeButton  = $('<button  data-toggle="tooltip" title="Edit JavaScript code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_edit_js.png"></button>');
+        buttonGroup.append(this.codeButton);
+        this.codeButton.on("click",$.proxy(function(){
+            new shape_designer.dialog.FigureCodeEdit().show();
+        },this));
+
+        this.exportButton  = $('<button  data-toggle="tooltip" title="Export JavaScript code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_export_js.png"></button>');
+        buttonGroup.append(this.exportButton);
+        this.exportButton.on("click",$.proxy(function(){
+            new shape_designer.dialog.FigureCodeExport().show();
+        },this));
+
+        this.galleryButton  = $('<a  target="gallery" href="http://freegroup.github.io/draw2d_js.shapes/" data-toggle="tooltip" title="Shape Gallery</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_gallery.png"></a>');
+        buttonGroup.append(this.galleryButton);
+
+        $(".toolbarGroup .btn-group").each(function(index, element){
+            var $e=$(element);
+            console.log($e.attr("title"));
+            $e.prepend("<div class='info-text'>"+$e.attr("title")+"</div>");
+        });
        // enable the tooltip for all buttons
        //
        $('*[data-toggle="tooltip"]').tooltip({placement:"bottom", container:"body",delay: { show: 1000, hide: 10 }, html:true});
@@ -913,7 +915,8 @@ shape_designer.Toolbar = Class.extend({
     },
 
     // update the visibility of the button regarding to the login state
-    onLogginStatusChanged: function(result){
+    onLogginStatusChanged: function(result)
+    {
         if(result===true){
             this.loginButton.hide();
             this.openButton.show();
@@ -933,7 +936,8 @@ shape_designer.Toolbar = Class.extend({
      * 
      * @param {draw2d.Figure} figure
      */
-    onSelectionChanged : function(emitter, event){
+    onSelectionChanged : function(emitter, event)
+    {
         this.deleteButton.prop( "disabled", event.figure===null );
     },
     
@@ -1109,7 +1113,7 @@ shape_designer.dialog.FigureTest = Class.extend(
 
       
 });  
-shape_designer.dialog.FigureCode = Class.extend(
+shape_designer.dialog.FigureCodeExport = Class.extend(
 {
 
     init:function(){
@@ -1120,7 +1124,11 @@ shape_designer.dialog.FigureCode = Class.extend(
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
-		   
+
+			var customCode = app.getConfiguration("code");
+
+			js = js +"\n\n\n"+customCode;
+
 	        var splash = $(
 	                '<pre id="test_code" class="prettyprint">'+
                     js+

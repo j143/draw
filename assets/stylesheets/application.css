@@ -50,12 +50,6 @@
 }
 /********/
 
-.highlight, .highlight tspan, .close{
-    color: #4285F4 !important;
-}
-text.highlight tspan{
-    fill: #80CBC4 !important;
-}
 
 .blackgradient{
   background:none repeat scroll 0 0 #303030;
