@@ -58,7 +58,7 @@ module.exports = function (grunt) {
 
                     './src/assets/javascript/dialog/About.js',
                     './src/assets/javascript/dialog/FigureTest.js',
-                    './src/assets/javascript/dialog/FigureCode.js',
+                    './src/assets/javascript/dialog/FigureCodeExport.js',
                     './src/assets/javascript/dialog/FigureCodeEdit.js',
                     './src/assets/javascript/dialog/FileOpen.js',
                     './src/assets/javascript/dialog/FileSave.js',

@@ -1,4 +1,4 @@
-shape_designer.dialog.FigureCode = Class.extend(
+shape_designer.dialog.FigureCodeExport = Class.extend(
 {
 
     init:function(){
@@ -9,7 +9,11 @@ shape_designer.dialog.FigureCode = Class.extend(
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
-		   
+
+			var customCode = app.getConfiguration("code");
+
+			js = js +"\n\n\n"+customCode;
+
 	        var splash = $(
 	                '<pre id="test_code" class="prettyprint">'+
                     js+

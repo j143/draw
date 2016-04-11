@@ -1,6 +1,11 @@
 @import "colors.less";
 @import "layout.less";
 
+
+#tool_shape_caret{
+  color:black;
+}
+
 #toolbar {
   margin:0;
   padding-top:3px;
@@ -28,6 +33,30 @@
     background-color: transparent !important;
     border: none !important;
     margin-top: 45px;
+
+    .btn-group {
+
+      background-color: rgba(0,0,0,0.02) !important;
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.3) !important;
+      margin-left:10px;
+
+      .info-text{
+        position: absolute;
+        top: -16px;
+        left: -2px;
+        font-size: 10px;
+        color: @tintColor;
+        opacity:0;
+        transition: all 1s ease;
+      }
+    }
+    .btn-group:hover {
+      .info-text{
+        opacity:0.3;
+        transition: all 1s ease;
+      }
+    }
+
 
     .btn:focus,
     .btn-default,
@@ -97,5 +126,4 @@
 #githubButton{
   color:white;
   background-color:#24c85b !important;
-  border:1px solid @tintColor  !important;
 }
