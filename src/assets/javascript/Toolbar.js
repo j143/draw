@@ -219,7 +219,6 @@ shape_designer.Toolbar = Class.extend({
 
         $(".toolbarGroup .btn-group").each(function(index, element){
             var $e=$(element);
-            console.log($e.attr("title"));
             $e.prepend("<div class='info-text'>"+$e.attr("title")+"</div>");
         });
        // enable the tooltip for all buttons
