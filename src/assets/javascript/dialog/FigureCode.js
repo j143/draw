@@ -1,6 +1,5 @@
 shape_designer.dialog.FigureCode = Class.extend(
 {
-    NAME : "shape_designer.dialog.FigureCode", 
 
     init:function(){
 	},
@@ -14,7 +13,7 @@ shape_designer.dialog.FigureCode = Class.extend(
 	        var splash = $(
 	                '<pre id="test_code" class="prettyprint">'+
                     js+
-	                '</div>'+
+	                '</pre>'+
 					' <div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'+
 			        ' <div title="Copy to Cliopboard" id="test_clipboard"><i class="icon ion-clipboard"></i></div>'
 	                );

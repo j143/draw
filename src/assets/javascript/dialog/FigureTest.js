@@ -2,7 +2,6 @@
 
 shape_designer.dialog.FigureTest = Class.extend(
 {
-    NAME : "shape_designer.dialog.FigureTest", 
 
     init:function(){
      },
@@ -11,6 +10,7 @@ shape_designer.dialog.FigureTest = Class.extend(
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
+            js = js+app.getConfiguration().code;
 		    eval(js);
 	        var splash = $(
 				'<div>'+

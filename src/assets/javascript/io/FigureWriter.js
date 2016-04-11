@@ -101,21 +101,21 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
         });
         
         var template =
-         '// Generated Code for the Draw2D touch HTML5 lib          \n'+       
-         '//                                                        \n'+       
-         '// http://www.draw2d.org                                  \n'+       
-         '//                                                        \n'+       
-         '// '+new Date()+'                                         \n'+       
-         '//                                                        \n'+       
+         '// Generated Code for the Draw2D touch HTML5 lib\n'+
+         '//\n'+
+         '// http://www.draw2d.org\n'+
+         '//\n'+
+         '// '+new Date()+'\n'+
+         '//\n'+
          '// Go to the Designer http://www.draw2d.org               \n'+
          '// to design your own shape or download user generated    \n'+       
-         '//                                                        \n'+
-         'var {{{className}}} = {{{baseClass}}}.extend({            \n'+
-         '                                                          \n'+       
-         '       NAME: "{{{className}}}",                           \n'+
-         '                                                          \n'+       
-         '       init:function(attr, setter, getter)                \n'+
-         '       {                                                  \n'+
+         '//\n'+
+         'var {{{className}}} = {{{baseClass}}}.extend({\n'+
+         '\n'+
+         '       NAME: "{{{className}}}",\n'+
+         '\n'+
+         '       init:function(attr, setter, getter)\n'+
+         '       {\n'+
          '         this._super( $.extend({stroke:0, bgColor:null, width:{{width}},height:{{height}}},attr), setter, getter);\n'+
          '         var port;                                        \n'+
          '         {{#ports}}                                       \n'+
@@ -126,7 +126,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
          '         {{/ports}}                                       \n'+
          '         this.persistPorts=false;                         \n'+
          '       },                                                 \n'+
-         '                                                          \n'+       
+         '\n'+
          '       createShapeElement : function()                    \n'+       
          '       {                                                  \n'+       
          '          var shape = this._super();                      \n'+       
@@ -137,9 +137,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
          '                                                          \n'+       
          '       createSet: function(){                             \n'+
          '            var set= this.canvas.paper.set();             \n'+
-         '                                                          \n'+
-         '            {{#figures}}                                  \n'+
-         '            // {{{name}}}                                 \n'+
+         '\n'+
+         '            {{#figures}}\n'+
+         '            // {{{name}}}\n'+
          '            shape = {{{constructor}}};                    \n'+
          '            shape.attr({{{attr}}});                       \n'+
          '            set.push(shape);                              \n'+
@@ -147,7 +147,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
          '            {{/figures}}                                  \n'+
          '            return set;                                   \n'+
          '       },                                                 \n'+
-         '                                                          \n'+       
+         '\n'+
          '       applyAlpha: function(){                            \n'+
          '       }                                                  \n'+
        '});                                                         \n'+

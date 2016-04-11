@@ -110,7 +110,7 @@ shape_designer.Toolbar = Class.extend({
         this.codeButton  = $('<button  data-toggle="tooltip" title="JS Code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_js.png"></button>');
         this.toolbarDiv.append(this.codeButton);
         this.codeButton.on("click",$.proxy(function(){
-            new shape_designer.dialog.FigureCode().show();
+            new shape_designer.dialog.FigureCodeEdit().show();
         },this));
 
         this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");

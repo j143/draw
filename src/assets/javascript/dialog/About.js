@@ -1,7 +1,5 @@
 shape_designer.dialog.About = Class.extend(
 {
-    NAME : "shape_designer.dialog.About", 
-
     init:function(){
      },
 

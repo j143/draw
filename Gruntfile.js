@@ -59,6 +59,7 @@ module.exports = function (grunt) {
                     './src/assets/javascript/dialog/About.js',
                     './src/assets/javascript/dialog/FigureTest.js',
                     './src/assets/javascript/dialog/FigureCode.js',
+                    './src/assets/javascript/dialog/FigureCodeEdit.js',
                     './src/assets/javascript/dialog/FileOpen.js',
                     './src/assets/javascript/dialog/FileSave.js',
                     './src/assets/javascript/dialog/FileSaveAs.js',
@@ -128,6 +129,12 @@ module.exports = function (grunt) {
                 cwd: 'bower_components/components-font-awesome/',
                 src: ['./css/font-awesome.css','./fonts/*'],
                 dest: './dist/lib/awesome'
+            },
+            ace:{
+                expand: true,
+                cwd: 'bower_components/ace/lib/ace',
+                src: ['**/*'],
+                dest: './dist/lib/ace'
             },
             jscolor:{
                 expand: true,
