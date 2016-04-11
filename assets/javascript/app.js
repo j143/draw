@@ -183,8 +183,6 @@ shape_designer.Application = Class.extend(
 
     login:function()
     {
-   //     var _this = this;
-
         window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
     },
 
@@ -905,7 +903,6 @@ shape_designer.Toolbar = Class.extend({
 
         $(".toolbarGroup .btn-group").each(function(index, element){
             var $e=$(element);
-            console.log($e.attr("title"));
             $e.prepend("<div class='info-text'>"+$e.attr("title")+"</div>");
         });
        // enable the tooltip for all buttons
@@ -1036,7 +1033,6 @@ shape_designer.dialog.FigureTest = Class.extend(
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
-            js = js+app.getConfiguration().code;
 		    eval(js);
 	        var splash = $(
 				'<div>'+
@@ -1125,10 +1121,6 @@ shape_designer.dialog.FigureCodeExport = Class.extend(
 		
 		writer.marshal(app.view, "testShape",function(js){
 
-			var customCode = app.getConfiguration("code");
-
-			js = js +"\n\n\n"+customCode;
-
 	        var splash = $(
 	                '<pre id="test_code" class="prettyprint">'+
                     js+
@@ -1198,86 +1190,83 @@ shape_designer.dialog.FigureCodeEdit = Class.extend(
 
 		var writer = new shape_designer.FigureWriter();
 		
-		writer.marshal(app.view, "testShape",function(js){
-		    var code = app.getConfiguration("code");
-	        var splash = $(
-	                '<pre id="test_code">'+
-                    code+
-	                '</pre>'+
-					'<div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'
-	                );
-	        splash.hide();
-	        $("body").append(splash);
-			splash.fadeIn();
+        var code = app.getConfiguration("code");
+        var splash = $(
+                '<pre id="test_code">'+
+                code+
+                '</pre>'+
+                '<div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'
+                );
+        splash.hide();
+        $("body").append(splash);
+        splash.fadeIn();
 
-			var before=function(obj, method, wrapper) {
-				var orig = obj[method];
-				obj[method] = function() {
-					var args = Array.prototype.slice.call(arguments);
-					return wrapper.call(this, function(){
-						return orig.apply(obj, args);
-					}, args);
-				};
+        var before=function(obj, method, wrapper) {
+            var orig = obj[method];
+            obj[method] = function() {
+                var args = Array.prototype.slice.call(arguments);
+                return wrapper.call(this, function(){
+                    return orig.apply(obj, args);
+                }, args);
+            };
 
-				return obj[method];
-			};
+            return obj[method];
+        };
 
-			var intersects=function(range) {
-				return editor.getSelectionRange().intersects(range);
-			};
+        var intersects=function(range) {
+            return editor.getSelectionRange().intersects(range);
+        };
 
-			var preventReadonly=function(next, args) {
-				if (intersects(range)) return;
-				next();
-			};
+        var preventReadonly=function(next, args) {
+            if (intersects(range)) return;
+            next();
+        };
 
-            var lines = code.split("\n");
-            var last =  lines.length-1;
-            var first = lines.findIndex(function(element, index, array){return element.startsWith("testShape");});
+        var lines = code.split("\n");
+        var last =  lines.length-1;
+        var first = lines.findIndex(function(element, index, array){return element.startsWith("testShape");});
 
-			var editor   = ace.edit("test_code"),
-				session  = editor.getSession(),
-				Range    = require("ace/range").Range,
-				range    = new Range(0, 0, first, lines[first].length),
-				range2   = new Range(last, 0, last, lines[last].length);
+        var editor   = ace.edit("test_code"),
+            session  = editor.getSession(),
+            Range    = require("ace/range").Range,
+            range    = new Range(0, 0, first, lines[first].length),
+            range2   = new Range(last, 0, last, lines[last].length);
 
-            session.addMarker(range, "readonly-highlight");
-            session.addMarker(range2, "readonly-highlight");
-			session.setMode("ace/mode/javascript");
-			session.setUseWrapMode(true);
-			editor.moveCursorTo(first+1,0);
-			editor.focus();
+        session.addMarker(range, "readonly-highlight");
+        session.addMarker(range2, "readonly-highlight");
+        session.setMode("ace/mode/javascript");
+        session.setUseWrapMode(true);
+        editor.moveCursorTo(first+1,0);
+        editor.focus();
 
-			editor.keyBinding.addKeyboardHandler({
-				handleKeyboard : function(data, hash, keyString, keyCode, event) {
-					if (hash === -1 || (keyCode <= 40 && keyCode >= 37)) return false;
+        editor.keyBinding.addKeyboardHandler({
+            handleKeyboard : function(data, hash, keyString, keyCode, event) {
+                if (hash === -1 || (keyCode <= 40 && keyCode >= 37)) return false;
 
-					if (intersects(range) ||intersects(range2)) {
-						return {command:"null", passEvent:false};
-					}
-				}
-			});
+                if (intersects(range) ||intersects(range2)) {
+                    return {command:"null", passEvent:false};
+                }
+            }
+        });
 
-			before(editor, 'onPaste', preventReadonly);
-			before(editor, 'onCut',   preventReadonly);
+        before(editor, 'onPaste', preventReadonly);
+        before(editor, 'onCut',   preventReadonly);
 
-			range.start  = session.doc.createAnchor(range.start);
-			range.end    = session.doc.createAnchor(range.end);
-			range.end.$insertRight = true;
+        range.start  = session.doc.createAnchor(range.start);
+        range.end    = session.doc.createAnchor(range.end);
+        range.end.$insertRight = true;
 
-            range2.start  = session.doc.createAnchor(range2.start);
-            range2.end    = session.doc.createAnchor(range2.end);
-            range2.end.$insertRight = true;
+        range2.start  = session.doc.createAnchor(range2.start);
+        range2.end    = session.doc.createAnchor(range2.end);
+        range2.end.$insertRight = true;
 
-	         $("#test_close").on("click",function(){
-				 var code = editor.getValue();
-				 app.setConfiguration({code:code});
-				 splash.fadeOut(function(){
-					 splash.remove();
-				 });
-			 });
-
-		});
+         $("#test_close").on("click",function(){
+             var code = editor.getValue();
+             app.setConfiguration({code:code});
+             splash.fadeOut(function(){
+                 splash.remove();
+             });
+         });
 	}
 
       
@@ -3602,7 +3591,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
      * @param {Function} resultCallback the method to call on success. The first argument is the result object, the second the base64 representation of the file content
      */
     marshal: function(canvas, className, resultCallback){
-        var baseClass = app.getConfiguration().baseClass;
+        var baseClass = app.getConfiguration("baseClass");
+        var customCode = app.getConfiguration("code");
         var figures = canvas.getExtFigures();
         var b = canvas.getBoundingBox();
 
@@ -3692,7 +3682,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
             width: b.w,
             height: b.h
         });
-        
+
+        output = output +"\n\n"+customCode;
         resultCallback(output,  draw2d.util.Base64.encode(output));
     }
 });
