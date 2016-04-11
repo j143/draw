@@ -21,7 +21,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
      * @param {Function} resultCallback the method to call on success. The first argument is the result object, the second the base64 representation of the file content
      */
     marshal: function(canvas, className, resultCallback){
-        var baseClass = app.getConfiguration().baseClass;
+        var baseClass = app.getConfiguration("baseClass");
+        var customCode = app.getConfiguration("code");
         var figures = canvas.getExtFigures();
         var b = canvas.getBoundingBox();
 
@@ -111,7 +112,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
             width: b.w,
             height: b.h
         });
-        
+
+        output = output +"\n\n"+customCode;
         resultCallback(output,  draw2d.util.Base64.encode(output));
     }
 });

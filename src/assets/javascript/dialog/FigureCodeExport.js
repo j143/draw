@@ -10,10 +10,6 @@ shape_designer.dialog.FigureCodeExport = Class.extend(
 		
 		writer.marshal(app.view, "testShape",function(js){
 
-			var customCode = app.getConfiguration("code");
-
-			js = js +"\n\n\n"+customCode;
-
 	        var splash = $(
 	                '<pre id="test_code" class="prettyprint">'+
                     js+

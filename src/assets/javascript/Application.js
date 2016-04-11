@@ -115,8 +115,6 @@ shape_designer.Application = Class.extend(
 
     login:function()
     {
-   //     var _this = this;
-
         window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
     },
 
