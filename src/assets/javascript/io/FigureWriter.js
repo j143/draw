@@ -100,60 +100,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
             figure.translate(x,y);
         });
         
-        var template =
-         '// Generated Code for the Draw2D touch HTML5 lib\n'+
-         '//\n'+
-         '// http://www.draw2d.org\n'+
-         '//\n'+
-         '// '+new Date()+'\n'+
-         '//\n'+
-         '// Go to the Designer http://www.draw2d.org               \n'+
-         '// to design your own shape or download user generated    \n'+       
-         '//\n'+
-         'var {{{className}}} = {{{baseClass}}}.extend({\n'+
-         '\n'+
-         '       NAME: "{{{className}}}",\n'+
-         '\n'+
-         '       init:function(attr, setter, getter)\n'+
-         '       {\n'+
-         '         this._super( $.extend({stroke:0, bgColor:null, width:{{width}},height:{{height}}},attr), setter, getter);\n'+
-         '         var port;                                        \n'+
-         '         {{#ports}}                                       \n'+
-         '         // {{{name}}}                                    \n'+
-         '         port = this.createPort("{{type}}", new draw2d.layout.locator.XYRelPortLocator({{x}}, {{y}})); \n'+       
-         '         port.setConnectionDirection({{direction}});      \n'+       
-         '         port.setBackgroundColor("{{color}}");            \n'+
-         '         {{/ports}}                                       \n'+
-         '         this.persistPorts=false;                         \n'+
-         '       },                                                 \n'+
-         '\n'+
-         '       createShapeElement : function()                    \n'+       
-         '       {                                                  \n'+       
-         '          var shape = this._super();                      \n'+       
-         '          this.originalWidth = {{width}};                 \n'+       
-         '          this.originalHeight= {{height}};                \n'+       
-         '          return shape;                                   \n'+       
-         '       },                                                 \n'+       
-         '                                                          \n'+       
-         '       createSet: function(){                             \n'+
-         '            var set= this.canvas.paper.set();             \n'+
-         '\n'+
-         '            {{#figures}}\n'+
-         '            // {{{name}}}\n'+
-         '            shape = {{{constructor}}};                    \n'+
-         '            shape.attr({{{attr}}});                       \n'+
-         '            set.push(shape);                              \n'+
-         '            {{{extra}}}                                   \n'+       
-         '            {{/figures}}                                  \n'+
-         '            return set;                                   \n'+
-         '       },                                                 \n'+
-         '\n'+
-         '       applyAlpha: function(){                            \n'+
-         '       }                                                  \n'+
-       '});                                                         \n'+
-         '                                                          \n';
-        
-        
+        var template =$("#shape-base-template").text().trim();
+
         var compiled = Hogan.compile(template);
         var output = compiled.render({
             className: className,

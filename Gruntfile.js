@@ -13,7 +13,7 @@ module.exports = function (grunt) {
             },
             libs: {
                 src: [
-                    './bower_components/shifty/dist/shifty.min.js',
+                    './bower_components/draw2d/dist/shifty.js',
                     './bower_components/draw2d/dist/patched_raphael.js',
                     './bower_components/jquery/dist/jquery.min.js',
                     './bower_components/draw2d/dist/jquery.autoresize.js',

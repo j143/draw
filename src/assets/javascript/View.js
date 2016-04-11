@@ -5,7 +5,7 @@ shape_designer.View = draw2d.Canvas.extend({
 	init:function(app, id){
         var _this = this;
 
-		this._super(id, 2000,2000);
+		this._super(id, 8000, 8000);
 		this.clippboardFigure=null;
         this.grid =  new draw2d.policy.canvas.ShowGridEditPolicy(20);
 
@@ -52,7 +52,27 @@ shape_designer.View = draw2d.Canvas.extend({
         // Inject the OneToOne Button
         //
         $("#canvas_zoom_normal").on("click",$.proxy(function(){
-            this.setZoom(1.0, true);
+            this.setZoom(1.0, false);
+            var xCoords = [];
+            var yCoords = [];
+            this.view.getFigures().each(function(i,f){
+                var b = f.getBoundingBox();
+                xCoords.push(b.x, b.x+b.w);
+                yCoords.push(b.y, b.y+b.h);
+            });
+            var minX   = Math.min.apply(Math, xCoords);
+            var minY   = Math.min.apply(Math, yCoords);
+            var width  = Math.max.apply(Math, xCoords)-minX;
+            var height = Math.max.apply(Math, yCoords)-minY;
+
+            var dx = (this.view.getWidth()/2)-(minX+width/2);
+            var dy = (this.view.getHeight()/2)-(minY+height/2);
+
+            // scroll the document top/left corner into the viewport
+            //
+            var c = $("#canvas");
+            c.animate({ scrollTop: minY+dy-(c.height()/2), scrollLeft: minX+dx-(c.width()/2) });
+
             $("#canvas_zoom_normal").text("100%");
         },this));
       
@@ -168,6 +188,30 @@ shape_designer.View = draw2d.Canvas.extend({
     
     showDecoration: function(){
         this.installEditPolicy( this.grid);
+    },
+
+    /**
+     * @method
+     * Return the width of the canvas
+     *
+     * @return {Number}
+     **/
+    getWidth: function()
+    {
+        return this.html.find("svg").width();
+    },
+
+
+    /**
+     * @method
+     * Return the height of the canvas.
+     *
+     * @return {Number}
+     **/
+    getHeight: function()
+    {
+        return this.html.find("svg").height();
     }
+
 });
 

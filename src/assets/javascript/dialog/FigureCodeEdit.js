@@ -8,7 +8,7 @@ shape_designer.dialog.FigureCodeEdit = Class.extend(
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
-		    var code = $.extend({},{code:"testShape = testShape.extend({\n});"},app.getConfiguration()).code;
+		    var code = app.getConfiguration("code");
 	        var splash = $(
 	                '<pre id="test_code">'+
                     code+
@@ -40,20 +40,22 @@ shape_designer.dialog.FigureCodeEdit = Class.extend(
 				next();
 			};
 
-            lines = code.split("\n");
-            last =  lines.length-1;
-            console.log(last);
-			var   editor   = ace.edit("test_code")
-				, session  = editor.getSession()
-				, Range    = require("ace/range").Range
-                , range    = new Range(0, 0, 0, code.indexOf('\n'))
-                , range2   = new Range(last, 0, last, lines[last].length);
+            var lines = code.split("\n");
+            var last =  lines.length-1;
+            var first = lines.findIndex(function(element, index, array){return element.startsWith("testShape");});
+
+			var editor   = ace.edit("test_code"),
+				session  = editor.getSession(),
+				Range    = require("ace/range").Range,
+				range    = new Range(0, 0, first, lines[first].length),
+				range2   = new Range(last, 0, last, lines[last].length);
 
             session.addMarker(range, "readonly-highlight");
             session.addMarker(range2, "readonly-highlight");
 			session.setMode("ace/mode/javascript");
 			session.setUseWrapMode(true);
-
+			editor.moveCursorTo(first+1,0);
+			editor.focus();
 
 			editor.keyBinding.addKeyboardHandler({
 				handleKeyboard : function(data, hash, keyString, keyCode, event) {
