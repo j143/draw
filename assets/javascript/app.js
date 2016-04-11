@@ -108,6 +108,11 @@ shape_designer.Application = Class.extend(
     {
         var _this = this;
 
+        this.documentConfigurationTempl = {
+            baseClass:"draw2d.SetFigure",
+            code :$("#shape-edit-template").text().trim()
+        };
+
         this.localStorage = [];
         try {
             if( 'localStorage' in window && window.localStorage !== null){
@@ -119,9 +124,7 @@ shape_designer.Application = Class.extend(
 
         this.currentFile = null;
         // attached to the very first shape
-        this.documentConfiguration = {
-            baseClass:"draw2d.SetFigure"
-        };
+        this.documentConfiguration = $.extend({},this.documentConfigurationTempl);
 
         this.storage = new shape_designer.storage.BackendStorage();
         this.view    = new shape_designer.View(this, "canvas");
@@ -202,12 +205,42 @@ shape_designer.Application = Class.extend(
         this.view.clear();
         this.localStorage.removeItem("json");
         this.storage.currentFileHandle = null;
-        this.documentConfiguration = {
-            baseClass:"draw2d.SetFigure"
-        };
+        this.documentConfiguration = $.extend({},this.documentConfigurationTempl);
+
         if(shapeTemplate){
             var reader = new draw2d.io.json.Reader();
             reader.unmarshal(this.view, shapeTemplate);
+            this.view.getCommandStack().markSaveLocation();
+
+            // get the bounding box of the document and translate the complete document
+            // into the center of the canvas. Scroll to the top left corner after them
+            //
+            var xCoords = [];
+            var yCoords = [];
+            this.view.getFigures().each(function(i,f){
+                var b = f.getBoundingBox();
+                xCoords.push(b.x, b.x+b.w);
+                yCoords.push(b.y, b.y+b.h);
+            });
+            var minX   = Math.min.apply(Math, xCoords);
+            var minY   = Math.min.apply(Math, yCoords);
+            var width  = Math.max.apply(Math, xCoords)-minX;
+            var height = Math.max.apply(Math, yCoords)-minY;
+
+            var dx = (this.view.getWidth()/2)-(minX+width/2);
+            var dy = (this.view.getHeight()/2)-(minY+height/2);
+            this.view.getFigures().each(function(i,f){
+                f.translate(dx,dy);
+            });
+            this.view.getLines().each(function(i,f){
+                f.translate(dx,dy);
+            });
+
+            // scroll the document top/left corner into the viewport
+            //
+            var c = $("#canvas");
+            c.animate({ scrollTop: minY+dy-(c.height()/2), scrollLeft: minX+dx-(c.width()/2) });
+
         }
     },
 
@@ -245,13 +278,16 @@ shape_designer.Application = Class.extend(
 	},
 
 
-    getConfiguration: function()
+    getConfiguration: function( key)
     {
         var figures = this.view.getExtFigures();
         if(figures.getSize()>0){
             this.documentConfiguration = $.extend({},  this.documentConfiguration, figures.first().getUserData());
         }
 
+        if(key){
+            return this.documentConfiguration[key];
+        }
         return this.documentConfiguration;
     },
 
@@ -272,7 +308,7 @@ shape_designer.View = draw2d.Canvas.extend({
 	init:function(app, id){
         var _this = this;
 
-		this._super(id, 2000,2000);
+		this._super(id, 8000, 8000);
 		this.clippboardFigure=null;
         this.grid =  new draw2d.policy.canvas.ShowGridEditPolicy(20);
 
@@ -319,7 +355,27 @@ shape_designer.View = draw2d.Canvas.extend({
         // Inject the OneToOne Button
         //
         $("#canvas_zoom_normal").on("click",$.proxy(function(){
-            this.setZoom(1.0, true);
+            this.setZoom(1.0, false);
+            var xCoords = [];
+            var yCoords = [];
+            this.view.getFigures().each(function(i,f){
+                var b = f.getBoundingBox();
+                xCoords.push(b.x, b.x+b.w);
+                yCoords.push(b.y, b.y+b.h);
+            });
+            var minX   = Math.min.apply(Math, xCoords);
+            var minY   = Math.min.apply(Math, yCoords);
+            var width  = Math.max.apply(Math, xCoords)-minX;
+            var height = Math.max.apply(Math, yCoords)-minY;
+
+            var dx = (this.view.getWidth()/2)-(minX+width/2);
+            var dy = (this.view.getHeight()/2)-(minY+height/2);
+
+            // scroll the document top/left corner into the viewport
+            //
+            var c = $("#canvas");
+            c.animate({ scrollTop: minY+dy-(c.height()/2), scrollLeft: minX+dx-(c.width()/2) });
+
             $("#canvas_zoom_normal").text("100%");
         },this));
       
@@ -435,7 +491,31 @@ shape_designer.View = draw2d.Canvas.extend({
     
     showDecoration: function(){
         this.installEditPolicy( this.grid);
+    },
+
+    /**
+     * @method
+     * Return the width of the canvas
+     *
+     * @return {Number}
+     **/
+    getWidth: function()
+    {
+        return this.html.find("svg").width();
+    },
+
+
+    /**
+     * @method
+     * Return the height of the canvas.
+     *
+     * @return {Number}
+     **/
+    getHeight: function()
+    {
+        return this.html.find("svg").height();
     }
+
 });
 
 
@@ -653,7 +733,7 @@ shape_designer.Toolbar = Class.extend({
         });
 
 
-        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_load.png"></button>');
+        this.openButton  = $('<button  data-toggle="tooltip" data-size="xs" title="Load <span class=\'highlight\'> [ Ctrl+O ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_load.png"></button>');
         buttonGroup.append(this.openButton);
         this.openButton.on("click",$.proxy(function(){
             var button = this.openButton;
@@ -663,7 +743,7 @@ shape_designer.Toolbar = Class.extend({
         Mousetrap.bind("ctrl+o", $.proxy(function (event) {this.openButton.click();return false;},this));
         this.openButton.hide();
         
-        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" data-style="zoom-in" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_save.png"></button>');
+        this.saveButton  = $('<button data-toggle="tooltip" data-size="xs" title="Save <span class=\'highlight\'> [ Ctrl+S ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_file_save.png"></button>');
         buttonGroup.append(this.saveButton);
         this.saveButton.on("click",$.proxy(function(){
             var button = this.saveButton;
@@ -716,7 +796,7 @@ shape_designer.Toolbar = Class.extend({
         this.codeButton  = $('<button  data-toggle="tooltip" title="JS Code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_js.png"></button>');
         this.toolbarDiv.append(this.codeButton);
         this.codeButton.on("click",$.proxy(function(){
-            new shape_designer.dialog.FigureCode().show();
+            new shape_designer.dialog.FigureCodeEdit().show();
         },this));
 
         this.delimiter  = $("<span class='toolbar_delimiter'>&nbsp;</span>");
@@ -913,8 +993,6 @@ shape_designer.Breadcrumb = Class.extend({
 
 shape_designer.dialog.About = Class.extend(
 {
-    NAME : "shape_designer.dialog.About", 
-
     init:function(){
      },
 
@@ -946,7 +1024,6 @@ shape_designer.dialog.About = Class.extend(
 
 shape_designer.dialog.FigureTest = Class.extend(
 {
-    NAME : "shape_designer.dialog.FigureTest", 
 
     init:function(){
      },
@@ -955,6 +1032,7 @@ shape_designer.dialog.FigureTest = Class.extend(
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
+            js = js+app.getConfiguration().code;
 		    eval(js);
 	        var splash = $(
 				'<div>'+
@@ -1033,7 +1111,6 @@ shape_designer.dialog.FigureTest = Class.extend(
 });  
 shape_designer.dialog.FigureCode = Class.extend(
 {
-    NAME : "shape_designer.dialog.FigureCode", 
 
     init:function(){
 	},
@@ -1047,7 +1124,7 @@ shape_designer.dialog.FigureCode = Class.extend(
 	        var splash = $(
 	                '<pre id="test_code" class="prettyprint">'+
                     js+
-	                '</div>'+
+	                '</pre>'+
 					' <div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'+
 			        ' <div title="Copy to Cliopboard" id="test_clipboard"><i class="icon ion-clipboard"></i></div>'
 	                );
@@ -1100,6 +1177,99 @@ shape_designer.dialog.FigureCode = Class.extend(
 			});
 		});
 
+	}
+
+      
+});  
+shape_designer.dialog.FigureCodeEdit = Class.extend(
+{
+    init:function(){
+	},
+
+	show:function(){
+
+		var writer = new shape_designer.FigureWriter();
+		
+		writer.marshal(app.view, "testShape",function(js){
+		    var code = app.getConfiguration("code");
+	        var splash = $(
+	                '<pre id="test_code">'+
+                    code+
+	                '</pre>'+
+					'<div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'
+	                );
+	        splash.hide();
+	        $("body").append(splash);
+			splash.fadeIn();
+
+			var before=function(obj, method, wrapper) {
+				var orig = obj[method];
+				obj[method] = function() {
+					var args = Array.prototype.slice.call(arguments);
+					return wrapper.call(this, function(){
+						return orig.apply(obj, args);
+					}, args);
+				};
+
+				return obj[method];
+			};
+
+			var intersects=function(range) {
+				return editor.getSelectionRange().intersects(range);
+			};
+
+			var preventReadonly=function(next, args) {
+				if (intersects(range)) return;
+				next();
+			};
+
+            var lines = code.split("\n");
+            var last =  lines.length-1;
+            var first = lines.findIndex(function(element, index, array){return element.startsWith("testShape");});
+
+			var editor   = ace.edit("test_code"),
+				session  = editor.getSession(),
+				Range    = require("ace/range").Range,
+				range    = new Range(0, 0, first, lines[first].length),
+				range2   = new Range(last, 0, last, lines[last].length);
+
+            session.addMarker(range, "readonly-highlight");
+            session.addMarker(range2, "readonly-highlight");
+			session.setMode("ace/mode/javascript");
+			session.setUseWrapMode(true);
+			editor.moveCursorTo(first+1,0);
+			editor.focus();
+
+			editor.keyBinding.addKeyboardHandler({
+				handleKeyboard : function(data, hash, keyString, keyCode, event) {
+					if (hash === -1 || (keyCode <= 40 && keyCode >= 37)) return false;
+
+					if (intersects(range) ||intersects(range2)) {
+						return {command:"null", passEvent:false};
+					}
+				}
+			});
+
+			before(editor, 'onPaste', preventReadonly);
+			before(editor, 'onCut',   preventReadonly);
+
+			range.start  = session.doc.createAnchor(range.start);
+			range.end    = session.doc.createAnchor(range.end);
+			range.end.$insertRight = true;
+
+            range2.start  = session.doc.createAnchor(range2.start);
+            range2.end    = session.doc.createAnchor(range2.end);
+            range2.end.$insertRight = true;
+
+	         $("#test_close").on("click",function(){
+				 var code = editor.getValue();
+				 app.setConfiguration({code:code});
+				 splash.fadeOut(function(){
+					 splash.remove();
+				 });
+			 });
+
+		});
 	}
 
       
@@ -3503,60 +3673,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
             figure.translate(x,y);
         });
         
-        var template =
-         '// Generated Code for the Draw2D touch HTML5 lib          \n'+       
-         '//                                                        \n'+       
-         '// http://www.draw2d.org                                  \n'+       
-         '//                                                        \n'+       
-         '// '+new Date()+'                                         \n'+       
-         '//                                                        \n'+       
-         '// Go to the Designer http://www.draw2d.org               \n'+
-         '// to design your own shape or download user generated    \n'+       
-         '//                                                        \n'+
-         'var {{{className}}} = {{{baseClass}}}.extend({            \n'+
-         '                                                          \n'+       
-         '       NAME: "{{{className}}}",                           \n'+
-         '                                                          \n'+       
-         '       init:function(attr, setter, getter)                \n'+
-         '       {                                                  \n'+
-         '         this._super( $.extend({stroke:0, bgColor:null, width:{{width}},height:{{height}}},attr), setter, getter);\n'+
-         '         var port;                                        \n'+
-         '         {{#ports}}                                       \n'+
-         '         // {{{name}}}                                    \n'+
-         '         port = this.createPort("{{type}}", new draw2d.layout.locator.XYRelPortLocator({{x}}, {{y}})); \n'+       
-         '         port.setConnectionDirection({{direction}});      \n'+       
-         '         port.setBackgroundColor("{{color}}");            \n'+
-         '         {{/ports}}                                       \n'+
-         '         this.persistPorts=false;                         \n'+
-         '       },                                                 \n'+
-         '                                                          \n'+       
-         '       createShapeElement : function()                    \n'+       
-         '       {                                                  \n'+       
-         '          var shape = this._super();                      \n'+       
-         '          this.originalWidth = {{width}};                 \n'+       
-         '          this.originalHeight= {{height}};                \n'+       
-         '          return shape;                                   \n'+       
-         '       },                                                 \n'+       
-         '                                                          \n'+       
-         '       createSet: function(){                             \n'+
-         '            var set= this.canvas.paper.set();             \n'+
-         '                                                          \n'+
-         '            {{#figures}}                                  \n'+
-         '            // {{{name}}}                                 \n'+
-         '            shape = {{{constructor}}};                    \n'+
-         '            shape.attr({{{attr}}});                       \n'+
-         '            set.push(shape);                              \n'+
-         '            {{{extra}}}                                   \n'+       
-         '            {{/figures}}                                  \n'+
-         '            return set;                                   \n'+
-         '       },                                                 \n'+
-         '                                                          \n'+       
-         '       applyAlpha: function(){                            \n'+
-         '       }                                                  \n'+
-       '});                                                         \n'+
-         '                                                          \n';
-        
-        
+        var template =$("#shape-base-template").text().trim();
+
         var compiled = Hogan.compile(template);
         var output = compiled.render({
             className: className,
