@@ -12,7 +12,7 @@ shape_designer.dialog.FigureCodeEdit = Class.extend(
                 '</pre>'+
                 '<div title="Run"   id="test_run"  ><i class="icon ion-android-arrow-dropright-circle"></i></div>'+
                 '<div title="Close" id="code_close"><i class="icon ion-ios-close-outline"></i></div>'
-                );
+        );
         splash.hide();
         $("body").append(splash);
         splash.fadeIn();

@@ -13,7 +13,7 @@ shape_designer.filter.StrokeFilter = shape_designer.filter.Filter.extend({
 	   $parent.append('<div id="'+cssScope+'_container" class="panel panel-default">'+
                 	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#'+cssScope+'_width_panel">'+
                 	   '     Stroke'+
-                       '    <span id="button_remove_'+cssScope+'" class="btn btn-mini glyphicon glyphicon-remove-circle pull-right" ></span>'+
+                       '    <span id="button_remove_'+cssScope+'" class="btn btn-mini icon ion-ios-close-outline pull-right" ></span>'+
                 	   '</div>'+
                 	   
                 	   ' <div class="panel-body collapse in" id="'+cssScope+'_width_panel">'+

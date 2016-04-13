@@ -26,7 +26,8 @@ shape_designer.Layer = Class.extend({
 	 * 
 	 * @param {draw2d.Figure} figure
 	 */
-	onSelectionChanged : function(emitter, event){
+	onSelectionChanged : function(emitter, event)
+	{
         this._updateSelection();
 	},
 	
@@ -47,8 +48,8 @@ shape_designer.Layer = Class.extend({
 	        this.html.append(
 	                '<div class="layerElement" data-figure="'+figure.id+'" id="layerElement_'+figure.id+'" >'+
 	                   figure.getUserData().name +
-	                   '<img data-figure="'+figure.id+'" class="layer_visibility pull-right" src="./assets/images/layer_visibility_'+figure.isVisible()+'.png">'+
-                       '<img data-figure="'+figure.id+'" class="layer_edit pull-right" src="./assets/images/layer_edit.png">'+
+	                   '<span data-figure="'+figure.id+'" class="icon layer_visibility pull-right '+(figure.isVisible()?'ion-eye':'ion-eye-disabled')+'"></span>'+
+                       '<span data-figure="'+figure.id+'" class="icon layer_edit pull-right ion-ios-pricetag-outline" ></span>'+
 	        		'</div>');
 	    },this),true);
 	    
@@ -62,10 +63,11 @@ shape_designer.Layer = Class.extend({
 	        },this)
 	    });
  
-	    $(".layerElement img.layer_edit").on("click", $.proxy(function(event){
+	    $(".layerElement .layer_edit").on("click", $.proxy(function(event){
             var figure =this.view.getExtFigure($(event.target).data("figure"));
             bootbox.prompt({
-                title: "Shape Name",
+                title: "Layer Name",
+				className: "layer-name-prompt",
                 value: figure.getUserData().name,
                 callback: $.proxy(function(result) {
                     if (result !== null) {
@@ -74,14 +76,23 @@ shape_designer.Layer = Class.extend({
                     }
                 },this)
             });
+
+			// autoselect text for fast edit
+			setTimeout(function(){$(".bootbox-input").focus().select()},200);
  	    },this));
 
 	    
-	    $(".layerElement img.layer_visibility").on("click", $.proxy(function(event){
+	    $(".layerElement .layer_visibility").on("click", $.proxy(function(event){
             var figure =this.view.getExtFigure($(event.target).data("figure"));
             figure.setVisible(!figure.isVisible());
             this.view.setCurrentSelection(null);
-            $(event.target).attr({"src": "./assets/images/layer_visibility_"+figure.isVisible()+".png"});
+			if(figure.isVisible()){
+				$(event.target).removeClass("ion-eye-disabled").addClass("ion-eye");
+			}
+			else{
+				$(event.target).removeClass("ion-eye").addClass("ion-eye-disabled");
+			}
+			return false;
         },this));
 
         $(".layerElement").on("click", $.proxy(function(event){
@@ -94,7 +105,8 @@ shape_designer.Layer = Class.extend({
         this._updateSelection();
 	},
 	
-	_updateSelection: function(){
+	_updateSelection: function()
+	{
         $(".layerElement").removeClass("layerSelectedElement");
 	    var selection = this.view.getSelection();
 	    selection.each(function(i,e){

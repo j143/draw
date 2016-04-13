@@ -2,6 +2,36 @@
 @import "layout.less";
 
 
+.layer-name-prompt {
+  .modal-title{
+    font-weight:100;
+  }
+  .modal-footer{
+    border:0;
+  }
+  .modal-header{
+    border-bottom:3px solid @tintColor;
+  }
+
+  input{
+    outline:none !important;
+    -webkit-box-shadow: inset !important;
+    box-shadow: inset !important;
+    background-color: rgba(0,0,0,0.02) !important;
+    border-radius: 1px !important;
+    &:focus{
+      border:1px solid @tintColor;
+    }
+  }
+  .btn-primary{
+    background-color:@tintColor;
+    border:0;
+
+    &:hover{
+      background-color:darken(@tintColor,10%);
+    }
+  }
+}
 
 #layer{
   padding:0px;
@@ -50,21 +80,27 @@
 .layerElement{
   color: #dddddd;
   cursor: move;
-  font-weight: 400;
+  font-weight: 200;
+  font-size:12px;
   letter-spacing: 1px;
   padding: 4px 4px 4px 20px;
   text-align: left;
 }
 
-.layerElement img{
+.layerElement .icon{
   cursor:pointer;
   padding-top:4px;
   padding-right:4px;
+  padding-left: 6px;
+  &:hover{
+    color:@tintColor;
+  }
 }
+
 
 .layerSelectedElement{
   color:white;
   padding:4px;
   padding-left:20px;
-  background: @tintColor;
+  background: rgba(255,255,255,0.1);
 }

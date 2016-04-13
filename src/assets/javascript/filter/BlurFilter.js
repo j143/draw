@@ -11,7 +11,7 @@ shape_designer.filter.BlurFilter = shape_designer.filter.Filter.extend({
 	   $parent.append('<div id="'+this.cssScope+'_filter_container" class="panel panel-default">'+
                 	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#'+this.cssScope+'_width_panel">'+
                 	   '     Blur'+
-                       '    <span id="button_remove_'+this.cssScope+'" class="btn btn-mini glyphicon glyphicon-remove-circle pull-right" ></span>'+
+                       '    <span id="button_remove_'+this.cssScope+'" class="btn btn-mini icon ion-ios-close-outline pull-right" ></span>'+
                 	   '</div>'+
                 	   
                 	   ' <div class="panel-body collapse in" id="'+this.cssScope+'_blur_panel">'+

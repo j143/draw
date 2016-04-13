@@ -11,25 +11,23 @@ shape_designer.dialog.FigureCodeExport = Class.extend(
 		writer.marshal(app.view, "testShape",function(js){
 
 	        var splash = $(
-	                '<pre id="export_overlay" class="prettyprint">'+
+	                '<div class="overlay-scale"><pre id="export_overlay" class="prettyprint">'+
                     js+
 	                '</pre>'+
 					' <div title="Close" id="export_close"><i class="icon ion-ios-close-outline"></i></div>'+
-			        ' <div title="Copy to Clipboard" id="export_clipboard"><i class="icon ion-clipboard"></i></div>'
+			        ' <div title="Copy to Clipboard" id="export_clipboard"><i class="icon ion-clipboard"></i></div></div>'
 	                );
-	        splash.hide();
 	        $("body").append(splash);
 
 	         var removeDialog = function(){
-                 splash.fadeOut(function(){
-                     splash.remove();
-                 });
+				 splash.removeClass("open");
+				 setTimeout(function(){splash.remove();},400);
              };
              
 	         $("#export_close").on("click",removeDialog);
 	         prettyPrint();
 	         
-	         splash.fadeIn();	
+	         setTimeout(function(){splash.addClass("open");},100);
 
 			$("#export_clipboard").off("click").on("click",function(ev){
 

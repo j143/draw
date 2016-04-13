@@ -12,7 +12,7 @@ shape_designer.filter.OutlineStrokeFilter = shape_designer.filter.Filter.extend(
 	   $parent.append('<div id="outlinestroke_filter_conainer" class="panel panel-default">'+
                 	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#outlinestroke_width_panel">'+
                 	   '     Outline Stroke'+
-                       '    <span id="button_remove_OutlineStrokeFilter" class="btn btn-mini glyphicon glyphicon-remove-circle pull-right" ></span>'+
+                       '    <span id="button_remove_OutlineStrokeFilter" class="btn btn-mini icon ion-ios-close-outline pull-right" ></span>'+
                 	   '</div>'+
                 	   
                 	   ' <div class="panel-body collapse in" id="outlinestroke_width_panel">'+
