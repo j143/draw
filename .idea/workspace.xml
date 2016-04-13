@@ -2,19 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c3d20c38-2845-4b73-a881-841000162782" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/assets/less/dialog_code.less" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/assets/less/dialog_export.less" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/assets/less/dialog_test.less" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/javascript/Application.js" afterPath="$PROJECT_DIR$/src/assets/javascript/Application.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeEdit.js" afterPath="$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeEdit.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeExport.js" afterPath="$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeExport.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/javascript/dialog/FigureTest.js" afterPath="$PROJECT_DIR$/src/assets/javascript/dialog/FigureTest.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/javascript/Toolbar.js" afterPath="$PROJECT_DIR$/src/assets/javascript/Toolbar.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/javascript/filter/PositionFilter.js" afterPath="$PROJECT_DIR$/src/assets/javascript/filter/PositionFilter.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/stylesheets/application.css" afterPath="$PROJECT_DIR$/src/assets/stylesheets/application.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/index.html" afterPath="$PROJECT_DIR$/src/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/less/toolbar.less" afterPath="$PROJECT_DIR$/src/assets/less/toolbar.less" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/assets/less/filter.less" afterPath="$PROJECT_DIR$/src/assets/less/filter.less" />
     </list>
     <ignored path="app.shape_designer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,16 +36,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="canvas.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/assets/less/canvas.less">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="FigureCodeExport.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeExport.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -66,11 +46,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FigureCodeEdit.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeEdit.js">
+      <file leaf-file-name="filter.less" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/assets/less/filter.less">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.0424597">
-              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+            <state vertical-scroll-proportion="-14.833333">
+              <caret line="92" column="17" selection-start-line="92" selection-start-column="17" selection-end-line="92" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="StrokeFilter.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/assets/javascript/filter/StrokeFilter.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="18" column="59" selection-start-line="18" selection-start-column="47" selection-end-line="18" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -79,48 +69,50 @@
       <file leaf-file-name="application.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/assets/stylesheets/application.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.5555556">
-              <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="toolbar.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/assets/less/toolbar.less">
+      <file leaf-file-name="PositionFilter.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/assets/javascript/filter/PositionFilter.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-19.208334">
-              <caret line="134" column="0" selection-start-line="134" selection-start-column="0" selection-end-line="134" selection-end-column="0" />
+            <state vertical-scroll-proportion="1.2676057">
+              <caret line="65" column="7" selection-start-line="65" selection-start-column="7" selection-end-line="65" selection-end-column="7" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Gruntfile.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <file leaf-file-name="FilterPane.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/assets/javascript/FilterPane.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="184" column="54" selection-start-line="184" selection-start-column="54" selection-end-line="184" selection-end-column="54" />
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dialog_test.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/assets/less/dialog_test.less">
+      <file leaf-file-name="Application.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/assets/javascript/Application.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.875">
-              <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="9" selection-end-column="16" />
-              <folding />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="47" column="25" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="25" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dialog_code.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/assets/less/dialog_code.less">
+      <file leaf-file-name="FigureCodeEdit.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeEdit.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.25">
-              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="10" selection-end-column="1" />
+            <state vertical-scroll-proportion="26.37037">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -149,7 +141,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/assets/javascript/policy/RectangleToolPolicy.js" />
         <option value="$PROJECT_DIR$/src/assets/javascript/policy/TextToolPolicy.js" />
         <option value="$PROJECT_DIR$/src/assets/javascript/policy/CircleToolPolicy.js" />
         <option value="$PROJECT_DIR$/src/assets/javascript/filter/PortDirectionFilter.js" />
@@ -173,7 +164,6 @@
         <option value="$PROJECT_DIR$/src/assets/javascript/Breadcrumb.js" />
         <option value="$PROJECT_DIR$/src/assets/less/layout.less" />
         <option value="$PROJECT_DIR$/src/assets/less/layer.less" />
-        <option value="$PROJECT_DIR$/src/assets/less/filter.less" />
         <option value="$PROJECT_DIR$/src/assets/javascript/io/BackendStorage.js" />
         <option value="$PROJECT_DIR$/src/assets/javascript/Configuration.js" />
         <option value="$PROJECT_DIR$/src/assets/less/colors.less" />
@@ -193,13 +183,15 @@
         <option value="$PROJECT_DIR$/src/assets/javascript/Toolbar.js" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/src/assets/less/toolbar.less" />
-        <option value="$PROJECT_DIR$/src/assets/stylesheets/application.css" />
         <option value="$PROJECT_DIR$/src/assets/less/dialog_test.less" />
         <option value="$PROJECT_DIR$/src/assets/less/dialog_code.less" />
         <option value="$PROJECT_DIR$/src/assets/less/dialog_export.less" />
         <option value="$PROJECT_DIR$/src/assets/javascript/dialog/FigureTest.js" />
         <option value="$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeExport.js" />
         <option value="$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeEdit.js" />
+        <option value="$PROJECT_DIR$/src/assets/stylesheets/application.css" />
+        <option value="$PROJECT_DIR$/src/assets/less/filter.less" />
+        <option value="$PROJECT_DIR$/src/assets/javascript/filter/PositionFilter.js" />
       </list>
     </option>
   </component>
@@ -390,7 +382,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="dialog" />
+              <option name="myItemId" value="filter" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -674,12 +666,12 @@
       <workItem from="1458312265167" duration="16000" />
       <workItem from="1458556076421" duration="4485000" />
       <workItem from="1458573661728" duration="4481000" />
-      <workItem from="1460532768894" duration="2103000" />
+      <workItem from="1460532768894" duration="3576000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="16101000" />
+    <option name="totallyTimeSpent" value="17574000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="209" y="23" width="1503" height="958" extended-state="0" />
@@ -736,20 +728,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/assets/javascript/figure/ExtPort.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bower_components/jquery/bower.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bower_components/jquery/.bower.json">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -800,13 +778,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/assets/javascript/FilterPane.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/assets/less/breadcrumb.less">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-18.125">
@@ -854,13 +825,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/assets/less/filter.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.0">
-          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1014,16 +978,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/assets/javascript/Application.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="77" column="7" selection-start-line="77" selection-start-column="7" selection-end-line="77" selection-end-column="7" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/assets/javascript/Toolbar.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-11.740741">
@@ -1052,14 +1006,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-19.208334">
           <caret line="134" column="0" selection-start-line="134" selection-start-column="0" selection-end-line="134" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/assets/stylesheets/application.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.5555556">
-          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1114,8 +1060,58 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/assets/javascript/dialog/FigureCodeEdit.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.0424597">
+        <state vertical-scroll-proportion="26.37037">
           <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assets/javascript/FilterPane.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assets/stylesheets/application.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assets/less/filter.less">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-14.833333">
+          <caret line="92" column="17" selection-start-line="92" selection-start-column="17" selection-end-line="92" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assets/javascript/filter/StrokeFilter.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="18" column="59" selection-start-line="18" selection-start-column="47" selection-end-line="18" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assets/javascript/Application.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="47" column="25" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="25" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/assets/javascript/filter/PositionFilter.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.2676057">
+          <caret line="65" column="7" selection-start-line="65" selection-start-column="7" selection-end-line="65" selection-end-column="7" />
           <folding />
         </state>
       </provider>

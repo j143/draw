@@ -31,9 +31,6 @@
     border-radius:0px !important;
 }
 
-.input-group-addon{
-    border-radius:0px !important;	
-}
 
 .panel{
 }
@@ -115,7 +112,6 @@ input{
  font-family: 'Roboto', sans-serif;
  font-weight: 300;
 }
-
 
 /******************************************************************
  * Einstellungen der PropertyViews im Editmodus der "Form".

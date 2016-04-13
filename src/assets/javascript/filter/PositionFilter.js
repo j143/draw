@@ -13,7 +13,7 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
                 	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#position_width_panel">'+
                 	   '     Position'+
                 	   '</div>'+
-                	   ' <div class="panel-body" id="position_width_panel">'+
+                	   ' <div class="panel-body  collapse in" id="position_width_panel">'+
                 	   '   <div class="form-group">'+
                        '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
                        '       <input id="filter_position_x" type="text" value="'+figure.getPosition().x+'" name="filter_position_x" class="form-control" />'+
@@ -24,7 +24,7 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
 
            $("#filter_position_x").TouchSpin({
                min: 0,
-               max: 3000,
+               max: 6000,
                step: 1,
                maxboostedstep: 10,
                postfix: 'X'
@@ -32,7 +32,7 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
 
            $("#filter_position_y").TouchSpin({
                min: 0,
-               max: 3000,
+               max: 6000,
                step: 1,
                maxboostedstep: 10,
                postfix: 'Y'
@@ -62,7 +62,8 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
            },this));
 	   },
 
-	   apply:function(figure, attributes){
+	   apply:function(figure, attributes)
+       {
 	       if(this.block===true){
 	           return;
 	       }
@@ -71,11 +72,12 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
            $("input[name='filter_position_x']").val(pos.x);
 	   },
 
-	   removePane:function(){
+	   removePane:function()
+       {
 	   },
 	   
-	   onInstall:function(figure){
-	     //   figure.setFontSize(1);
+	   onInstall:function(figure)
+       {
 	   }
 
 });
