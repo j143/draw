@@ -1,21 +1,3 @@
-.portDirectionOption {
-  height: 60px;
-  text-align: center;
-}
-.portDirectionOption label > input {
-  /* HIDE RADIO */
-  display: none;
-}
-.portDirectionOption label > input + span {
-  /* IMAGE STYLES */
-  cursor: pointer;
-  color: gray !important;
-  padding-right: 5px;
-}
-.portDirectionOption label > input:checked + span {
-  /* (CHECKED) IMAGE STYLES */
-  color: #4285f4 !important;
-}
 #tool_shape:hover #tool_shape_caret {
   color: #4285f4;
 }
@@ -200,7 +182,7 @@
   color: #4285f4;
 }
 #toolbar #currentTool_image {
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(66, 133, 244, 0.4);
 }
 #toolbar #currentTool_message {
   font-size: 12px;
@@ -280,8 +262,6 @@
   bottom: 0px;
   width: 200px;
   background-color: #282a30;
-  background-image: -webkit-linear-gradient(-405deg, #282a30, #393f4f);
-  background-image: linear-gradient(135deg, #282a30, #393f4f);
   text-align: center;
 }
 #layer .panetitle {
@@ -317,6 +297,7 @@
   letter-spacing: 1px;
   padding: 4px 4px 4px 20px;
   text-align: left;
+  border-bottom: 1px solid #222222;
 }
 .layerElement .icon {
   cursor: pointer;
@@ -441,6 +422,47 @@
   color: #4285f4;
 }
 
+.portDirectionOption {
+  height: 60px;
+  text-align: center;
+}
+.portDirectionOption label > input {
+  /* HIDE RADIO */
+  display: none;
+}
+.portDirectionOption label > input + span {
+  /* IMAGE STYLES */
+  cursor: pointer;
+  color: gray !important;
+  padding-right: 5px;
+}
+.portDirectionOption label > input:checked + span {
+  /* (CHECKED) IMAGE STYLES */
+  color: #4285f4 !important;
+}
+.portTypeOption {
+  height: 65px;
+  padding-left: 60px;
+}
+.portTypeOption label > input {
+  /* HIDE RADIO */
+  display: none;
+}
+.portTypeOption label > input + span {
+  /* IMAGE STYLES */
+  cursor: pointer;
+  color: gray !important;
+  padding-right: 5px;
+  font-weight: 100;
+  font-size: 14px;
+}
+.portTypeOption label > input + span:before {
+  padding-right: 10px;
+}
+.portTypeOption label > input:checked + span {
+  /* (CHECKED) IMAGE STYLES */
+  color: #4285f4 !important;
+}
 #filter {
   position: absolute;
   top: 120px;
@@ -452,8 +474,6 @@
   border-radius: 0;
   border: 0;
   background-color: #282a30;
-  background-image: -webkit-linear-gradient(-405deg, #282a30, #393f4f);
-  background-image: linear-gradient(135deg, #282a30, #393f4f);
 }
 #filter .form-control {
   height: 25px;
@@ -479,10 +499,11 @@
 #filter .panel-default {
   margin: 0;
   border-radius: 0;
-  background-color: #26262F;
+  background-color: rgba(66, 133, 244, 0.02);
   border: 0;
   border-top: 1px solid #303030;
   border-bottom: 1px solid #202525;
+  margin-top: 3px;
 }
 #filter .panetitle {
   position: fixed;
@@ -520,6 +541,7 @@
   border: 0 !important;
   margin-top: 4px;
   cursor: pointer;
+  font-weight: 300;
 }
 #filter_actions {
   position: fixed;
@@ -533,10 +555,6 @@
 #filter_actions .panel-body {
   padding: 7px;
   padding-top: 0;
-}
-#filter_actions > .panel {
-  margin-bottom: 8px;
-  border-left: 3px solid #26B4A8;
 }
 #filter_actions .form-group {
   margin-bottom: 2px !important;

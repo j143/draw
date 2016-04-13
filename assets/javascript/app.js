@@ -2561,34 +2561,39 @@ shape_designer.filter.PortTypeFilter = shape_designer.filter.Filter.extend({
 	insertPane: function(figure, $parent){
 
 	   var _this = this;
+	   var type =figure.getInputType();
 	   $parent.append('<div id="'+this.cssScope+'_container" class="panel panel-default">'+
                 	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#'+this.cssScope+'_panel">'+
                 	   '     Port Type'+
                 	   '</div>'+
                 	   
                 	   ' <div class="panel-body collapse in" id="'+this.cssScope+'_panel">'+
-                	   '   <div class="form-group">'+
-                       '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
-                       '      <div class="btn-group dropdown">'+
-                       '         <button id="'+this.cssScope+'_button" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">'+
-                       '              <span id="'+this.cssScope+'_label">'+figure.getInputType()+'</span>        '+
-                       '              <span class="caret"></span></button>     '+
-                       '              <ul class="dropdown-menu" id="select_'+this.cssScope+'_menu">'+
-                       '                 <li><a href="#" data-type="Input"  >Input </a></li>'+
-                       '                 <li><a href="#" data-type="Output" >Output</a></li>'+
-                       '                 <li><a href="#" data-type="Hybrid" >Hybrid</a></li>'+
-                       '              </ul>'+
-                       '         </button>'+
-                       '       </div>'+
+                	   '   <div class="form-group portTypeOption">'+
+
+						   '<label>'+
+						   '  <input '+(type=='Input'?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-type="Input" />'+
+						   '  <span  title="down" class="icon ion-log-in">input</span>'+
+						   '</label>'+
+						   '<br>'+
+						   '<label>'+
+						   '  <input '+(type=='Output'?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-type="Output" />'+
+						   '  <span  title="down" class="icon ion-log-out">output</span>'+
+						   '</label>'+
+	                       '<br>'+
+						   '<label>'+
+						   '  <input '+(type=='Hybrid'?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-type="Hybrid" />'+
+						   '  <span  title="down" class="icon ion-ios-circle-outline">unspecified</span>'+
+						   '</label>'+
+
+					   '       </div>'+
                        '   </div>'+
                        ' </div>'+
                 	   '</div>');
 
-	       $('#select_'+this.cssScope+'_menu a').on("click", function(){
+	       $("#"+_this.cssScope+"_panel .portTypeOption input").on("change", function(){
 	           var $this = $(this);
 	           var typeName = $this.data("type");
 	           figure.setInputType(typeName);
-	           $('#'+_this.cssScope+'_label').text(typeName);
 	       });
 	   },
 	   
@@ -3185,7 +3190,10 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     {
       this.isExtFigure = true;
       this.decoration = null;
-      this._super({diameter:10});
+      this._super({
+          bgColor:"#37B1DE",
+          diameter:10
+      });
 
 
       this.setUserData({
@@ -3256,16 +3264,18 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
         return [
                 {label:"Port Type",      impl:"shape_designer.filter.PortTypeFilter"},
                 {label:"Port Direction", impl:"shape_designer.filter.PortDirectionFilter"},
-                {label:"Color",          impl:"shape_designer.filter.FillColorFilter"},
+                {label:"Color",          impl:"shape_designer.filter.FillColorFilter"}
                 
                 ];
     },
 
-    removeFilter:function(filter){
+    removeFilter:function(filter)
+    {
       this.filters.remove(filter);  
     },
 
-    addFilter:function(filter){
+    addFilter:function(filter)
+    {
         var alreadyIn = false;
         
         this.filters.each($.proxy(function(i,e){
@@ -3295,9 +3305,7 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
         if(typeof attributes === "undefined"){
             attributes = {};
         }
-        
-         
-        
+
         this.filters.each($.proxy(function(i,filter){
             filter.apply(this, attributes);
         },this));
@@ -3897,8 +3905,8 @@ shape_designer.policy.GeoUnionToolPolicy = shape_designer.policy.AbstractGeoTool
 	
     
     onInstall: function(canvas){
-        this.setToolHeader("Add Polygon", "SURFACE_BOOL_ADD_064.png");
-    	this.setToolText( "Select polygon to add to");
+        this.setToolHeader("Merge Polygons", "SURFACE_BOOL_ADD_064.png");
+    	this.setToolText( "Select polygon to add to..");
     },
     
     
@@ -3926,7 +3934,7 @@ shape_designer.policy.GeoUnionToolPolicy = shape_designer.policy.AbstractGeoTool
             if(this.firstFigure===null){
                 this.firstFigure = figure;
                 this.select(canvas,figure);
-            	this.setToolText( "Select polygon to add");
+            	this.setToolText( "Select polygon to merge");
             }
             else{
                 this.execute(canvas, this.firstFigure, figure);
@@ -4429,24 +4437,27 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
     TITLE: "Port",
     MESSAGE_STEP1 : "Select location to add port.<br>Click on port to move.",
     
-    init:function(){
+    init:function()
+    {
         this._super();
-        
     },
 
     
-    onInstall: function(canvas){
+    onInstall: function(canvas)
+    {
         this.setToolHeader(this.TITLE, "PORT_064.png");
         this.setToolText(this.MESSAGE_STEP1);
         canvas.setCursor("cursor_port.png");
     },
     
-    onUninstall: function(canvas){
+    onUninstall: function(canvas)
+    {
         canvas.setCursor(null);
     },
     
     
-    select: function(canvas, figure){
+    select: function(canvas, figure)
+    {
       // check if the element an valid polygon. otherwise an boolean operation
         // isn't possible
         if(!(figure instanceof shape_designer.figure.ExtPort)){
@@ -4456,7 +4467,8 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
         this._super(canvas, figure);
     },
     
-    onMouseDown:function(canvas, x, y, shiftKey, ctrlKey){
+    onMouseDown:function(canvas, x, y, shiftKey, ctrlKey)
+    {
         var figure = canvas.getBestFigure(x, y);
         
         if(figure===null || figure instanceof shape_designer.figure.ExtPort){
@@ -4473,6 +4485,7 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
      * @template
      */
     onMouseUp: function(canvas, x, y){
+
         if(this.mouseDownElement===null || !(this.mouseDownElement instanceof shape_designer.figure.ExtPort)){
             var command = new draw2d.command.CommandAdd(canvas, new shape_designer.figure.ExtPort(), x, y);
             canvas.getCommandStack().execute(command);
