@@ -62,11 +62,13 @@ shape_designer.dialog.FigureTest = Class.extend(
 	          
 	            // create and add two nodes which contains Ports (In and OUT)
 	            //
-	             var start = new draw2d.shape.node.Start();
+                var start = new draw2d.shape.node.Start();
+                var toggle = new shape_designer.figure.TestSwitch();
 	             var end   = new draw2d.shape.node.End();
 	            
 	             // ...add it to the canvas 
-	             canvas.add( start, 50,250);
+                 canvas.add( toggle, 50,150);
+                 canvas.add( start, 50,250);
 	             canvas.add( end, 630,250);
 	             
 	             canvas.setCurrentSelection(test);

@@ -18,6 +18,31 @@ shape_designer.View = draw2d.Canvas.extend({
         this.installEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
 
+        Mousetrap.bind(['left'],function (event) {
+            var diff = _this.getZoom()<0.5?0.5:1;
+            var primarySelection = _this.getSelection().getPrimary();
+            if(primarySelection!==null){ primarySelection.translate(-diff,0);}
+            return false;
+        });
+        Mousetrap.bind(['up'],function (event) {
+            var diff = _this.getZoom()<0.5?0.5:1;
+            var primarySelection = _this.getSelection().getPrimary();
+            if(primarySelection!==null){ primarySelection.translate(0,-diff);}
+            return false;
+        });
+        Mousetrap.bind(['right'],function (event) {
+            var diff = _this.getZoom()<0.5?0.5:1;
+            var primarySelection = _this.getSelection().getPrimary();
+            if(primarySelection!==null){ primarySelection.translate(diff,0);}
+            return false;
+        });
+        Mousetrap.bind(['down'],function (event) {
+            var diff = _this.getZoom()<0.5?0.5:1;
+            var primarySelection = _this.getSelection().getPrimary();
+            if(primarySelection!==null){ primarySelection.translate(0,diff);}
+            return false;
+        });
+
         Mousetrap.bind(['ctrl+c', 'command+c'], $.proxy(function (event) {
             var primarySelection = this.getSelection().getPrimary();
             if(primarySelection!==null){
@@ -55,7 +80,7 @@ shape_designer.View = draw2d.Canvas.extend({
             this.setZoom(1.0, false);
             var xCoords = [];
             var yCoords = [];
-            this.view.getFigures().each(function(i,f){
+            _this.getFigures().each(function(i,f){
                 var b = f.getBoundingBox();
                 xCoords.push(b.x, b.x+b.w);
                 yCoords.push(b.y, b.y+b.h);
@@ -65,8 +90,8 @@ shape_designer.View = draw2d.Canvas.extend({
             var width  = Math.max.apply(Math, xCoords)-minX;
             var height = Math.max.apply(Math, yCoords)-minY;
 
-            var dx = (this.view.getWidth()/2)-(minX+width/2);
-            var dy = (this.view.getHeight()/2)-(minY+height/2);
+            var dx = (_this.getWidth()/2)-(minX+width/2);
+            var dy = (_this.getHeight()/2)-(minY+height/2);
 
             // scroll the document top/left corner into the viewport
             //

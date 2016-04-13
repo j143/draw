@@ -1,76 +1,76 @@
 /* jshint evil:true */
 shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
-    
+
     NAME: "shape_designer.figure.ExtLabel",
-    
+
 
     init:function()
     {
-      this.blur = 0;
-      this.isExtFigure = true;
+        this.blur = 0;
+        this.isExtFigure = true;
 
-      this._super();
- 
-     
-      this.setUserData({name:"Label"});
-      
-      this.filters   = new draw2d.util.ArrayList();
-      this.filters.add( new shape_designer.filter.PositionFilter());
-      this.filters.add( new shape_designer.filter.FontSizeFilter());
-      this.filters.add( new shape_designer.filter.FontColorFilter());
-      
-      this.installEditor(new draw2d.ui.LabelInplaceEditor());
-      
+        this._super();
+
+
+        this.setUserData({name:"Label"});
+
+        this.filters   = new draw2d.util.ArrayList();
+        this.filters.add( new shape_designer.filter.PositionFilter());
+        this.filters.add( new shape_designer.filter.FontSizeFilter());
+        this.filters.add( new shape_designer.filter.FontColorFilter());
+
+        this.installEditor(new draw2d.ui.LabelInplaceEditor());
+
     },
-    
+
     getPotentialFilters: function(){
         return [
-                {label:"Opacity", impl:"shape_designer.filter.OpacityFilter"},
-                {label:"Blur", impl:"shape_designer.filter.BlurFilter"},
-                {label:"Outline", impl:"shape_designer.filter.OutlineStrokeFilter"},
-                {label:"Gradient", impl:"shape_designer.filter.TextLinearGradientFilter"},
-                {label:"Font Size", impl:"shape_designer.filter.FontSizeFilter"},
-                {label:"Font Color", impl:"shape_designer.filter.FontColorFilter"}
-                ];
+            {label:"Opacity", impl:"shape_designer.filter.OpacityFilter"},
+            {label:"Blur", impl:"shape_designer.filter.BlurFilter"},
+            {label:"Outline", impl:"shape_designer.filter.OutlineStrokeFilter"},
+            {label:"Gradient", impl:"shape_designer.filter.TextLinearGradientFilter"},
+            {label:"Font Size", impl:"shape_designer.filter.FontSizeFilter"},
+            {label:"Font Color", impl:"shape_designer.filter.FontColorFilter"}
+        ];
     },
-    
+
     setBlur: function( value){
         this.blur = value;
         this.repaint();
     },
-    
+
     getBlur: function(){
-      return this.blur;  
+        return this.blur;
     },
-    
+
     removeFilter:function(filter){
-      this.filters.remove(filter);  
-      
-      return this;
+        this.filters.remove(filter);
+
+        return this;
     },
 
     addFilter:function(filter){
         var alreadyIn = false;
-        
+
         this.filters.each($.proxy(function(i,e){
             alreadyIn = alreadyIn || (e.NAME===filter.NAME);
         },this));
         if(alreadyIn===true){
             return; // silently
         }
-        
-        this.filters.add(filter);  
+
+        this.filters.add(filter);
         filter.onInstall(this);
         this.repaint();
-        
+
         return this;
     },
-    
-    
+
+
     /**
      * @method
      * Trigger the repaint of the element.
-     * 
+     *
      */
     repaint:function(attributes)
     {
@@ -81,7 +81,7 @@ shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
         if(typeof attributes === "undefined"){
             attributes = {};
         }
- 
+
         // style the label
         var lattr = {};
         lattr.text = this.text;
@@ -95,7 +95,7 @@ shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
         // since 4.2.1
         lattr.stroke = this.outlineColor.hash();
         lattr["stroke-width"] = this.outlineStroke;
-        
+
         this.filters.each($.proxy(function(i,filter){
             filter.apply(this, attributes, lattr);
         },this));
@@ -111,22 +111,22 @@ shape_designer.figure.ExtLabel = draw2d.shape.basic.Label.extend({
     },
 
     getPersistentAttributes : function()
-    {   
+    {
         var memento = this._super();
-        
+
         memento.filters = [];
         this.filters.each($.proxy(function(i,e){
             var filterMemento = e.getPersistentAttributes(this);
             memento.filters.push(filterMemento);
         },this));
- 
+
         return memento;
     },
-    
+
     setPersistentAttributes : function( memento)
     {
         this._super(memento);
-        
+
 
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();

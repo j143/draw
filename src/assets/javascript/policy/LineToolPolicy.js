@@ -121,7 +121,7 @@ shape_designer.policy.LineToolPolicy = shape_designer.policy.AbstractToolPolicy.
             this.lineFigure.setEndPoint(x, y);
             var command = new draw2d.command.CommandAdd(this.canvas, this.lineFigure, x, y);
             this.canvas.getCommandStack().execute(command);
-            canvas.setCurrentSelection(this.lineFigure);
+            this.canvas.setCurrentSelection(this.lineFigure);
         }
         else {
             this.lineFigure.addVertex(x, y);

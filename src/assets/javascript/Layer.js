@@ -58,7 +58,7 @@ shape_designer.Layer = Class.extend({
 	            $(".layerElement").reverse().each($.proxy(function(i,e){
 	                this.view.getExtFigure($(e).data("figure")).toFront();
 	            },this));
-                this.view.exportFramesToFront();
+
 	        },this)
 	    });
  
