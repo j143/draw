@@ -4,24 +4,27 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
     TITLE: "Port",
     MESSAGE_STEP1 : "Select location to add port.<br>Click on port to move.",
     
-    init:function(){
+    init:function()
+    {
         this._super();
-        
     },
 
     
-    onInstall: function(canvas){
+    onInstall: function(canvas)
+    {
         this.setToolHeader(this.TITLE, "PORT_064.png");
         this.setToolText(this.MESSAGE_STEP1);
         canvas.setCursor("cursor_port.png");
     },
     
-    onUninstall: function(canvas){
+    onUninstall: function(canvas)
+    {
         canvas.setCursor(null);
     },
     
     
-    select: function(canvas, figure){
+    select: function(canvas, figure)
+    {
       // check if the element an valid polygon. otherwise an boolean operation
         // isn't possible
         if(!(figure instanceof shape_designer.figure.ExtPort)){
@@ -31,7 +34,8 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
         this._super(canvas, figure);
     },
     
-    onMouseDown:function(canvas, x, y, shiftKey, ctrlKey){
+    onMouseDown:function(canvas, x, y, shiftKey, ctrlKey)
+    {
         var figure = canvas.getBestFigure(x, y);
         
         if(figure===null || figure instanceof shape_designer.figure.ExtPort){
@@ -48,6 +52,7 @@ shape_designer.policy.PortToolPolicy = shape_designer.policy.SelectionToolPolicy
      * @template
      */
     onMouseUp: function(canvas, x, y){
+
         if(this.mouseDownElement===null || !(this.mouseDownElement instanceof shape_designer.figure.ExtPort)){
             var command = new draw2d.command.CommandAdd(canvas, new shape_designer.figure.ExtPort(), x, y);
             canvas.getCommandStack().execute(command);

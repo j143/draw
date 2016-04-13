@@ -12,34 +12,39 @@ shape_designer.filter.PortTypeFilter = shape_designer.filter.Filter.extend({
 	insertPane: function(figure, $parent){
 
 	   var _this = this;
+	   var type =figure.getInputType();
 	   $parent.append('<div id="'+this.cssScope+'_container" class="panel panel-default">'+
                 	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#'+this.cssScope+'_panel">'+
                 	   '     Port Type'+
                 	   '</div>'+
                 	   
                 	   ' <div class="panel-body collapse in" id="'+this.cssScope+'_panel">'+
-                	   '   <div class="form-group">'+
-                       '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
-                       '      <div class="btn-group dropdown">'+
-                       '         <button id="'+this.cssScope+'_button" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">'+
-                       '              <span id="'+this.cssScope+'_label">'+figure.getInputType()+'</span>        '+
-                       '              <span class="caret"></span></button>     '+
-                       '              <ul class="dropdown-menu" id="select_'+this.cssScope+'_menu">'+
-                       '                 <li><a href="#" data-type="Input"  >Input </a></li>'+
-                       '                 <li><a href="#" data-type="Output" >Output</a></li>'+
-                       '                 <li><a href="#" data-type="Hybrid" >Hybrid</a></li>'+
-                       '              </ul>'+
-                       '         </button>'+
-                       '       </div>'+
+                	   '   <div class="form-group portTypeOption">'+
+
+						   '<label>'+
+						   '  <input '+(type=='Input'?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-type="Input" />'+
+						   '  <span  title="down" class="icon ion-log-in">input</span>'+
+						   '</label>'+
+						   '<br>'+
+						   '<label>'+
+						   '  <input '+(type=='Output'?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-type="Output" />'+
+						   '  <span  title="down" class="icon ion-log-out">output</span>'+
+						   '</label>'+
+	                       '<br>'+
+						   '<label>'+
+						   '  <input '+(type=='Hybrid'?' checked="checked"':'')+'type="radio" value="" name="'+this.cssScope+'_label" name="'+this.cssScope+'_label" data-type="Hybrid" />'+
+						   '  <span  title="down" class="icon ion-ios-circle-outline">unspecified</span>'+
+						   '</label>'+
+
+					   '       </div>'+
                        '   </div>'+
                        ' </div>'+
                 	   '</div>');
 
-	       $('#select_'+this.cssScope+'_menu a').on("click", function(){
+	       $("#"+_this.cssScope+"_panel .portTypeOption input").on("change", function(){
 	           var $this = $(this);
 	           var typeName = $this.data("type");
 	           figure.setInputType(typeName);
-	           $('#'+_this.cssScope+'_label').text(typeName);
 	       });
 	   },
 	   

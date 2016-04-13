@@ -9,7 +9,10 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     {
       this.isExtFigure = true;
       this.decoration = null;
-      this._super({diameter:10});
+      this._super({
+          bgColor:"#37B1DE",
+          diameter:10
+      });
 
 
       this.setUserData({
@@ -80,16 +83,18 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
         return [
                 {label:"Port Type",      impl:"shape_designer.filter.PortTypeFilter"},
                 {label:"Port Direction", impl:"shape_designer.filter.PortDirectionFilter"},
-                {label:"Color",          impl:"shape_designer.filter.FillColorFilter"},
+                {label:"Color",          impl:"shape_designer.filter.FillColorFilter"}
                 
                 ];
     },
 
-    removeFilter:function(filter){
+    removeFilter:function(filter)
+    {
       this.filters.remove(filter);  
     },
 
-    addFilter:function(filter){
+    addFilter:function(filter)
+    {
         var alreadyIn = false;
         
         this.filters.each($.proxy(function(i,e){
@@ -119,9 +124,7 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
         if(typeof attributes === "undefined"){
             attributes = {};
         }
-        
-         
-        
+
         this.filters.each($.proxy(function(i,filter){
             filter.apply(this, attributes);
         },this));

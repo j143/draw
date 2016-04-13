@@ -78,7 +78,7 @@ shape_designer.Layer = Class.extend({
             });
 
 			// autoselect text for fast edit
-			setTimeout(function(){$(".bootbox-input").focus().select()},200);
+			setTimeout(function(){$(".bootbox-input").focus().select();},200);
  	    },this));
 
 	    
