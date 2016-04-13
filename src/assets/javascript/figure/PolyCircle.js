@@ -25,6 +25,7 @@ shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
       
       this.filters = new draw2d.util.ArrayList();
       this.filters.add( new shape_designer.filter.PositionFilter());
+      this.filters.add( new shape_designer.filter.SizeFilter());
       this.filters.add( new shape_designer.filter.FillColorFilter());
     },
 

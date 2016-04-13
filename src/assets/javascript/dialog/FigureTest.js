@@ -21,9 +21,9 @@ shape_designer.dialog.FigureTest = Class.extend(
 				'<div class="overlay-scale">'+
 	                '<div id="test_canvas">'+
 	                '</div>'+
-	                ' <div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'+
-				'<div>'
-	                );
+				    ' <div               id="test_info" >Test page for your designed and coded draw2d shape.</div>'+
+				    ' <div title="Close" id="test_close" class="icon ion-ios-close-outline"></div>'+
+				'<div>');
 
 	        // fadeTo MUSS leider sein. Man kann mit raphael keine paper.text elemente einfügen
 	        // wenn das canvas nicht sichtbar ist. In diesen Fall mach ich das Canvas "leicht" sichtbar und raphael ist

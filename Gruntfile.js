@@ -67,6 +67,7 @@ module.exports = function (grunt) {
 
                     './src/assets/javascript/filter/Filter.js',
                     './src/assets/javascript/filter/StrokeFilter.js',
+                    './src/assets/javascript/filter/SizeFilter.js',
                     './src/assets/javascript/filter/OutlineStrokeFilter.js',
                     './src/assets/javascript/filter/BlurFilter.js',
                     './src/assets/javascript/filter/FillColorFilter.js',

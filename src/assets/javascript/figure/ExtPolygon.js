@@ -16,9 +16,9 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
       
       this.filters   = new draw2d.util.ArrayList();
       this.filters.add( new shape_designer.filter.PositionFilter());
+      this.filters.add( new shape_designer.filter.SizeFilter());
       this.filters.add( new shape_designer.filter.StrokeFilter());
       this.filters.add( new shape_designer.filter.FillColorFilter());
-      
       
       this.installEditPolicy(new draw2d.policy.figure.RectangleSelectionFeedbackPolicy());
     },
@@ -34,13 +34,13 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     
     getPotentialFilters: function(){
         return [
-                {label:"Stroke", impl:"shape_designer.filter.StrokeFilter"},
-                {label:"Opacity", impl:"shape_designer.filter.OpacityFilter"},
-                {label:"Blur", impl:"shape_designer.filter.BlurFilter"},
-                {label:"Corner Radius", impl:"shape_designer.filter.RadiusFilter"},
-                {label:"Linear Gradient", impl:"shape_designer.filter.LinearGradientFilter"},
-                {label:"Fill Color", impl:"shape_designer.filter.FillColorFilter"}
-                ];
+                { label: "Stroke",          impl: "shape_designer.filter.StrokeFilter"},
+                { label: "Opacity",         impl: "shape_designer.filter.OpacityFilter"},
+                { label: "Blur",            impl: "shape_designer.filter.BlurFilter"},
+                { label: "Corner Radius",   impl: "shape_designer.filter.RadiusFilter"},
+                { label: "Linear Gradient", impl: "shape_designer.filter.LinearGradientFilter"},
+                { label: "Fill Color",      impl: "shape_designer.filter.FillColorFilter"}
+               ];
     },
     
     removeFilter:function(filter){
@@ -63,7 +63,8 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         this.repaint();
     },
       
-    onDoubleClick: function(){
+    onDoubleClick: function()
+    {
         this.installEditPolicy(new draw2d.policy.figure.VertexSelectionFeedbackPolicy());
     },
     
@@ -121,7 +122,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     },
 
     getPersistentAttributes : function()
-    {   
+    {
         var memento = this._super();
         
         memento.blur = this.blur;
@@ -133,7 +134,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
  
         return memento;
     },
-    
+
     setPersistentAttributes : function( memento)
     {
         this._super(memento);
@@ -143,11 +144,19 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
+            var sizeFilterAdded = false;
             $.each(memento.filters, $.proxy(function(i,e){
+
                 var filter = eval("new "+e.name+"()");
+                if(filter instanceof shape_designer.filter.SizeFilter){
+                    sizeFilterAdded=true;
+                }
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
+            if(! sizeFilterAdded){
+                this.filters.insertElementAt(new shape_designer.filter.SizeFilter(),1);
+            }
         }
     }
 });

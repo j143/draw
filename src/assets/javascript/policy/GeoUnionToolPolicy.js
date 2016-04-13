@@ -8,8 +8,8 @@ shape_designer.policy.GeoUnionToolPolicy = shape_designer.policy.AbstractGeoTool
 	
     
     onInstall: function(canvas){
-        this.setToolHeader("Add Polygon", "SURFACE_BOOL_ADD_064.png");
-    	this.setToolText( "Select polygon to add to");
+        this.setToolHeader("Merge Polygons", "SURFACE_BOOL_ADD_064.png");
+    	this.setToolText( "Select polygon to add to..");
     },
     
     
@@ -37,7 +37,7 @@ shape_designer.policy.GeoUnionToolPolicy = shape_designer.policy.AbstractGeoTool
             if(this.firstFigure===null){
                 this.firstFigure = figure;
                 this.select(canvas,figure);
-            	this.setToolText( "Select polygon to add");
+            	this.setToolText( "Select polygon to merge");
             }
             else{
                 this.execute(canvas, this.firstFigure, figure);

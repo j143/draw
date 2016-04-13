@@ -16,8 +16,8 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
                 	   ' <div class="panel-body  collapse in" id="position_width_panel">'+
                 	   '   <div class="form-group">'+
                        '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
-                       '       <input id="filter_position_x" type="text" value="'+figure.getPosition().x+'" name="filter_position_x" class="form-control" />'+
-                       '       <input id="filter_position_y" type="text" value="'+figure.getPosition().y+'" name="filter_position_y" class="form-control" />'+
+                       '       <input id="filter_position_x" type="text" value="'+parseInt(figure.getPosition().x)+'" name="filter_position_x" class="form-control" />'+
+                       '       <input id="filter_position_y" type="text" value="'+parseInt(figure.getPosition().y)+'" name="filter_position_y" class="form-control" />'+
                        '   </div>'+
                        ' </div>'+
                 	   '</div>');
