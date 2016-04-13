@@ -75,7 +75,7 @@ shape_designer.Application = Class.extend(
                },this));
            });
         }
-        about.hide();
+     //   about.hide();
 
         this.breadcrumb.update(this.storage);
 

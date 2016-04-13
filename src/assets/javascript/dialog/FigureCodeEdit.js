@@ -5,14 +5,13 @@ shape_designer.dialog.FigureCodeEdit = Class.extend(
 
 	show:function(){
 
-		var writer = new shape_designer.FigureWriter();
-		
         var code = app.getConfiguration("code");
         var splash = $(
-                '<pre id="test_code">'+
+                '<pre id="code_overlay">'+
                 code+
                 '</pre>'+
-                '<div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'
+                '<div title="Run"   id="test_run"  ><i class="icon ion-android-arrow-dropright-circle"></i></div>'+
+                '<div title="Close" id="code_close"><i class="icon ion-ios-close-outline"></i></div>'
                 );
         splash.hide();
         $("body").append(splash);
@@ -43,7 +42,7 @@ shape_designer.dialog.FigureCodeEdit = Class.extend(
         var last =  lines.length-1;
         var first = lines.findIndex(function(element, index, array){return element.startsWith("testShape");});
 
-        var editor   = ace.edit("test_code"),
+        var editor   = ace.edit("code_overlay"),
             session  = editor.getSession(),
             Range    = require("ace/range").Range,
             range    = new Range(0, 0, first, lines[first].length),
@@ -77,13 +76,19 @@ shape_designer.dialog.FigureCodeEdit = Class.extend(
         range2.end    = session.doc.createAnchor(range2.end);
         range2.end.$insertRight = true;
 
-         $("#test_close").on("click",function(){
+         $("#code_close").on("click",function(){
              var code = editor.getValue();
              app.setConfiguration({code:code});
              splash.fadeOut(function(){
                  splash.remove();
              });
          });
+
+        $("#test_run").on("click",function(){
+            var code = editor.getValue();
+            app.setConfiguration({code:code});
+            new shape_designer.dialog.FigureTest().show();
+        });
 	}
 
       

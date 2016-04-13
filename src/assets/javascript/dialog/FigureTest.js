@@ -10,7 +10,13 @@ shape_designer.dialog.FigureTest = Class.extend(
 		var writer = new shape_designer.FigureWriter();
 		
 		writer.marshal(app.view, "testShape",function(js){
-		    eval(js);
+			try{
+				eval(js);
+			}
+			catch(exc){
+				alert("Error in shape code. \nRemove error and try it again:\n\n>>    "+exc);
+				throw exc;
+			}
 	        var splash = $(
 				'<div>'+
 	                '<div id="test_canvas">'+
@@ -64,24 +70,21 @@ shape_designer.dialog.FigureTest = Class.extend(
 	            //
                 var start = new draw2d.shape.node.Start();
                 var toggle = new shape_designer.figure.TestSwitch();
-	             var end   = new draw2d.shape.node.End();
+	            var end   = new draw2d.shape.node.End();
 	            
-	             // ...add it to the canvas 
-                 canvas.add( toggle, 50,150);
-                 canvas.add( start, 50,250);
-	             canvas.add( end, 630,250);
+	            // ...add it to the canvas
+                canvas.add( toggle, 50,150);
+                canvas.add( start, 50,250);
+	            canvas.add( end, 630,250);
 	             
-	             canvas.setCurrentSelection(test);
-	             var removeDialog = function(){
-	                Mousetrap.unbind("esc");
+	            canvas.setCurrentSelection(test);
+	            var removeDialog = function(){
                     splash.fadeOut(function(){
                         splash.remove();
                     });
-                 };
+                };
                  
-                 $("#test_close").on("click",removeDialog);
-                 Mousetrap.bind("esc", removeDialog);
-
+                $("#test_close").on("click",removeDialog);
              });
 		});
 	}

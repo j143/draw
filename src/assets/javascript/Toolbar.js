@@ -199,7 +199,13 @@ shape_designer.Toolbar = Class.extend({
         this.testButton  = $('<button  data-toggle="tooltip" title="Test</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_test.png"></button>');
         buttonGroup.append(this.testButton);
         this.testButton.on("click",$.proxy(function(){
-            new shape_designer.dialog.FigureTest().show();
+            // if any error happens during the shape code create/execute -> goto the the JS editor
+            try {
+                new shape_designer.dialog.FigureTest().show();
+            }
+            catch(exc){
+                new shape_designer.dialog.FigureCodeEdit().show();
+            }
         },this));
 
         this.codeButton  = $('<button  data-toggle="tooltip" title="Edit JavaScript code</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_edit_js.png"></button>');
