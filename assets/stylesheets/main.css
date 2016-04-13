@@ -31,6 +31,29 @@
 #tool_shape #tool_shape_caret > span {
   margin-top: 21px;
 }
+/* Effects */
+.overlay-scale {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transform: scale(0.9);
+  transform: scale(0.9);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+.overlay-scale.open {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
 
 .readonly-highlight {
   background-color: rgba(50, 43, 168, 0.5);
@@ -110,6 +133,9 @@
   background-image: linear-gradient(rgba(0, 0, 0, 0.025), rgba(255, 255, 255, 0.05) 44%, rgba(0, 0, 0, 0.05) 100%);
   border-bottom: 10px solid #4285f4;
 }
+#toolbar * {
+  outline: none;
+}
 #toolbar .toolbarGroup {
   background-image: none !important;
   background-color: transparent !important;
@@ -183,11 +209,67 @@
   font-weight: 400;
   letter-spacing: 0.1em;
 }
+.toolbar_delimiter {
+  margin-left: 10px;
+}
+.tool_rectangle {
+  background: transparent url(../icons/rectangle.png) no-repeat;
+}
+.tool_triangle {
+  background: transparent url(../icons/triangle.png) no-repeat;
+}
+.toolbar_union {
+  background-image: url(../icons/toolbar_union.png) !important;
+  background-repeat: no-repeat;
+  background-position: 3px !important;
+  width: 55px;
+  height: 48px;
+}
+.toolbar_difference {
+  background-image: url(../icons/toolbar_difference.png) !important;
+  background-repeat: no-repeat;
+  background-position: 3px !important;
+  width: 55px;
+  height: 48px;
+}
+.toolbar_intersect {
+  background-image: url(../icons/toolbar_intersect.png) !important;
+  background-repeat: no-repeat;
+  background-position: 2px !important;
+  width: 55px;
+  height: 48px;
+}
 #githubButton {
   color: white;
   background-color: #24c85b !important;
 }
 
+.layer-name-prompt .modal-title {
+  font-weight: 100;
+}
+.layer-name-prompt .modal-footer {
+  border: 0;
+}
+.layer-name-prompt .modal-header {
+  border-bottom: 3px solid #4285f4;
+}
+.layer-name-prompt input {
+  outline: none !important;
+  -webkit-box-shadow: inset !important;
+  box-shadow: inset !important;
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  border-radius: 1px !important;
+}
+.layer-name-prompt input:focus {
+  border: 1px solid #4285f4;
+}
+.layer-name-prompt .btn-primary {
+  background-color: #4285f4;
+  border: 0;
+}
+.layer-name-prompt .btn-primary:hover {
+  background-color: #1266f1;
+}
 #layer {
   padding: 0px;
   margin: 0px;
@@ -230,21 +312,133 @@
 .layerElement {
   color: #dddddd;
   cursor: move;
-  font-weight: 400;
+  font-weight: 200;
+  font-size: 12px;
   letter-spacing: 1px;
   padding: 4px 4px 4px 20px;
   text-align: left;
 }
-.layerElement img {
+.layerElement .icon {
   cursor: pointer;
   padding-top: 4px;
   padding-right: 4px;
+  padding-left: 6px;
+}
+.layerElement .icon:hover {
+  color: #4285f4;
 }
 .layerSelectedElement {
   color: white;
   padding: 4px;
   padding-left: 20px;
-  background: #4285f4;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#code_overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 10000;
+}
+#code_close {
+  position: fixed;
+  right: 40px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  z-index: 10000;
+  cursor: pointer;
+  font-size: 50px;
+}
+#code_close:hover {
+  color: #4285f4;
+}
+#test_run {
+  position: fixed;
+  right: 90px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  z-index: 10000;
+  cursor: pointer;
+  font-size: 50px;
+}
+#test_run:hover {
+  color: #4285f4;
+}
+
+#export_overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+#export_close {
+  position: fixed;
+  right: 40px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  z-index: 10000;
+  cursor: pointer;
+  font-size: 50px;
+}
+#export_close:hover {
+  color: #4285f4;
+}
+#export_clipboard {
+  position: fixed;
+  right: 100px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  z-index: 10000;
+  cursor: pointer;
+  font-size: 50px;
+}
+#export_clipboard:hover {
+  color: #4285f4;
+}
+
+#test_canvas {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 10000;
+}
+#test_close {
+  position: fixed;
+  right: 40px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  z-index: 10000;
+  cursor: pointer;
+  font-size: 50px;
+}
+#test_close:hover {
+  color: #4285f4;
+}
+#test_clipboard {
+  position: fixed;
+  right: 100px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  z-index: 10000;
+  cursor: pointer;
+  font-size: 50px;
+}
+#test_clipboard:hover {
+  color: #4285f4;
 }
 
 #filter {
@@ -260,6 +454,27 @@
   background-color: #282a30;
   background-image: -webkit-linear-gradient(-405deg, #282a30, #393f4f);
   background-image: linear-gradient(135deg, #282a30, #393f4f);
+}
+#filter .form-control {
+  height: 25px;
+}
+#filter .btn {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 1px;
+  padding-bottom: 2px;
+}
+#filter .input-group-addon {
+  padding: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: rgba(0, 0, 0, 0.3);
+  background-color: white;
+  border-left: 0;
+  border-radius: 0;
+  font-weight: 100;
+  text-transform: lowercase;
+  font-size: 12px;
 }
 #filter .panel-default {
   margin: 0;
@@ -302,7 +517,9 @@
   padding-bottom: 0px !important;
   background-color: transparent !important;
   background-image: none !important;
-  border: 0px !important;
+  border: 0 !important;
+  margin-top: 4px;
+  cursor: pointer;
 }
 #filter_actions {
   position: fixed;
@@ -314,7 +531,8 @@
   overflow-y: auto;
 }
 #filter_actions .panel-body {
-  padding: 7px !important;
+  padding: 7px;
+  padding-top: 0;
 }
 #filter_actions > .panel {
   margin-bottom: 8px;
@@ -329,9 +547,14 @@
 #filter_actions .form-group > .input-group:last-child {
   margin-bottom: 0px;
 }
-#filter_actions .glyphicon {
-  top: -5px;
+#filter_actions .icon {
   color: #26B4A8;
+  padding: 0;
+  top: -4px;
+  color: rgba(255, 255, 255, 0.25);
+}
+#filter_actions .icon:hover {
+  color: #4285f4;
 }
 
 .githubFileDialog .githubNavigation *[data-draw2d="true"] {
