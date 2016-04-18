@@ -235,6 +235,38 @@ shape_designer.View = draw2d.Canvas.extend({
     getHeight: function()
     {
         return this.html.find("svg").height();
+    },
+
+    centerDocument:function()
+    {
+        // get the bounding box of the document and translate the complete document
+        // into the center of the canvas. Scroll to the top left corner after them
+        //
+        var xCoords = [];
+        var yCoords = [];
+        this.getFigures().each(function(i,f){
+            var b = f.getBoundingBox();
+            xCoords.push(b.x, b.x+b.w);
+            yCoords.push(b.y, b.y+b.h);
+        });
+        var minX   = Math.min.apply(Math, xCoords);
+        var minY   = Math.min.apply(Math, yCoords);
+        var width  = Math.max.apply(Math, xCoords)-minX;
+        var height = Math.max.apply(Math, yCoords)-minY;
+
+        var dx = (this.getWidth()/2)-(minX+width/2);
+        var dy = (this.getHeight()/2)-(minY+height/2);
+        this.getFigures().each(function(i,f){
+            f.translate(dx,dy);
+        });
+        this.getLines().each(function(i,f){
+            f.translate(dx,dy);
+        });
+
+        // scroll the document top/left corner into the viewport
+        //
+        var c = $("#canvas");
+        c.animate({ scrollTop: minY+dy-(c.height()/2), scrollLeft: minX+dx-(c.width()/2) });
     }
 
 });
