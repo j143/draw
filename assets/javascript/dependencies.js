@@ -16906,7 +16906,6 @@ draw2d.geo.Point = Class.extend({
      */
     init: function(x, y)
     {
-
         if(x instanceof draw2d.geo.Point){
             this.x = x.x;
             this.y = x.y;
@@ -16936,7 +16935,8 @@ draw2d.geo.Point = Class.extend({
      * the boundary. A setX or setY will always be adjusted.
      * 
      */
-    setBoundary: function(bx, by, bw, bh){
+    setBoundary: function(bx, by, bw, bh)
+    {
         if(bx instanceof draw2d.geo.Rectangle){
             this.bx = bx.x;
             this.by = bx.y;
@@ -16959,7 +16959,8 @@ draw2d.geo.Point = Class.extend({
      * @method
      * @private
      */
-    adjustBoundary: function(){
+    adjustBoundary: function()
+    {
         if(this.bx===null){
             return;
         }
@@ -17047,7 +17048,8 @@ draw2d.geo.Point = Class.extend({
      * @param {Number|draw2d.geo.Point} x
      * @param {Number} [y]
      */
-    setPosition: function(x,y){
+    setPosition: function(x,y)
+    {
         if(x instanceof draw2d.geo.Point){
      	   this.x=x.x;
     	   this.y=x.y;
@@ -28566,7 +28568,7 @@ draw2d.policy.canvas.SnapToGeometryEditPolicy = draw2d.policy.canvas.SnapToEditP
 
        if ((snapOrientation & draw2d.SnapToHelper.EAST) !== 0) 
        {
-          var rightCorrection = this.getCorrectionFor(this.cols, inputPoint.x -1, 1);
+          var rightCorrection = this.getCorrectionFor(this.cols, inputPoint.x +1, 1);
           if (rightCorrection !== this.SNAP_THRESHOLD) 
           {
              snapOrientation &= ~draw2d.SnapToHelper.EAST;
@@ -28586,7 +28588,7 @@ draw2d.policy.canvas.SnapToGeometryEditPolicy = draw2d.policy.canvas.SnapToEditP
 
        if ((snapOrientation & draw2d.SnapToHelper.SOUTH) !== 0) 
        {
-          var bottomCorrection = this.getCorrectionFor(this.rows,  inputPoint.y - 1, 1);
+          var bottomCorrection = this.getCorrectionFor(this.rows,  inputPoint.y +1, 1);
           if (bottomCorrection !== this.SNAP_THRESHOLD) 
           {
              snapOrientation &= ~draw2d.SnapToHelper.SOUTH;
@@ -28622,10 +28624,10 @@ draw2d.policy.canvas.SnapToGeometryEditPolicy = draw2d.policy.canvas.SnapToEditP
              var bounds = figure.getBoundingBox();
              this.cols.push({type:-1, location: bounds.x});
              this.cols.push({type:0 , location: bounds.x + (bounds.w - 1) / 2});
-             this.cols.push({type:1 , location: bounds.getRight() - 1});
+             this.cols.push({type:1 , location: bounds.getRight() +1 });
              this.rows.push({type:-1, location: bounds.y});
              this.rows.push({type:0 , location: bounds.y + (bounds.h - 1) / 2});
-             this.rows.push({type:1 , location: bounds.getBottom() - 1});
+             this.rows.push({type:1 , location: bounds.getBottom()+1 });
          }
        }
 
@@ -35824,16 +35826,6 @@ draw2d.Canvas = Class.extend(
 
 
 
-        // ResizeHandles first
-        //
-        var i,len;
-        for ( i = 0, len = this.resizeHandles.getSize(); i < len; i++) {
-            testFigure = this.resizeHandles.get(i);
-            if (testFigure.isVisible() && testFigure.hitTest(x, y) && !isInBlacklist(testFigure) &&  isInWhitelist(testFigure)){
-                return testFigure; 
-            }
-        }
-
         // tool method to check recursive a figure for hitTest
         //
         var checkRecursive = function(children){
@@ -35847,7 +35839,7 @@ draw2d.Canvas = Class.extend(
             });
         };
 
-        // Checking ports
+        // Checking ports first
         //
         for ( i = 0, len = this.commonPorts.getSize(); i < len; i++) {
             port = this.commonPorts.get(i);
@@ -35856,11 +35848,22 @@ draw2d.Canvas = Class.extend(
             checkRecursive( port.children);
 
             if(result===null && port.isVisible() && port.hitTest(x, y) && !isInBlacklist(port) &&  isInWhitelist(port)){
-               result = port;
+                result = port;
             }
-            
+
             if(result !==null){
                 return result;
+            }
+        }
+
+
+        // ResizeHandles next
+        //
+        var i,len;
+        for ( i = 0, len = this.resizeHandles.getSize(); i < len; i++) {
+            testFigure = this.resizeHandles.get(i);
+            if (testFigure.isVisible() && testFigure.hitTest(x, y) && !isInBlacklist(testFigure) &&  isInWhitelist(testFigure)){
+                return testFigure; 
             }
         }
 
@@ -45025,10 +45028,10 @@ draw2d.shape.basic.Polygon = draw2d.VectorFigure.extend({
         if(radius === 0){
             var length = this.vertices.getSize();
             var p = this.vertices.get(0);
-            path.push("M",(p.x|0)+0.5," ",(p.y|0)+0.5);
+            path.push("M",p.x," ", p.y);
             for(var i=1;i<length;i++){
                   p = this.vertices.get(i);
-                  path.push("L", (p.x|0)+0.5, " ", (p.y|0)+0.5);
+                  path.push("L", p.x, " ", p.y);
             }
             path.push("Z");
         }
@@ -45043,14 +45046,14 @@ draw2d.shape.basic.Polygon = draw2d.VectorFigure.extend({
                 end = this.vertices.get(length-1);
             }
             var begin   = draw2d.geo.Util.insetPoint(start,end, radius);
-            path.push("M", (begin.x|0)+0.5, ",", (begin.y|0)+0.5);
+            path.push("M", begin.x, ",", begin.y);
             for( var i=0 ;i<length;i++){
                   start = this.vertices.get(i);
                   end   = this.vertices.get((i+1)%length);
                   modStart = draw2d.geo.Util.insetPoint(start,end, radius);
                   modEnd   = draw2d.geo.Util.insetPoint(end,start,radius);
-                  path.push("Q",start.x,",",start.y," ", (modStart.x|0)+0.5, ", ", (modStart.y|0)+0.5);
-                  path.push("L", (modEnd.x|0)+0.5, ",", (modEnd.y|0)+0.5);
+                  path.push("Q",start.x,",",start.y," ", modStart.x, ", ", modStart.y);
+                  path.push("L", modEnd.x, ",", modEnd.y);
             }
         }
         this.svgPathString = path.join("");

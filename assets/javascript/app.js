@@ -315,6 +315,7 @@ shape_designer.View = draw2d.Canvas.extend({
 		this.currentDropConnection = null;
 		
         this.installEditPolicy( this.grid);
+        this.installEditPolicy(new draw2d.policy.canvas.FadeoutDecorationPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
@@ -1070,7 +1071,7 @@ shape_designer.dialog.FigureTest = Class.extend(
 {
 
     init:function(){
-     },
+    },
 
 	show:function(){
 		var writer = new shape_designer.FigureWriter();
@@ -1087,9 +1088,9 @@ shape_designer.dialog.FigureTest = Class.extend(
 				'<div class="overlay-scale">'+
 	                '<div id="test_canvas">'+
 	                '</div>'+
-	                ' <div title="Close" id="test_close"><i class="icon ion-ios-close-outline"></i></div>'+
-				'<div>'
-	                );
+				    ' <div               id="test_info" >Test page for your designed and coded draw2d shape.</div>'+
+				    ' <div title="Close" id="test_close" class="icon ion-ios-close-outline"></div>'+
+				'<div>');
 
 	        // fadeTo MUSS leider sein. Man kann mit raphael keine paper.text elemente einfügen
 	        // wenn das canvas nicht sichtbar ist. In diesen Fall mach ich das Canvas "leicht" sichtbar und raphael ist
@@ -1952,6 +1953,92 @@ shape_designer.filter.StrokeFilter = shape_designer.filter.Filter.extend({
 
 
 
+shape_designer.filter.SizeFilter = shape_designer.filter.Filter.extend({
+    NAME :"shape_designer.filter.SizeFilter",
+    
+	init:function(){
+	    this._super();
+	    this.block = false;
+	},
+	
+	insertPane: function(figure, $parent){
+
+        $parent.append('<div id="size_filter_container" class="panel panel-default">'+
+                	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#size_width_panel">'+
+                	   '     Size'+
+                	   ' </div>'+
+                	   ' <div class="panel-body  collapse in" id="size_width_panel">'+
+                	   '   <div class="form-group">'+
+                       '       <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
+                       '       <input id="filter_width"  type="text" value="'+figure.getWidth()+'"  name="filter_width"  class="form-control" />'+
+                       '       <input id="filter_height" type="text" value="'+figure.getHeight()+'" name="filter_height" class="form-control" />'+
+                       '   </div>'+
+                       ' </div>'+
+                	   '</div>');
+
+           $("#filter_width").TouchSpin({
+               min: 0,
+               max: 600,
+               step: 1,
+               maxboostedstep: 10,
+               postfix: 'width'
+           });
+
+           $("#filter_height").TouchSpin({
+               min: 0,
+               max: 600,
+               step: 1,
+               maxboostedstep: 10,
+               postfix: 'height'
+           });
+
+           $("input[name='filter_width']").on("change", $.proxy(function(){
+               try{
+                   this.block = true;
+                   figure.setWidth(parseInt($("input[name='filter_width']").val()));
+               }
+               finally{
+                   this.block = false;
+               }
+               
+           },this));
+
+           $("input[name='filter_height']").on("change", $.proxy(function(){
+               try{
+                   this.block = true;
+                   figure.setHeight(parseInt($("input[name='filter_height']").val()));
+               }
+               finally{
+                   this.block = false;
+               }
+           },this));
+	   },
+
+	   apply:function(figure, attributes)
+       {
+	       if(this.block===true){
+	           return;
+	       }
+
+           $("input[name='filter_width']").val(figure.getWidth());
+           $("input[name='filter_height']").val(figure.getHeight());
+	   },
+
+	   removePane:function()
+       {
+	   },
+	   
+	   onInstall:function(figure)
+       {
+	   }
+
+});
+
+
+
+
+
+
 shape_designer.filter.OutlineStrokeFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.OutlineStrokeFilter",
     
@@ -2730,8 +2817,8 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
                 	   ' <div class="panel-body  collapse in" id="position_width_panel">'+
                 	   '   <div class="form-group">'+
                        '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
-                       '       <input id="filter_position_x" type="text" value="'+figure.getPosition().x+'" name="filter_position_x" class="form-control" />'+
-                       '       <input id="filter_position_y" type="text" value="'+figure.getPosition().y+'" name="filter_position_y" class="form-control" />'+
+                       '       <input id="filter_position_x" type="text" value="'+parseInt(figure.getPosition().x)+'" name="filter_position_x" class="form-control" />'+
+                       '       <input id="filter_position_y" type="text" value="'+parseInt(figure.getPosition().y)+'" name="filter_position_y" class="form-control" />'+
                        '   </div>'+
                        ' </div>'+
                 	   '</div>');
@@ -3043,9 +3130,9 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
       
       this.filters   = new draw2d.util.ArrayList();
       this.filters.add( new shape_designer.filter.PositionFilter());
+      this.filters.add( new shape_designer.filter.SizeFilter());
       this.filters.add( new shape_designer.filter.StrokeFilter());
       this.filters.add( new shape_designer.filter.FillColorFilter());
-      
       
       this.installEditPolicy(new draw2d.policy.figure.RectangleSelectionFeedbackPolicy());
     },
@@ -3061,13 +3148,13 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     
     getPotentialFilters: function(){
         return [
-                {label:"Stroke", impl:"shape_designer.filter.StrokeFilter"},
-                {label:"Opacity", impl:"shape_designer.filter.OpacityFilter"},
-                {label:"Blur", impl:"shape_designer.filter.BlurFilter"},
-                {label:"Corner Radius", impl:"shape_designer.filter.RadiusFilter"},
-                {label:"Linear Gradient", impl:"shape_designer.filter.LinearGradientFilter"},
-                {label:"Fill Color", impl:"shape_designer.filter.FillColorFilter"}
-                ];
+                { label: "Stroke",          impl: "shape_designer.filter.StrokeFilter"},
+                { label: "Opacity",         impl: "shape_designer.filter.OpacityFilter"},
+                { label: "Blur",            impl: "shape_designer.filter.BlurFilter"},
+                { label: "Corner Radius",   impl: "shape_designer.filter.RadiusFilter"},
+                { label: "Linear Gradient", impl: "shape_designer.filter.LinearGradientFilter"},
+                { label: "Fill Color",      impl: "shape_designer.filter.FillColorFilter"}
+               ];
     },
     
     removeFilter:function(filter){
@@ -3090,7 +3177,8 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         this.repaint();
     },
       
-    onDoubleClick: function(){
+    onDoubleClick: function()
+    {
         this.installEditPolicy(new draw2d.policy.figure.VertexSelectionFeedbackPolicy());
     },
     
@@ -3148,7 +3236,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
     },
 
     getPersistentAttributes : function()
-    {   
+    {
         var memento = this._super();
         
         memento.blur = this.blur;
@@ -3160,7 +3248,7 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
  
         return memento;
     },
-    
+
     setPersistentAttributes : function( memento)
     {
         this._super(memento);
@@ -3170,11 +3258,19 @@ shape_designer.figure.ExtPolygon = draw2d.shape.basic.Polygon.extend({
         
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
+            var sizeFilterAdded = false;
             $.each(memento.filters, $.proxy(function(i,e){
+
                 var filter = eval("new "+e.name+"()");
+                if(filter instanceof shape_designer.filter.SizeFilter){
+                    sizeFilterAdded=true;
+                }
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
+            if(! sizeFilterAdded){
+                this.filters.insertElementAt(new shape_designer.filter.SizeFilter(),1);
+            }
         }
     }
 });
@@ -3514,6 +3610,7 @@ shape_designer.figure.PolyCircle = draw2d.shape.basic.Oval.extend({
       
       this.filters = new draw2d.util.ArrayList();
       this.filters.add( new shape_designer.filter.PositionFilter());
+      this.filters.add( new shape_designer.filter.SizeFilter());
       this.filters.add( new shape_designer.filter.FillColorFilter());
     },
 
@@ -4063,11 +4160,13 @@ shape_designer.policy.GeoIntersectionToolPolicy = shape_designer.policy.Abstract
 
 shape_designer.policy.SelectionToolPolicy = draw2d.policy.canvas.BoundingboxSelectionPolicy.extend({
 	
-	init:function(){
+	init:function()
+    {
 	    this._super();
 	},
 	
-    onInstall: function(canvas){
+    onInstall: function(canvas)
+    {
         this.setToolHeader("Selection", "SELECT_TOOL_064.png");
     	this.setToolText("Click on shape to select<br>Double click to edit");
     },
@@ -4080,7 +4179,53 @@ shape_designer.policy.SelectionToolPolicy = draw2d.policy.canvas.BoundingboxSele
 
     setToolText: function( message ){
         $("#currentTool_message").html(message);
-	}
+	},
+
+    /**
+     * @method
+     *
+     * @param {draw2d.Canvas} canvas
+     * @param {Number} x the x-coordinate of the mouse down event
+     * @param {Number} y the y-coordinate of the mouse down event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
+     */
+    onMouseDown:function(canvas, x, y, shiftKey, ctrlKey)
+    {
+        this.cloneOnDrag = shiftKey;
+        this._super(canvas, x,y,shiftKey, ctrlKey);
+    },
+
+    /**
+     * Copy the selected figure if the user start dragging the selection.
+     *
+     */
+    onMouseDrag:function(canvas, dx, dy, dx2, dy2)
+    {
+        if( !((this.mouseDraggingElement instanceof draw2d.ResizeHandle) || (this.mouseDraggingElement instanceof draw2d.Port))){
+            if(this.cloneOnDrag ===true && this.mouseDraggingElement !==null){
+                // get the current position of the selected shape
+                var pos = this.mouseDraggingElement.getPosition();
+
+                // cancel the current drag&drop operation
+                this.mouseDraggingElement.onDragEnd(pos.x, pos.y, false,false);
+                this.mouseDraggingElement.unselect();
+
+                // clone the selection
+                this.mouseDraggingElement  = this.mouseDraggingElement.clone();
+                // add the clone to the canvas and start dragging of the clone
+                canvas.add(this.mouseDraggingElement, pos);
+
+                // select the cloned shape
+                this.select(canvas,this.mouseDraggingElement);
+
+                // start dragging if the clone accept this operation
+                this.mouseDraggingElement.onDragStart(pos.x, pos.y, false,false);
+            }
+        }
+        this.cloneOnDrag=false;
+        this._super(canvas, dx,dy,dx2,dy2);
+    }
 });
 
 
