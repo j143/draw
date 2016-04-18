@@ -4,7 +4,7 @@ shape_designer.dialog.FigureTest = Class.extend(
 {
 
     init:function(){
-     },
+    },
 
 	show:function(){
 		var writer = new shape_designer.FigureWriter();
