@@ -28,8 +28,7 @@ var shape_designer = {
 
 shape_designer.Application = Class.extend(
 {
-    NAME : "shape_designer.Application", 
-
+    NAME : "shape_designer.Application",
     
     /**
      * @constructor
@@ -54,67 +53,87 @@ shape_designer.Application = Class.extend(
 
         }
 
-        this.currentFile = null;
-        // attached to the very first shape
+        // automatic add the configuration to the very first shape
+        // in the document as userData
+        //
         this.documentConfiguration = $.extend({},this.documentConfigurationTempl);
 
-        this.storage = new shape_designer.storage.BackendStorage();
-        this.view    = new shape_designer.View(this, "canvas");
-        this.toolbar = new shape_designer.Toolbar(this, "toolbar",  this.view );
-        this.layer   = new shape_designer.Layer(this, "layer_elements", this.view );
-        this.filter  = new shape_designer.FilterPane(this, "filter_actions", this.view );
+        this.storage     = new shape_designer.storage.BackendStorage();
+        this.view        = new shape_designer.View(this, "canvas");
+        this.toolbar     = new shape_designer.Toolbar(this, "toolbar",  this.view );
+        this.layer       = new shape_designer.Layer(this, "layer_elements", this.view );
+        this.filter      = new shape_designer.FilterPane(this, "filter_actions", this.view );
         this.breadcrumb  = new shape_designer.Breadcrumb(this,"breadcrumb" );
+
         this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
 
-        // Get the authorization code from the url that was returned by GitHub
-        var code = this.getParam("code");
-        if (code!==null) {
-           $.getJSON(conf.githubAuthenticateCallback+code, function(data) {
-               _this.storage.connect(data.token, $.proxy(function(success){
-                   _this.toolbar.onLogginStatusChanged(success);
-               },this));
-           });
-        }
 
-        this.breadcrumb.update(this.storage);
+        // First check if a valid token is inside the local storage
+        //
+        this.autoLogin();
 
         // check if the user has added a "file" parameter. In this case we load the shape from
         // the draw2d.shape github repository
         //
-        var shapeUrl = "./assets/shapes/Basic.shape";
         var file = this.getParam("file");
         if(file){
-            shapeUrl = conf.repository + file.replace(/_/g,"/");
-            // cleaup the localStorage if the user comes with a fresh file request
-            this.localStorage.removeItem("json");
-        }
+            var path = conf.shapesPath+file.replace(/_/g,"/");
+            var repo = conf.defaultRepo;
+            _this.storage.load(repo, path,function(content){
+                _this.view.clear();
+                var reader = new draw2d.io.json.Reader();
+                reader.unmarshal(_this.view, content);
+                _this.getConfiguration();
+                _this.view.getCommandStack().markSaveLocation();
+                _this.view.centerDocument();
+                _this.breadcrumb.update(_this.storage);
 
-        // restore the previews document from asession before
-        //
-        if(this.localStorage["json"]) {
-            _this.fileNew(this.localStorage["json"]);
-        }
-        // or load the requested document
-        //
-        else {
-            $.getJSON(shapeUrl, function (document) {
-                _this.fileNew(document);
             });
         }
-
-        // save the document in the local storage if the user leave the page
-        //
-        window.onbeforeunload = function (e) {
-            var writer = new draw2d.io.json.Writer();
-            writer.marshal(_this.view, function (json, base64) {
-                _this.localStorage["json"]=JSON.stringify(json);
-            });
-        };
+        else{
+            _this.fileNew();
+        }
     },
 
     login:function()
     {
         window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
+    },
+
+    autoLogin:function()
+    {
+        var _this = this;
+        var _doIt=function() {
+            var code = _this.getParam("code");
+            if (code !== null) {
+                $.getJSON(conf.githubAuthenticateCallback + code, function (data) {
+                    _this.storage.connect(data.token, function (success) {
+                        if (success) {
+                            _this.localStorage["token"] = data.token;
+                        }
+                        else {
+                            _this.localStorage.removeItem("token");
+                        }
+                        _this.toolbar.onLogginStatusChanged(success);
+                    });
+                });
+            }
+        };
+
+        var token = this.localStorage["token"];
+        if(token){
+            _this.storage.connect(token, function(success){
+                _this.toolbar.onLogginStatusChanged(success);
+                if(!success){
+                    _doIt();
+                }
+            });
+        }
+        // or check if we come back from the OAuth redirect
+        //
+        else{
+            _doIt();
+        }
     },
 
     getParam: function( name )
@@ -132,7 +151,6 @@ shape_designer.Application = Class.extend(
 	fileNew: function(shapeTemplate)
     {
         this.view.clear();
-        this.localStorage.removeItem("json");
         this.storage.currentFileHandle = null;
         this.documentConfiguration = $.extend({},this.documentConfigurationTempl);
 
@@ -140,17 +158,13 @@ shape_designer.Application = Class.extend(
             var reader = new draw2d.io.json.Reader();
             reader.unmarshal(this.view, shapeTemplate);
             this.view.getCommandStack().markSaveLocation();
-
             this.view.centerDocument();
         }
     },
 
     fileOpen: function()
     {
-        this.fileNew();
-
         new shape_designer.dialog.FileOpen(this.storage).show(
-
             // success callback
             $.proxy(function(fileData){
                 try{

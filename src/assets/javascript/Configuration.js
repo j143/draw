@@ -13,5 +13,6 @@ else{
     };
 }
 
-conf.fileSuffix = ".shape";
-conf.repository="https://raw.githubusercontent.com/freegroup/draw2d_js.shapes/master/shapes/org/";
+conf.fileSuffix  = ".shape";
+conf.defaultRepo = "freegroup/draw2d_js.shapes";
+conf.shapesPath  = "shapes/org/";

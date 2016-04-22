@@ -6,7 +6,6 @@ shape_designer.dialog.FileOpen = Class.extend({
      */
     init:function(storage){
         this.storage=storage;
-
     },
 
     /**
@@ -70,13 +69,12 @@ shape_designer.dialog.FileOpen = Class.extend({
             var output = compiled.render({
                 repos: repos
             });
-            console.log("here");
+
             $("#githubFileSelectDialog .githubNavigation").html($(output));
             $("#githubFileSelectDialog .githubNavigation").scrollTop(0);
 
             $(".repository").on("click", function(){
-                var $this = $(this);
-                var repositoryId = $this.data("id");
+                var repositoryId = $(this).data("id");
                 _this.storage.currentRepository = $.grep(_this.storage.repositories, function(repo){return repo.id === repositoryId;})[0];
                 _this.fetchPathContent("",successCallback);
             });
@@ -121,7 +119,7 @@ shape_designer.dialog.FileOpen = Class.extend({
             );
 
 
-            var parentPath =  _this.dirname(newPath);
+            var parentPath =  _this.storage.dirname(newPath);
             var output = compiled.render({
                 parentType: parentPath===newPath?"repository":"dir",
                 parentPath: parentPath,
@@ -151,33 +149,11 @@ shape_designer.dialog.FileOpen = Class.extend({
 
             $('.githubPath*[data-draw2d="true"][data-type="file"]').on("click", function(){
                 var path = $(this).data("path");
-                var sha  = $(this).data("sha");
-                _this.storage.currentRepository.contents(path).read(function(param, content){
-                    _this.storage.currentFileHandle={
-                        path : path,
-                        title: path.split(/[\\/]/).pop(), // basename
-                        sha  : sha,
-                        content : content
-                    };
+                _this.storage.load(_this.storage.currentRepository.fullName, path, function(content){
                     successCallback(content);
                     $('#githubFileSelectDialog').modal('hide');
                 });
             });
         });
-    },
-
-
-
-
-    dirname: function(path)
-    {
-        if (path.length === 0)
-            return "";
-
-        var segments = path.split("/");
-        if (segments.length <= 1)
-            return "";
-        return segments.slice(0, -1).join("/");
     }
-
 });

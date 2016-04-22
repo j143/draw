@@ -121,7 +121,8 @@ shape_designer.View = draw2d.Canvas.extend({
         },this));
 
         this.reset();
-	},
+
+    },
 
 	setCursor:function(cursor){
 	    if(cursor!==null){

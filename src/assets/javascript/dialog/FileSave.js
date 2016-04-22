@@ -4,7 +4,8 @@ shape_designer.dialog.FileSave = Class.extend({
      * @constructor
      *
      */
-    init:function(storage){
+    init:function(storage)
+    {
         this.storage=storage;
     },
 
@@ -44,12 +45,19 @@ shape_designer.dialog.FileSave = Class.extend({
             $("#githubSaveFileDialog .okButton").on("click", function () {
                 var writer = new draw2d.io.json.Writer();
                 writer.marshal(canvas, function (json, base64) {
+
                     var config = {
                         message: $("#githubSaveFileDialog .githubCommitMessage").val(),
                         content: base64,
                         sha: _this.storage.currentFileHandle.sha
                     };
 
+                    var currentName = _this.storage.basename(_this.storage.currentFileHandle.path);
+                    var newName = $("#githubSaveFileDialog .githubFileName").val();
+                    if(currentName!= newName){
+                        config.sha=null;
+                        _this.storage.currentFileHandle.path = _this.storage.dirname(_this.storage.currentFileHandle.path )+"/"+newName;
+                    }
                     _this.storage.currentRepository.contents(_this.storage.currentFileHandle.path).add(config)
                         .then(function (info) {
                             _this.storage.currentFileHandle.sha = info.content.sha;
