@@ -64,8 +64,10 @@ else{
     };
 }
 
-conf.fileSuffix = ".shape";
-conf.repository="https://raw.githubusercontent.com/freegroup/draw2d_js.shapes/master/shapes/org/";
+conf.fileSuffix  = ".shape";
+conf.defaultRepo = "freegroup/draw2d_js.shapes";
+conf.shapesPath  = "shapes/org/";
+
 /*jshint sub:true*/
 
 // declare the namespace for this example
@@ -96,8 +98,7 @@ var shape_designer = {
 
 shape_designer.Application = Class.extend(
 {
-    NAME : "shape_designer.Application", 
-
+    NAME : "shape_designer.Application",
     
     /**
      * @constructor
@@ -122,68 +123,87 @@ shape_designer.Application = Class.extend(
 
         }
 
-        this.currentFile = null;
-        // attached to the very first shape
+        // automatic add the configuration to the very first shape
+        // in the document as userData
+        //
         this.documentConfiguration = $.extend({},this.documentConfigurationTempl);
 
-        this.storage = new shape_designer.storage.BackendStorage();
-        this.view    = new shape_designer.View(this, "canvas");
-        this.toolbar = new shape_designer.Toolbar(this, "toolbar",  this.view );
-        this.layer   = new shape_designer.Layer(this, "layer_elements", this.view );
-        this.filter  = new shape_designer.FilterPane(this, "filter_actions", this.view );
+        this.storage     = new shape_designer.storage.BackendStorage();
+        this.view        = new shape_designer.View(this, "canvas");
+        this.toolbar     = new shape_designer.Toolbar(this, "toolbar",  this.view );
+        this.layer       = new shape_designer.Layer(this, "layer_elements", this.view );
+        this.filter      = new shape_designer.FilterPane(this, "filter_actions", this.view );
         this.breadcrumb  = new shape_designer.Breadcrumb(this,"breadcrumb" );
+
         this.view.installEditPolicy(new shape_designer.policy.SelectionToolPolicy());
 
-        // Get the authorization code from the url that was returned by GitHub
-        var code = this.getParam("code");
-        if (code!==null) {
-           $.getJSON(conf.githubAuthenticateCallback+code, function(data) {
-               _this.storage.connect(data.token, $.proxy(function(success){
-                   _this.toolbar.onLogginStatusChanged(success);
-               },this));
-           });
-        }
-     //   about.hide();
 
-        this.breadcrumb.update(this.storage);
+        // First check if a valid token is inside the local storage
+        //
+        this.autoLogin();
 
         // check if the user has added a "file" parameter. In this case we load the shape from
         // the draw2d.shape github repository
         //
-        var shapeUrl = "./assets/shapes/Basic.shape";
         var file = this.getParam("file");
         if(file){
-            shapeUrl = conf.repository + file.replace(/_/g,"/");
-            // cleaup the localStorage if the user comes with a fresh file request
-            this.localStorage.removeItem("json");
-        }
+            var path = conf.shapesPath+file.replace(/_/g,"/");
+            var repo = conf.defaultRepo;
+            _this.storage.load(repo, path,function(content){
+                _this.view.clear();
+                var reader = new draw2d.io.json.Reader();
+                reader.unmarshal(_this.view, content);
+                _this.getConfiguration();
+                _this.view.getCommandStack().markSaveLocation();
+                _this.view.centerDocument();
+                _this.breadcrumb.update(_this.storage);
 
-        // restore the previews document from asession before
-        //
-        if(this.localStorage["json"]) {
-            _this.fileNew(this.localStorage["json"]);
-        }
-        // or load the requested document
-        //
-        else {
-            $.getJSON(shapeUrl, function (document) {
-                _this.fileNew(document);
             });
         }
-
-        // save the document in the local storage if the user leave the page
-        //
-        window.onbeforeunload = function (e) {
-            var writer = new draw2d.io.json.Writer();
-            writer.marshal(_this.view, function (json, base64) {
-                _this.localStorage["json"]=JSON.stringify(json);
-            });
-        };
+        else{
+            _this.fileNew();
+        }
     },
 
     login:function()
     {
         window.location.href='https://github.com/login/oauth/authorize?client_id='+conf.githubClientId+'&scope=public_repo';
+    },
+
+    autoLogin:function()
+    {
+        var _this = this;
+        var _doIt=function() {
+            var code = _this.getParam("code");
+            if (code !== null) {
+                $.getJSON(conf.githubAuthenticateCallback + code, function (data) {
+                    _this.storage.connect(data.token, function (success) {
+                        if (success) {
+                            _this.localStorage["token"] = data.token;
+                        }
+                        else {
+                            _this.localStorage.removeItem("token");
+                        }
+                        _this.toolbar.onLogginStatusChanged(success);
+                    });
+                });
+            }
+        };
+
+        var token = this.localStorage["token"];
+        if(token){
+            _this.storage.connect(token, function(success){
+                _this.toolbar.onLogginStatusChanged(success);
+                if(!success){
+                    _doIt();
+                }
+            });
+        }
+        // or check if we come back from the OAuth redirect
+        //
+        else{
+            _doIt();
+        }
     },
 
     getParam: function( name )
@@ -201,7 +221,6 @@ shape_designer.Application = Class.extend(
 	fileNew: function(shapeTemplate)
     {
         this.view.clear();
-        this.localStorage.removeItem("json");
         this.storage.currentFileHandle = null;
         this.documentConfiguration = $.extend({},this.documentConfigurationTempl);
 
@@ -209,45 +228,13 @@ shape_designer.Application = Class.extend(
             var reader = new draw2d.io.json.Reader();
             reader.unmarshal(this.view, shapeTemplate);
             this.view.getCommandStack().markSaveLocation();
-
-            // get the bounding box of the document and translate the complete document
-            // into the center of the canvas. Scroll to the top left corner after them
-            //
-            var xCoords = [];
-            var yCoords = [];
-            this.view.getFigures().each(function(i,f){
-                var b = f.getBoundingBox();
-                xCoords.push(b.x, b.x+b.w);
-                yCoords.push(b.y, b.y+b.h);
-            });
-            var minX   = Math.min.apply(Math, xCoords);
-            var minY   = Math.min.apply(Math, yCoords);
-            var width  = Math.max.apply(Math, xCoords)-minX;
-            var height = Math.max.apply(Math, yCoords)-minY;
-
-            var dx = (this.view.getWidth()/2)-(minX+width/2);
-            var dy = (this.view.getHeight()/2)-(minY+height/2);
-            this.view.getFigures().each(function(i,f){
-                f.translate(dx,dy);
-            });
-            this.view.getLines().each(function(i,f){
-                f.translate(dx,dy);
-            });
-
-            // scroll the document top/left corner into the viewport
-            //
-            var c = $("#canvas");
-            c.animate({ scrollTop: minY+dy-(c.height()/2), scrollLeft: minX+dx-(c.width()/2) });
-
+            this.view.centerDocument();
         }
     },
 
     fileOpen: function()
     {
-        this.fileNew();
-
         new shape_designer.dialog.FileOpen(this.storage).show(
-
             // success callback
             $.proxy(function(fileData){
                 try{
@@ -256,6 +243,7 @@ shape_designer.Application = Class.extend(
                     reader.unmarshal(this.view, fileData);
                     this.getConfiguration();
                     this.view.getCommandStack().markSaveLocation();
+                    this.view.centerDocument();
                     this.breadcrumb.update(this.storage);
                 }
                 catch(e){
@@ -311,9 +299,7 @@ shape_designer.View = draw2d.Canvas.extend({
         this.grid =  new draw2d.policy.canvas.ShowGridEditPolicy(20);
 
 		this.setScrollArea("#"+id);
-		
-		this.currentDropConnection = null;
-		
+
         this.installEditPolicy( this.grid);
         this.installEditPolicy(new draw2d.policy.canvas.FadeoutDecorationPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
@@ -424,7 +410,8 @@ shape_designer.View = draw2d.Canvas.extend({
         },this));
 
         this.reset();
-	},
+
+    },
 
 	setCursor:function(cursor){
 	    if(cursor!==null){
@@ -538,6 +525,38 @@ shape_designer.View = draw2d.Canvas.extend({
     getHeight: function()
     {
         return this.html.find("svg").height();
+    },
+
+    centerDocument:function()
+    {
+        // get the bounding box of the document and translate the complete document
+        // into the center of the canvas. Scroll to the top left corner after them
+        //
+        var xCoords = [];
+        var yCoords = [];
+        this.getFigures().each(function(i,f){
+            var b = f.getBoundingBox();
+            xCoords.push(b.x, b.x+b.w);
+            yCoords.push(b.y, b.y+b.h);
+        });
+        var minX   = Math.min.apply(Math, xCoords);
+        var minY   = Math.min.apply(Math, yCoords);
+        var width  = Math.max.apply(Math, xCoords)-minX;
+        var height = Math.max.apply(Math, yCoords)-minY;
+
+        var dx = (this.getWidth()/2)-(minX+width/2);
+        var dy = (this.getHeight()/2)-(minY+height/2);
+        this.getFigures().each(function(i,f){
+            f.translate(dx,dy);
+        });
+        this.getLines().each(function(i,f){
+            f.translate(dx,dy);
+        });
+
+        // scroll the document top/left corner into the viewport
+        //
+        var c = $("#canvas");
+        c.animate({ scrollTop: minY+dy-(c.height()/2), scrollLeft: minX+dx-(c.width()/2) });
     }
 
 });
@@ -1327,7 +1346,6 @@ shape_designer.dialog.FileOpen = Class.extend({
      */
     init:function(storage){
         this.storage=storage;
-
     },
 
     /**
@@ -1391,13 +1409,12 @@ shape_designer.dialog.FileOpen = Class.extend({
             var output = compiled.render({
                 repos: repos
             });
-            console.log("here");
+
             $("#githubFileSelectDialog .githubNavigation").html($(output));
             $("#githubFileSelectDialog .githubNavigation").scrollTop(0);
 
             $(".repository").on("click", function(){
-                var $this = $(this);
-                var repositoryId = $this.data("id");
+                var repositoryId = $(this).data("id");
                 _this.storage.currentRepository = $.grep(_this.storage.repositories, function(repo){return repo.id === repositoryId;})[0];
                 _this.fetchPathContent("",successCallback);
             });
@@ -1442,7 +1459,7 @@ shape_designer.dialog.FileOpen = Class.extend({
             );
 
 
-            var parentPath =  _this.dirname(newPath);
+            var parentPath =  _this.storage.dirname(newPath);
             var output = compiled.render({
                 parentType: parentPath===newPath?"repository":"dir",
                 parentPath: parentPath,
@@ -1472,35 +1489,13 @@ shape_designer.dialog.FileOpen = Class.extend({
 
             $('.githubPath*[data-draw2d="true"][data-type="file"]').on("click", function(){
                 var path = $(this).data("path");
-                var sha  = $(this).data("sha");
-                _this.storage.currentRepository.contents(path).read(function(param, content){
-                    _this.storage.currentFileHandle={
-                        path : path,
-                        title: path.split(/[\\/]/).pop(), // basename
-                        sha  : sha,
-                        content : content
-                    };
+                _this.storage.load(_this.storage.currentRepository.fullName, path, function(content){
                     successCallback(content);
                     $('#githubFileSelectDialog').modal('hide');
                 });
             });
         });
-    },
-
-
-
-
-    dirname: function(path)
-    {
-        if (path.length === 0)
-            return "";
-
-        var segments = path.split("/");
-        if (segments.length <= 1)
-            return "";
-        return segments.slice(0, -1).join("/");
     }
-
 });
 shape_designer.dialog.FileSave = Class.extend({
 
@@ -1508,7 +1503,8 @@ shape_designer.dialog.FileSave = Class.extend({
      * @constructor
      *
      */
-    init:function(storage){
+    init:function(storage)
+    {
         this.storage=storage;
     },
 
@@ -1548,12 +1544,19 @@ shape_designer.dialog.FileSave = Class.extend({
             $("#githubSaveFileDialog .okButton").on("click", function () {
                 var writer = new draw2d.io.json.Writer();
                 writer.marshal(canvas, function (json, base64) {
+
                     var config = {
                         message: $("#githubSaveFileDialog .githubCommitMessage").val(),
                         content: base64,
                         sha: _this.storage.currentFileHandle.sha
                     };
 
+                    var currentName = _this.storage.basename(_this.storage.currentFileHandle.path);
+                    var newName = $("#githubSaveFileDialog .githubFileName").val();
+                    if(currentName!= newName){
+                        config.sha=null;
+                        _this.storage.currentFileHandle.path = _this.storage.dirname(_this.storage.currentFileHandle.path )+"/"+newName;
+                    }
                     _this.storage.currentRepository.contents(_this.storage.currentFileHandle.path).add(config)
                         .then(function (info) {
                             _this.storage.currentFileHandle.sha = info.content.sha;
@@ -3751,7 +3754,48 @@ shape_designer.storage.BackendStorage = Class.extend({
                 callback(false);
             }
         });
+    },
+
+    load: function(repository, path, successCallback)
+    {
+        var _this = this;
+        this.octo.user.repos.fetch(function(param, repos){
+            _this.repositories = repos;
+            _this.currentRepository = $.grep(_this.repositories, function(repo){return repo.fullName === repository;})[0];
+            _this.currentPath = _this.dirname(path);
+            _this.currentRepository
+                .contents(path)
+                .fetch()
+                .then(function(info) {
+                    _this.currentFileHandle={
+                        path : path,
+                        title:  _this.basename(path),
+                        sha  : info.sha,
+                        content : atob(info.content)
+                    };
+                    successCallback(_this.currentFileHandle.content);
+                });
+        });
+    },
+
+
+    dirname: function(path)
+    {
+        if (path.length === 0)
+            return "";
+
+        var segments = path.split("/");
+        if (segments.length <= 1)
+            return "";
+        return segments.slice(0, -1).join("/");
+    },
+
+
+    basename:function(path)
+    {
+        return path.split(/[\\/]/).pop();
     }
+
 });
 
 shape_designer.FigureWriter = draw2d.io.Writer.extend({

@@ -34430,7 +34430,7 @@ draw2d.policy.port.IntrusivePortsFeedbackPolicy = draw2d.policy.port.PortFeedbac
  *   Library is under GPL License (GPL)
  *   Copyright (c) 2012 Andreas Herz
  ****************************************/draw2d.Configuration = {
-    version : "6.1.12",
+    version : "6.1.13",
     i18n : {
         command : {
             move : "Move Shape",
