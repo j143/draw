@@ -65,7 +65,8 @@ else{
 }
 
 conf.fileSuffix  = ".shape";
-conf.defaultRepo = "freegroup/draw2d_js.shapes";
+conf.defaultUser = "freegroup";
+conf.defaultRepo = "draw2d_js.shapes";
 conf.shapesPath  = "shapes/org/";
 
 /*jshint sub:true*/
@@ -148,7 +149,7 @@ shape_designer.Application = Class.extend(
         var file = this.getParam("file");
         if(file){
             var path = conf.shapesPath+file.replace(/_/g,"/");
-            var repo = conf.defaultRepo;
+            var repo = conf.defaultUser+"/"+conf.defaultRepo;
             _this.storage.load(repo, path,function(content){
                 _this.view.clear();
                 var reader = new draw2d.io.json.Reader();
@@ -208,13 +209,23 @@ shape_designer.Application = Class.extend(
 
     getParam: function( name )
     {
-      name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-      var regexS = "[\\?&]"+name+"=([^&#]*)";
-      var regex = new RegExp( regexS );
-      var results = regex.exec( window.location.href );
-      if( results === null )
-        return null;
-      
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec( window.location.href );
+        // the param isn'T part of the normal URL pattern...
+        //
+        if( results === null ) {
+            // maybe it is part in the hash.
+            //
+            regexS = "[\\#]"+name+"=([^&#]*)";
+            regex = new RegExp( regexS );
+            results = regex.exec( window.location.hash );
+            if( results === null ) {
+                return null;
+            }
+        }
+
       return results[1];
     },
  	
@@ -245,6 +256,11 @@ shape_designer.Application = Class.extend(
                     this.view.getCommandStack().markSaveLocation();
                     this.view.centerDocument();
                     this.breadcrumb.update(this.storage);
+
+                    var hash = this.storage.currentFileHandle.path;
+                    hash = hash.replace(conf.shapesPath,"");
+                    hash = hash.replace(/\//g,"_");
+                    window.location.hash = "#file="+hash;
                 }
                 catch(e){
                     this.view.reset();
@@ -3762,23 +3778,39 @@ shape_designer.storage.BackendStorage = Class.extend({
     load: function(repository, path, successCallback)
     {
         var _this = this;
-        this.octo.user.repos.fetch(function(param, repos){
-            _this.repositories = repos;
-            _this.currentRepository = $.grep(_this.repositories, function(repo){return repo.fullName === repository;})[0];
-            _this.currentPath = _this.dirname(path);
-            _this.currentRepository
-                .contents(path)
-                .fetch()
-                .then(function(info) {
-                    _this.currentFileHandle={
-                        path : path,
-                        title:  _this.basename(path),
-                        sha  : info.sha,
-                        content : atob(info.content)
-                    };
-                    successCallback(_this.currentFileHandle.content);
+        // anonymous usage. Not authenticated
+        //
+        if (this.octo === null) {
+            var octo = new Octokat();
+            var repo = octo.repos(conf.defaultUser, conf.defaultRepo);
+            repo.contents(path).read()
+                .then(function(contents) {
+                    successCallback(contents);
                 });
-        });
+        }
+        // Authenticated usage
+        //
+        else {
+            this.octo.user.repos.fetch(function (param, repos) {
+                _this.repositories = repos;
+                _this.currentRepository = $.grep(_this.repositories, function (repo) {
+                    return repo.fullName === repository;
+                })[0];
+                _this.currentPath = _this.dirname(path);
+                _this.currentRepository
+                    .contents(path)
+                    .fetch()
+                    .then(function (info) {
+                        _this.currentFileHandle = {
+                            path: path,
+                            title: _this.basename(path),
+                            sha: info.sha,
+                            content: atob(info.content)
+                        };
+                        successCallback(_this.currentFileHandle.content);
+                    });
+            });
+        }
     },
 
 
