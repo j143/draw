@@ -310,7 +310,7 @@ shape_designer.View = draw2d.Canvas.extend({
 	init:function(app, id){
         var _this = this;
 
-		this._super(id, 8000, 8000);
+		this._super(id, 16000, 16000);
 		this.clippboardFigure=null;
         this.grid =  new draw2d.policy.canvas.ShowGridEditPolicy(20);
 
@@ -366,53 +366,37 @@ shape_designer.View = draw2d.Canvas.extend({
            return false;
         },this));
 
-        var setZoom = $.proxy(function(factor){
-            var newZoom = this.getZoom()*factor;
-            $("#canvas_zoom_normal").text((parseInt((1.0/newZoom)*100))+"%");
-            this.setZoom(newZoom,true);
+
+        var zoom=new draw2d.policy.canvas.WheelZoomPolicy();
+        this.installEditPolicy(zoom);
+
+        var setZoom = $.proxy(function(newZoom, animate){
+            var bb = this.getBoundingBox().getCenter();
+            var c = $("#canvas");
+            this.setZoom(newZoom);
+            c.scrollTop((bb.y/newZoom- c.height()/2));
+            c.scrollLeft((bb.x/newZoom- c.width()/2));
         },this);
         
         // Inject the ZoomIn Button and the callbacks
         //
         $("#canvas_zoom_in").on("click",function(){
-            setZoom(1.2);
+            setZoom(_this.getZoom()*1.2,true);
         });
  
         // Inject the OneToOne Button
         //
-        $("#canvas_zoom_normal").on("click",$.proxy(function(){
-            this.setZoom(1.0, false);
-            var xCoords = [];
-            var yCoords = [];
-            _this.getFigures().each(function(i,f){
-                var b = f.getBoundingBox();
-                xCoords.push(b.x, b.x+b.w);
-                yCoords.push(b.y, b.y+b.h);
-            });
-            var minX   = Math.min.apply(Math, xCoords);
-            var minY   = Math.min.apply(Math, yCoords);
-            var width  = Math.max.apply(Math, xCoords)-minX;
-            var height = Math.max.apply(Math, yCoords)-minY;
-
-            var dx = (_this.getWidth()/2)-(minX+width/2);
-            var dy = (_this.getHeight()/2)-(minY+height/2);
-
-            // scroll the document top/left corner into the viewport
-            //
-            var c = $("#canvas");
-            c.animate({ scrollTop: minY+dy-(c.height()/2), scrollLeft: minX+dx-(c.width()/2) });
-
-            $("#canvas_zoom_normal").text("100%");
-        },this));
+        $("#canvas_zoom_normal").on("click",function(){
+            setZoom(1.0, false);
+        });
       
         // Inject the ZoomOut Button and the callback
         //
-        $("#canvas_zoom_out").on("click",$.proxy(function(){
-            setZoom(0.8);
-        },this));
+        $("#canvas_zoom_out").on("click",function(){
+            setZoom(_this.getZoom()*0.8,true);
+        });
 
-  //      $('#canvas_config_grid').bootstrapToggle();
-        $('#canvas_config_grid').on('change', function (e) {
+       $('#canvas_config_grid').on('change', function (e) {
            if($(this).prop('checked')){
                 _this.installEditPolicy( _this.grid);
             }
@@ -429,7 +413,8 @@ shape_designer.View = draw2d.Canvas.extend({
 
     },
 
-	setCursor:function(cursor){
+	setCursor:function(cursor)
+    {
 	    if(cursor!==null){
 	        this.html.css("cursor","url(assets/images/cursors/"+cursor+") 0 0, default");
 	    }
@@ -445,15 +430,23 @@ shape_designer.View = draw2d.Canvas.extend({
 	 * 
 	 * 
 	 */
-	reset: function(){
+	reset: function()
+    {
         this.clear();
 	},
-	
+
+    setZoom:function(newZoom)
+    {
+        $("#canvas_zoom_normal").text((parseInt((1.0/newZoom)*100))+"%");
+        this._super(newZoom);
+    },
+
 	/**
 	 * Reset the view without any decorations. This is good before loading a document
 	 * 
 	 */
-	clear: function(){
+	clear: function()
+    {
 	    this._super();
 	},
 	
@@ -548,23 +541,15 @@ shape_designer.View = draw2d.Canvas.extend({
 
     centerDocument:function()
     {
+        this.setZoom(1.0);
         // get the bounding box of the document and translate the complete document
         // into the center of the canvas. Scroll to the top left corner after them
         //
-        var xCoords = [];
-        var yCoords = [];
-        this.getFigures().each(function(i,f){
-            var b = f.getBoundingBox();
-            xCoords.push(b.x, b.x+b.w);
-            yCoords.push(b.y, b.y+b.h);
-        });
-        var minX   = Math.min.apply(Math, xCoords);
-        var minY   = Math.min.apply(Math, yCoords);
-        var width  = Math.max.apply(Math, xCoords)-minX;
-        var height = Math.max.apply(Math, yCoords)-minY;
+        var bb = this.getBoundingBox();
 
-        var dx = (this.getWidth()/2)-(minX+width/2);
-        var dy = (this.getHeight()/2)-(minY+height/2);
+        var dx = (this.getWidth()/4)-(bb.x+bb.w/2);
+        var dy = (this.getHeight()/4)-(bb.y+bb.h/2);
+
         this.getFigures().each(function(i,f){
             f.translate(dx,dy);
         });
@@ -572,10 +557,10 @@ shape_designer.View = draw2d.Canvas.extend({
             f.translate(dx,dy);
         });
 
-        // scroll the document top/left corner into the viewport
-        //
+        var center = bb.getCenter();
         var c = $("#canvas");
-        c.animate({ scrollTop: minY+dy-(c.height()/2), scrollLeft: minX+dx-(c.width()/2) });
+        c.scrollTop((center.y- c.height()/2));
+        c.scrollLeft((center.x- c.width()/2));
     }
 
 });
