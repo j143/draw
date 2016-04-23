@@ -586,6 +586,9 @@
   color: #4285f4;
 }
 
+.btn-primary {
+  background-color: #4285f4;
+}
 .githubFileDialog .githubNavigation *[data-draw2d="true"] {
   font-weight: bold;
   color: #4285f4;

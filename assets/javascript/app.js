@@ -477,6 +477,9 @@ shape_designer.View = draw2d.Canvas.extend({
         var xCoords = [];
         var yCoords = [];
         this.getExtFigures().each(function(i,f){
+            if(f instanceof shape_designer.figure.ExtPort){
+                return;
+            }
             var b = f.getBoundingBox();
             xCoords.push(b.x, b.x+b.w);
             yCoords.push(b.y, b.y+b.h);

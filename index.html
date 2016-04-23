@@ -297,6 +297,11 @@ testShape = testShape.extend({
          this._super(attr, setter, getter);
 
          // your special code here
+    },
+
+    calculate:function()
+    {
+
     }
 
 });
@@ -323,6 +328,7 @@ var {{{className}}} = {{{baseClass}}}.extend({
      port = this.createPort("{{type}}", new draw2d.layout.locator.XYRelPortLocator({{x}}, {{y}}));
      port.setConnectionDirection({{direction}});
      port.setBackgroundColor("{{color}}");
+     port.setName("{{name}}");
      {{/ports}}
      this.persistPorts=false;
    },
