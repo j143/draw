@@ -14,5 +14,6 @@ else{
 }
 
 conf.fileSuffix  = ".shape";
-conf.defaultRepo = "freegroup/draw2d_js.shapes";
+conf.defaultUser = "freegroup";
+conf.defaultRepo = "draw2d_js.shapes";
 conf.shapesPath  = "shapes/org/";

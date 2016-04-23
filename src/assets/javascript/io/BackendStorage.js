@@ -32,23 +32,39 @@ shape_designer.storage.BackendStorage = Class.extend({
     load: function(repository, path, successCallback)
     {
         var _this = this;
-        this.octo.user.repos.fetch(function(param, repos){
-            _this.repositories = repos;
-            _this.currentRepository = $.grep(_this.repositories, function(repo){return repo.fullName === repository;})[0];
-            _this.currentPath = _this.dirname(path);
-            _this.currentRepository
-                .contents(path)
-                .fetch()
-                .then(function(info) {
-                    _this.currentFileHandle={
-                        path : path,
-                        title:  _this.basename(path),
-                        sha  : info.sha,
-                        content : atob(info.content)
-                    };
-                    successCallback(_this.currentFileHandle.content);
+        // anonymous usage. Not authenticated
+        //
+        if (this.octo === null) {
+            var octo = new Octokat();
+            var repo = octo.repos(conf.defaultUser, conf.defaultRepo);
+            repo.contents(path).read()
+                .then(function(contents) {
+                    successCallback(contents);
                 });
-        });
+        }
+        // Authenticated usage
+        //
+        else {
+            this.octo.user.repos.fetch(function (param, repos) {
+                _this.repositories = repos;
+                _this.currentRepository = $.grep(_this.repositories, function (repo) {
+                    return repo.fullName === repository;
+                })[0];
+                _this.currentPath = _this.dirname(path);
+                _this.currentRepository
+                    .contents(path)
+                    .fetch()
+                    .then(function (info) {
+                        _this.currentFileHandle = {
+                            path: path,
+                            title: _this.basename(path),
+                            sha: info.sha,
+                            content: atob(info.content)
+                        };
+                        successCallback(_this.currentFileHandle.content);
+                    });
+            });
+        }
     },
 
 

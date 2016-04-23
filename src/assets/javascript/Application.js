@@ -78,7 +78,7 @@ shape_designer.Application = Class.extend(
         var file = this.getParam("file");
         if(file){
             var path = conf.shapesPath+file.replace(/_/g,"/");
-            var repo = conf.defaultRepo;
+            var repo = conf.defaultUser+"/"+conf.defaultRepo;
             _this.storage.load(repo, path,function(content){
                 _this.view.clear();
                 var reader = new draw2d.io.json.Reader();
@@ -138,13 +138,23 @@ shape_designer.Application = Class.extend(
 
     getParam: function( name )
     {
-      name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-      var regexS = "[\\?&]"+name+"=([^&#]*)";
-      var regex = new RegExp( regexS );
-      var results = regex.exec( window.location.href );
-      if( results === null )
-        return null;
-      
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec( window.location.href );
+        // the param isn'T part of the normal URL pattern...
+        //
+        if( results === null ) {
+            // maybe it is part in the hash.
+            //
+            regexS = "[\\#]"+name+"=([^&#]*)";
+            regex = new RegExp( regexS );
+            results = regex.exec( window.location.hash );
+            if( results === null ) {
+                return null;
+            }
+        }
+
       return results[1];
     },
  	
@@ -175,6 +185,11 @@ shape_designer.Application = Class.extend(
                     this.view.getCommandStack().markSaveLocation();
                     this.view.centerDocument();
                     this.breadcrumb.update(this.storage);
+
+                    var hash = this.storage.currentFileHandle.path;
+                    hash = hash.replace(conf.shapesPath,"");
+                    hash = hash.replace(/\//g,"_");
+                    window.location.hash = "#file="+hash;
                 }
                 catch(e){
                     this.view.reset();
