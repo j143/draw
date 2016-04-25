@@ -30,6 +30,7 @@ module.exports = function (grunt) {
                     './bower_components/draw2d/dist/jquery-touch_punch.js',
                     './lib/jquery.bootstrap-growl.js',
                     './bower_components/mousetrap/mousetrap.min.js',
+                    './bower_components/remarkable/dist/remarkable.min.js',
                     './bower_components/bootstrap/dist/js/bootstrap.min.js',
                     './bower_components/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js',
                     './bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js',
@@ -58,6 +59,7 @@ module.exports = function (grunt) {
 
                     './src/assets/javascript/dialog/About.js',
                     './src/assets/javascript/dialog/FigureTest.js',
+                    './src/assets/javascript/dialog/FigureMarkdownEdit.js',
                     './src/assets/javascript/dialog/FigureCodeExport.js',
                     './src/assets/javascript/dialog/FigureCodeEdit.js',
                     './src/assets/javascript/dialog/FileOpen.js',
@@ -185,6 +187,7 @@ module.exports = function (grunt) {
                         "./src/assets/less/dialog_export.less",
                         "./src/assets/less/dialog_test.less",
                         "./src/assets/less/filter.less",
+                        "./src/assets/less/markdown_dialog.less",
                         "./src/assets/less/file_dialog.less",
                         "./src/assets/less/file_open_dialog.less",
                         "./src/assets/less/file_save_dialog.less",

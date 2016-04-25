@@ -220,8 +220,15 @@ shape_designer.Toolbar = Class.extend({
             new shape_designer.dialog.FigureCodeExport().show();
         },this));
 
-        this.galleryButton  = $('<a  target="gallery" href="http://freegroup.github.io/draw2d_js.shapes/" data-toggle="tooltip" title="Shape Gallery</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_gallery.png"></a>');
-        buttonGroup.append(this.galleryButton);
+        this.markdownButton  = $('<button  data-toggle="tooltip" title="Helpfile for this shape</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_markdown.png"></button>');
+        buttonGroup.append(this.markdownButton);
+        this.markdownButton.on("click",$.proxy(function(){
+            new shape_designer.dialog.FigureMarkdownEdit().show();
+        },this));
+
+
+ //       this.galleryButton  = $('<a  target="gallery" href="http://freegroup.github.io/draw2d_js.shapes/" data-toggle="tooltip" title="Shape Gallery</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_gallery.png"></a>');
+ //       buttonGroup.append(this.galleryButton);
 
         $(".toolbarGroup .btn-group").each(function(index, element){
             var $e=$(element);
