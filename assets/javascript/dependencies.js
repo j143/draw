@@ -26619,7 +26619,11 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
             canDragStart = figure.onDragStart(x - figure.getAbsoluteX(), y - figure.getAbsoluteY(), shiftKey, ctrlKey);
             // Element send a veto about the drag&drop operation
             this.mouseDraggingElement = canDragStart===false ? null : figure;
-            this.mouseDownElement = figure;
+        }
+
+        this.mouseDownElement = figure;
+        if(this.mouseDownElement!==null){
+            this.mouseDownElement.fireEvent("mousedown", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
         }
 
         if (figure !== canvas.getSelection().getPrimary() && figure !== null && figure.isSelectable() === true) {
@@ -26783,6 +26787,10 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
         //
         if (this.mouseDownElement === null && this.mouseMovedDuringMouseDown===false) {
             this.select(canvas,null);
+        }
+
+        if(this.mouseDownElement!==null){
+            this.mouseDownElement.fireEvent("mouseup", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
         }
 
         this.mouseDownElement = null;
@@ -27278,10 +27286,15 @@ draw2d.policy.canvas.BoundingboxSelectionPolicy =  draw2d.policy.canvas.SingleSe
                 canDragStart = figure.onDragStart(x - figure.getAbsoluteX(), y - figure.getAbsoluteY(), shiftKey, ctrlKey);
                 // Element send a veto about the drag&drop operation
                 this.mouseDraggingElement = canDragStart===false ? null : figure;
-                this.mouseDownElement = figure;
             }
-    
-            // we click on an element which are not part of the current selection
+
+             this.mouseDownElement = figure;
+
+             if(this.mouseDownElement!==null){
+                 this.mouseDownElement.fireEvent("mousedown", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
+             }
+
+             // we click on an element which are not part of the current selection
             // => reset the "old" current selection if we didn't press the shift key
             if(shiftKey === false){
                 if(this.mouseDownElement!==null && this.mouseDownElement.isResizeHandle===false && !currentSelection.contains(this.mouseDownElement)){
@@ -34439,7 +34452,7 @@ draw2d.policy.port.IntrusivePortsFeedbackPolicy = draw2d.policy.port.PortFeedbac
  *   Library is under GPL License (GPL)
  *   Copyright (c) 2012 Andreas Herz
  ****************************************/draw2d.Configuration = {
-    version : "6.1.16",
+    version : "6.1.17",
     i18n : {
         command : {
             move : "Move Shape",
