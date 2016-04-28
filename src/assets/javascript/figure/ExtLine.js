@@ -39,13 +39,15 @@ shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
                ];
     },
      
-    removeFilter:function(filter){
+    removeFilter:function(filter)
+    {
       this.filters.remove(filter);  
       
       return this;
     },
 
-    addFilter:function(filter){
+    addFilter:function(filter)
+    {
         var alreadyIn = false;
         
         this.filters.each($.proxy(function(i,e){

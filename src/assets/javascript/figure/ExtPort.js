@@ -18,11 +18,13 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
       this.setUserData({
     	  name:"Port",
     	  type:"Hybrid",
-    	  direction:null
+    	  direction:null,
+          fanout:20
     		  });
       
       this.filters   = new draw2d.util.ArrayList();
       this.filters.add( new shape_designer.filter.PositionFilter());
+      this.filters.add( new shape_designer.filter.FanoutFilter());
       this.filters.add( new shape_designer.filter.PortDirectionFilter());
       this.filters.add( new shape_designer.filter.PortTypeFilter());
 
@@ -30,25 +32,41 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     },
     
 
-    setInputType: function(type){
+    setInputType: function(type)
+    {
     	this.getUserData().type = type;
     },
     
-    getInputType: function(){
+    getInputType: function()
+    {
     	return this.getUserData().type;
     },
 
-    setConnectionDirection: function(direction){
+    setMaxFanOut: function( count)
+    {
+        this.getUserData().fanout = parseInt(count);
+    },
+
+    getMaxFanOut: function()
+    {
+        return this.getUserData().fanout?this.getUserData().fanout:20;
+    },
+
+
+    setConnectionDirection: function(direction)
+    {
         this.getUserData().direction = direction;
         this.updateDecoration();
     },
     
-    getConnectionDirection: function(){
+    getConnectionDirection: function()
+    {
         return this.getUserData().direction;
     },
 
     
-    updateDecoration:function(){
+    updateDecoration:function()
+    {
         if(this.decoration!==null){
             this.remove(this.decoration);
             this.decoration = null;
@@ -152,11 +170,19 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
 
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
+            var fanoutFilterAdded = false;
             $.each(memento.filters, $.proxy(function(i,e){
                 var filter = eval("new "+e.name+"()");
+                if(filter instanceof shape_designer.filter.FanoutFilter){
+                    fanoutFilterAdded=true;
+                }
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
+            if(!fanoutFilterAdded){
+                this.filters.insertElementAt(new shape_designer.filter.FanoutFilter(),1);
+            }
+
         }
         this.updateDecoration();
     }

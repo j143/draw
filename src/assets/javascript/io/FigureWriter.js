@@ -95,7 +95,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
                     x    : 100/b.w*figure.getCenter().x,
                     y    : 100/b.h*figure.getCenter().y,
                     color: figure.getBackgroundColor().hash(),
-                    name : figure.getUserData().name
+                    name : figure.getUserData().name,
+                    fanout: figure.getMaxFanOut()
                     });
             }
             figure.translate(x,y);
