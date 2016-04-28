@@ -34452,7 +34452,7 @@ draw2d.policy.port.IntrusivePortsFeedbackPolicy = draw2d.policy.port.PortFeedbac
  *   Library is under GPL License (GPL)
  *   Copyright (c) 2012 Andreas Herz
  ****************************************/draw2d.Configuration = {
-    version : "6.1.17",
+    version : "6.1.18",
     i18n : {
         command : {
             move : "Move Shape",
@@ -36112,8 +36112,8 @@ draw2d.Canvas = Class.extend(
             figure:figure,
             x:x,
             y:y,
-            relX: x-figure.getAbsoluteX(),
-            relY: y-figure.getAbsoluteY(),
+            relX: figure!==null?x-figure.getAbsoluteX():0,
+            relY: figure!==null?y-figure.getAbsoluteY():0,
             shiftKey:shiftKey,
             ctrlKey:ctrlKey});
 
