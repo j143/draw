@@ -21003,14 +21003,10 @@ draw2d.layout.connection.ConnectionRouter = Class.extend({
     
     _paint: function(conn)
     {
-        // calculate the path string for the SVG rendering
-        // Important: to avoid subpixel error rendering we add 0.5 to each coordinate
-        //            With this offset the canvas can paint the line on a "full pixel" instead
-        //            of subpixel rendering.
         var ps = conn.getVertices();
         var p = ps.get(0);
         var distance = conn.getRadius();
-        var path = ["M",(p.x|0)+0.5," ",(p.y|0)+0.5];
+        var path = ["M",p.x," ",p.y];
         var i=1;
         if(distance>0){
             var lastP = p;
@@ -21018,22 +21014,22 @@ draw2d.layout.connection.ConnectionRouter = Class.extend({
             for(  ;i<length;i++){
                   p = ps.get(i);
                   inset = draw2d.geo.Util.insetPoint(p,lastP, distance);
-                  path.push("L", (inset.x|0)+0.5, ",", (inset.y|0)+0.5);
+                  path.push("L", (inset), ",", inset.y);
     
                   p2 = ps.get(i+1);
                   inset = draw2d.geo.Util.insetPoint(p,p2,distance);
                   
-                  path.push("Q",p.x,",",p.y," ", (inset.x|0)+0.5, ", ", (inset.y|0)+0.5);
+                  path.push("Q",p.x,",",p.y," ", inset.x, ", ", inset.y);
                   lastP = p;
             }
             p = ps.get(i);
-            path.push("L", (p.x|0)+0.5, ",", (p.y|0)+0.5);
+            path.push("L", p.x, ",", p.y);
        }
         else{
             var length = ps.getSize();
             for( ;i<length;i++){
                 p = ps.get(i);
-                path.push("L", (p.x|0)+0.5, ",", (p.y|0)+0.5);
+                path.push("L", p.x, ",", p.y);
           }
         }
          conn.svgPathString = path.join("");
@@ -34452,7 +34448,7 @@ draw2d.policy.port.IntrusivePortsFeedbackPolicy = draw2d.policy.port.PortFeedbac
  *   Library is under GPL License (GPL)
  *   Copyright (c) 2012 Andreas Herz
  ****************************************/draw2d.Configuration = {
-    version : "6.1.18",
+    version : "6.1.22",
     i18n : {
         command : {
             move : "Move Shape",
@@ -34720,9 +34716,9 @@ draw2d.Canvas = Class.extend(
 
         this.html.bind("mousemove touchmove", function(event)
         {
-            event = _this._getEvent(event);
+            event  = _this._getEvent(event);
+            var pos = _this.fromDocumentToCanvasCoordinate(event.clientX, event.clientY);
             if (_this.mouseDown === false){
-               var pos = _this.fromDocumentToCanvasCoordinate(event.clientX, event.clientY);
                // mouseEnter/mouseLeave events for Figures. Don't use the Raphael or DOM native functions.
                // Raphael didn't work for Rectangle with transparent fill (events only fired for the border line)
                // DOM didn't work well for lines. No eclipse area - you must hit the line exact to retrieve the event.
@@ -34732,12 +34728,14 @@ draw2d.Canvas = Class.extend(
                try{
 	               var hover = _this.getBestFigure(pos.x,pos.y);
 	               if(hover !== _this.currentHoverFigure && _this.currentHoverFigure!==null){
-	            	   _this.currentHoverFigure.onMouseLeave();
+	            	   _this.currentHoverFigure.onMouseLeave(); // deprecated
 	            	   _this.currentHoverFigure.fireEvent("mouseleave");
+                       _this.fireEvent("mouseleave", {figure:_this.currentHoverFigure});
 	               }
 	               if(hover !== _this.currentHoverFigure && hover!==null){
 	            	   hover.onMouseEnter();
 	            	   hover.fireEvent("mouseenter");
+                       _this.fireEvent("mouseenter", {figure:hover});
 	               }
 	               _this.currentHoverFigure = hover;
                }
@@ -34749,6 +34747,7 @@ draw2d.Canvas = Class.extend(
                _this.editPolicy.each(function(i,policy){
                    policy.onMouseMove(_this, pos.x, pos.y, event.shiftKey, event.ctrlKey);
                });
+               _this.fireEvent("mousemove",{x:pos.x, y:pos.y, shiftKey:event.shiftKey, ctrlKey:event.ctrlKey, hoverFigure:_this.currentHoverFigure});
             }
             else{
                var diffXAbs = (event.clientX - _this.mouseDownX)*_this.zoomFactor;
@@ -34758,6 +34757,7 @@ draw2d.Canvas = Class.extend(
                });
                _this.mouseDragDiffX = diffXAbs;
                _this.mouseDragDiffY = diffYAbs;
+               _this.fireEvent("mousemove",{x:pos.x, y:pos.y, shiftKey:event.shiftKey, ctrlKey:event.ctrlKey, hoverFigure:_this.currentHoverFigure});
            }
         });
         

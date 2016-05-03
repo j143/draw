@@ -2169,6 +2169,57 @@ shape_designer.filter.Filter = Class.extend({
 
 
 
+shape_designer.filter.FanoutFilter = shape_designer.filter.Filter.extend({
+    NAME :"shape_designer.filter.FanoutFilter",
+    
+	init:function(){
+	    this._super();
+	},
+	
+	insertPane: function(figure, $parent){
+       var cssScope = this.NAME.replace(/[.]/g, "_");
+	    
+	   $parent.append('<div id="'+cssScope+'_container" class="panel panel-default">'+
+                	   ' <div class="panel-heading filter-heading" data-toggle="collapse" data-target="#'+cssScope+'_width_panel">'+
+                	   '     Maximal fan out'+
+                	   '</div>'+
+                	   
+                	   ' <div class="panel-body collapse in" id="'+cssScope+'_width_panel">'+
+                	   '   <div class="form-group">'+
+                       '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
+                 	   '       <input id="filter_'+cssScope+'_fanout" type="text" value="'+figure.getMaxFanOut()+'" name="filter_'+cssScope+'_fanout" class="form-control" />'+
+                       '   </div>'+
+                       ' </div>'+
+                	   '</div>');
+
+	       $("input[name='filter_"+cssScope+"_fanout']").TouchSpin({
+	           min: 0,
+	           max: 50,
+	           step: 1,
+	           maxboostedstep: 1,
+	           postfix: 'px'
+	       });
+           $("input[name='filter_"+cssScope+"_fanout']").on("change", $.proxy(function(){
+               this.setMaxFanOut(parseInt($("input[name='filter_"+cssScope+"_fanout']").val()));
+           },figure));
+
+
+	   },
+	   
+	   removePane:function()
+	   {
+	   },
+	   
+	   onInstall:function(figure)
+	   {
+	   }
+});
+
+
+
+
+
+
 shape_designer.filter.StrokeFilter = shape_designer.filter.Filter.extend({
     NAME :"shape_designer.filter.StrokeFilter",
     
@@ -3583,11 +3634,13 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
       this.setUserData({
     	  name:"Port",
     	  type:"Hybrid",
-    	  direction:null
+    	  direction:null,
+          fanout:20
     		  });
       
       this.filters   = new draw2d.util.ArrayList();
       this.filters.add( new shape_designer.filter.PositionFilter());
+      this.filters.add( new shape_designer.filter.FanoutFilter());
       this.filters.add( new shape_designer.filter.PortDirectionFilter());
       this.filters.add( new shape_designer.filter.PortTypeFilter());
 
@@ -3595,25 +3648,41 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
     },
     
 
-    setInputType: function(type){
+    setInputType: function(type)
+    {
     	this.getUserData().type = type;
     },
     
-    getInputType: function(){
+    getInputType: function()
+    {
     	return this.getUserData().type;
     },
 
-    setConnectionDirection: function(direction){
+    setMaxFanOut: function( count)
+    {
+        this.getUserData().fanout = parseInt(count);
+    },
+
+    getMaxFanOut: function()
+    {
+        return this.getUserData().fanout?this.getUserData().fanout:20;
+    },
+
+
+    setConnectionDirection: function(direction)
+    {
         this.getUserData().direction = direction;
         this.updateDecoration();
     },
     
-    getConnectionDirection: function(){
+    getConnectionDirection: function()
+    {
         return this.getUserData().direction;
     },
 
     
-    updateDecoration:function(){
+    updateDecoration:function()
+    {
         if(this.decoration!==null){
             this.remove(this.decoration);
             this.decoration = null;
@@ -3717,11 +3786,19 @@ shape_designer.figure.ExtPort = draw2d.shape.basic.Circle.extend({
 
         if(typeof memento.filters !=="undefined"){
             this.filters = new draw2d.util.ArrayList();
+            var fanoutFilterAdded = false;
             $.each(memento.filters, $.proxy(function(i,e){
                 var filter = eval("new "+e.name+"()");
+                if(filter instanceof shape_designer.filter.FanoutFilter){
+                    fanoutFilterAdded=true;
+                }
                 filter.setPersistentAttributes(this, e);
                 this.filters.add(filter);
             },this));
+            if(!fanoutFilterAdded){
+                this.filters.insertElementAt(new shape_designer.filter.FanoutFilter(),1);
+            }
+
         }
         this.updateDecoration();
     }
@@ -3768,13 +3845,15 @@ shape_designer.figure.ExtLine = draw2d.shape.basic.PolyLine.extend({
                ];
     },
      
-    removeFilter:function(filter){
+    removeFilter:function(filter)
+    {
       this.filters.remove(filter);  
       
       return this;
     },
 
-    addFilter:function(filter){
+    addFilter:function(filter)
+    {
         var alreadyIn = false;
         
         this.filters.each($.proxy(function(i,e){
@@ -4195,7 +4274,8 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
                     x    : 100/b.w*figure.getCenter().x,
                     y    : 100/b.h*figure.getCenter().y,
                     color: figure.getBackgroundColor().hash(),
-                    name : figure.getUserData().name
+                    name : figure.getUserData().name,
+                    fanout: figure.getMaxFanOut()
                     });
             }
             figure.translate(x,y);
