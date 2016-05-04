@@ -28,8 +28,7 @@
 
 	var app=null;
 	$( window ).load(function() {
-
-	   try{
+       try{
 	       app  = new shape_designer.Application(true);
 	   }
 	   catch(e){
@@ -345,7 +344,7 @@ var {{{className}}} = {{{baseClass}}}.extend({
      var port;
      {{#ports}}
      // {{{name}}}
-     port = this.createPort("{{type}}", new draw2d.layout.locator.XYRelPortLocator({{x}}, {{y}}));
+     port = this.{{{method}}}({{{type}}}, new draw2d.layout.locator.XYRelPortLocator({{x}}, {{y}}));
      port.setConnectionDirection({{direction}});
      port.setBackgroundColor("{{color}}");
      port.setName("{{name}}");
@@ -437,6 +436,15 @@ var {{{className}}} = {{{baseClass}}}.extend({
 
     onStop:function()
     {
+    },
+
+    /**
+     * @method
+     */
+    addPort: function(port, locator)
+    {
+        this._super(port, locator);
+        return port;
     },
 
     /**

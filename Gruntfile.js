@@ -84,6 +84,10 @@ module.exports = function (grunt) {
                     './src/assets/javascript/filter/PositionFilter.js',
                     './src/assets/javascript/filter/RadiusFilter.js',
 
+                    './src/assets/javascript/figure/DecoratedInputPort.js',
+                    './src/assets/javascript/figure/MarkerFigure.js',
+                    './src/assets/javascript/figure/MarkerStateAFigure.js',
+                    './src/assets/javascript/figure/MarkerStateBFigure.js',
                     './src/assets/javascript/figure/TestSwitch.js',
                     './src/assets/javascript/figure/ExtLabel.js',
                     './src/assets/javascript/figure/ExtPolygon.js',

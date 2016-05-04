@@ -226,10 +226,6 @@ shape_designer.Toolbar = Class.extend({
             new shape_designer.dialog.FigureMarkdownEdit().show();
         },this));
 
-
- //       this.galleryButton  = $('<a  target="gallery" href="http://freegroup.github.io/draw2d_js.shapes/" data-toggle="tooltip" title="Shape Gallery</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_gallery.png"></a>');
- //       buttonGroup.append(this.galleryButton);
-
         $(".toolbarGroup .btn-group").each(function(index, element){
             var $e=$(element);
             $e.prepend("<div class='info-text'>"+$e.attr("title")+"</div>");

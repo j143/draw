@@ -90,8 +90,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
                     });
             }else if(figure instanceof shape_designer.figure.ExtPort){
                 ports.push({
-                    type:figure.getInputType().toLowerCase(), 
-                    direction:figure.getConnectionDirection(), 
+                    type:figure.getInputType()==="Input"?"new DecoratedInputPort()":'"'+figure.getInputType().toLowerCase()+'"',
+                    method:figure.getInputType()==="Input"?"addPort":'createPort',
+                    direction:figure.getConnectionDirection(),
                     x    : 100/b.w*figure.getCenter().x,
                     y    : 100/b.h*figure.getCenter().y,
                     color: figure.getBackgroundColor().hash(),
