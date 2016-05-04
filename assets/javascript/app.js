@@ -971,10 +971,6 @@ shape_designer.Toolbar = Class.extend({
             new shape_designer.dialog.FigureMarkdownEdit().show();
         },this));
 
-
- //       this.galleryButton  = $('<a  target="gallery" href="http://freegroup.github.io/draw2d_js.shapes/" data-toggle="tooltip" title="Shape Gallery</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_gallery.png"></a>');
- //       buttonGroup.append(this.galleryButton);
-
         $(".toolbarGroup .btn-group").each(function(index, element){
             var $e=$(element);
             $e.prepend("<div class='info-text'>"+$e.attr("title")+"</div>");
@@ -3279,6 +3275,408 @@ shape_designer.filter.RadiusFilter = shape_designer.filter.Filter.extend({
 
 
 
+
+var DecoratedInputPort = draw2d.InputPort.extend({
+
+    init : function(attr, setter, getter)
+    {
+        this._super(attr, setter, getter);
+        
+        this.decoration = new MarkerFigure();
+
+        this.add(this.decoration, new draw2d.layout.locator.LeftLocator({margin:8}));
+
+
+        this.on("disconnect",function(emitter, event){
+            this.decoration.setVisible(this.getConnections().getSize()===0);
+        }.bind(this));
+
+        this.on("connect",function(emitter, event){
+            this.decoration.setVisible(false);
+        }.bind(this));
+
+        this.on("dragend",function(emitter, event){
+            this.decoration.setVisible(this.getConnections().getSize()===0);
+        }.bind(this));
+        
+        this.on("drag",function(emitter, event){
+            this.decoration.setVisible(false);
+        }.bind(this));
+
+        // a port can have a value. Usefull for workflow engines or circuit diagrams
+        this.setValue(true);
+    },
+
+    useDefaultValue:function()
+    {
+        this.decoration.setStick(true);
+    }
+});
+
+/**
+ * The markerFigure is the left hand side annotation for a DecoratedPort.
+ *
+ * It contains two children
+ *
+ * StateAFigure: if the mouse hover and the figure isn't permanent visible
+ * StateBFigure: either the mouse is over or the user pressed the checkbox to stick the figure on the port
+ *
+ * This kind of decoration is usefull for defualt values on workflwos enginges or circuit diagrams
+ *
+ */
+var MarkerFigure = draw2d.shape.layout.VerticalLayout.extend({
+
+    NAME : "MarkerFigure",
+
+    init : function(attr, setter, getter)
+    {
+        var _this = this;
+
+        this.isMouseOver = false;        // indicator if the mouse is over the element
+        this.stick       = false;        // indicator if the stateBFigure should always be visible
+        this.defaultValue= true;         // current selected default value for the decoration
+
+        this._super($.extend({
+              stroke:0
+        },attr),
+        setter, 
+        getter);
+
+
+        // figure if the decoration is not permanent visible (sticky note)
+        this.add(this.stateA = new MarkerStateAFigure({text:"X"}));
+        // figure if the decoration permanent visible
+        this.add(this.stateB = new MarkerStateBFigure({text:"X"}));
+
+
+        this.on("mouseenter",function(emitter, event){
+            _this.onMouseOver(true);
+        });
+
+        this.on("mouseleave",function(emitter, event){
+            _this.onMouseOver(false);
+        });
+
+        this.on("click",function(emitter, event){
+            if (_this.isVisible() === false) {
+                return;//silently
+            }
+
+            if(_this.stateB.getStickTickFigure().getBoundingBox().hitTest(event.x, event.y) === true){
+                _this.setStick(!_this.getStick());
+            }
+            else if(_this.stateB.getLabelFigure().getBoundingBox().hitTest(event.x, event.y) === true){
+                $.contextMenu({
+                    selector: 'body',
+                    trigger:"left",
+                    events:
+                    {
+                        hide:function(){ $.contextMenu( 'destroy' ); }
+                    },
+                    callback: $.proxy(function(key, options)
+                    {
+                        // propagate the default value to the port
+                        //
+                        switch(key){
+                            case "high":
+                                _this.setDefaultValue(true);
+                                break;
+                            case "low":
+                                _this.setDefaultValue(false);
+                                break;
+                            default:
+                                break;
+                        }
+
+                    },this),
+                    x:event.x,
+                    y:event.y,
+                    items:{
+                        "high": {name: "High"},
+                        "low":  {name: "Low" }
+                    }
+                });
+
+            }
+        });
+
+        this.setDefaultValue(true);
+        this.onMouseOver(false);
+    },
+
+
+    onMouseOver: function(flag)
+    {
+        this.isMouseOver = flag;
+
+        if(this.visible===false){
+            return; // silently
+        }
+
+        if(this.stick===true) {
+            this.stateA.setVisible(false);
+            this.stateB.setVisible(true);
+        }
+        else{
+            this.stateA.setVisible(!this.isMouseOver);
+            this.stateB.setVisible( this.isMouseOver);
+        }
+
+        return this;
+    },
+
+
+    setVisible: function(flag)
+    {
+        this._super(flag);
+
+        // update the hover/stick state of the figure
+        this.onMouseOver(this.isMouseOver);
+
+        return this;
+    },
+
+
+    setStick:function(flag)
+    {
+        this.stick = flag;
+        this.onMouseOver(this.isMouseOver);
+
+
+        // the port has only a default value if the decoration is visible
+        this.parent.setValue(flag?this.defaultValue:null);
+
+        this.stateB.setTick(this.getStick());
+
+        return this;
+    },
+
+
+    getStick:function()
+    {
+        return this.stick;
+    },
+
+
+    setText: function(text)
+    {
+        this.stateB.setText(text);
+
+        return this;
+    },
+
+    setDefaultValue: function(value)
+    {
+        this.defaultValue = value;
+        this.setText((this.defaultValue===true)?"High":"Low");
+
+        // only propagate the value to the parent if the decoration permanent visible
+        //
+        if(this.stick===true){
+            this.parent.setValue(this.defaultValue);
+        }
+    }
+});
+
+/**
+ * This is only the mouseover reactive shape. A little bit smaller than the visible shape
+ *
+ * Or you can display this shape with opacity of 0.2 to indicate that this is a reactive area.
+ */
+var MarkerStateAFigure = draw2d.shape.basic.Label.extend({
+
+    NAME : "MarkerStateAFigure",
+
+    /**
+     * @param attr
+     */
+    init : function(attr, setter, getter)
+    {
+        this._super($.extend({
+            padding:{left:5, top:2, bottom:2, right:10},
+            bgColor:null,
+            stroke:1,
+            color:null,
+            fontColor:null,
+            fontSize:10
+        },attr), 
+        setter, 
+        getter);
+
+        // we must override the hitTest method to ensure that the parent can receive the mouseenter/mouseleave events.
+        // Unfortunately draw2D didn't provide event bubbling like HTML. The first shape in queue consumes the event.
+        //
+        // now this shape is "dead" for any mouse events and the parent must/can handle this.
+        this.hitTest = function(){return false;};
+    }
+
+});
+var MarkerStateBFigure = draw2d.shape.layout.HorizontalLayout.extend({
+
+    NAME : "MarkerStateBFigure",
+
+    /**
+     * @param attr
+     */
+    init : function(attr, setter, getter)
+    {
+        this._super($.extend({
+            bgColor:"#FFFFFF",
+            stroke:1,
+            color:"#00bcd4",
+            radius:2,
+            padding:{left:3, top:3, bottom:3, right:8},
+            gap:5
+        },attr), 
+        setter, 
+        getter);
+
+        this.stickTick = new draw2d.shape.basic.Circle({
+            diameter:10,
+            bgColor:"#f0f0f0",
+            stroke:1,
+            resizeable:false
+        });
+        this.add(this.stickTick);
+        this.stickTick.hitTest = function(){return false;};
+        this.stickTick.addCssClass("cursorPointer");
+
+        this.label = new draw2d.shape.basic.Label({
+            text:attr.text,
+            resizeable:false,
+            stroke:0,
+            padding:0,
+            fontSize:10,
+            fontColor:"#303030"
+        });
+        this.add(this.label);
+        // don't catch the mouse events. This is done by the parent container
+        this.label.hitTest = function(){return false;};
+        this.label.addCssClass("cursorPointer");
+
+        // we must override the hitTest method to ensure that the parent can receive the mouseenter/mouseleave events.
+        // Unfortunately draw2D didn't provide event bubbling like HTML. The first shape in queue consumes the event.
+        //
+        // now this shape is "dead" for any mouse events and the parent must/can handle this.
+        this.hitTest = function(){return false;};
+    },
+
+    setText: function(text)
+    {
+        this.label.setText(text);
+    },
+
+    setTick :function(flag)
+    {
+        this.stickTick.attr({bgColor:flag?"#00bcd4":"#f0f0f0"});
+   },
+
+    getStickTickFigure:function()
+    {
+        return this.stickTick;
+    },
+
+    getLabelFigure:function()
+    {
+        return this.label;
+    },
+
+    /**
+     * @method
+     *
+     *
+     * @template
+     **/
+    repaint: function(attributes)
+    {
+        if(this.repaintBlocked===true || this.shape===null){
+            return;
+        }
+
+        attributes= attributes || {};
+
+        attributes.path = this.calculatePath();
+
+        this._super(attributes);
+    },
+
+
+    /**
+     * @method
+     *
+     * Override the default rendering of the HorizontalLayout, which is a simple
+     * rectangle. We want an arrow.
+     */
+    createShapeElement : function()
+    {
+        return this.canvas.paper.path(this.calculatePath());
+    },
+
+    /**
+     * stupid copy&paste the code from the Polygon shape...unfortunately the LayoutFigure isn't a polygon.
+     *
+     * @returns {string}
+     */
+    calculatePath: function()
+    {
+        var arrowLength=8;
+
+        this.vertices   = new draw2d.util.ArrayList();
+
+        var w= this.width;
+        var h= this.height;
+        var pos= this.getAbsolutePosition();
+        var i=0;
+        var length=0;
+        this.vertices.add(new draw2d.geo.Point(pos.x,  pos.y)  );
+        this.vertices.add(new draw2d.geo.Point(pos.x+w-arrowLength,pos.y)  );
+
+        this.vertices.add(new draw2d.geo.Point(pos.x+w,pos.y+h/2));
+
+        this.vertices.add(new draw2d.geo.Point(pos.x+w-arrowLength,pos.y+h));
+        this.vertices.add(new draw2d.geo.Point(pos.x  ,pos.y+h));
+
+        var radius = this.getRadius();
+        var path = [];
+        // hard corners
+        //
+        if(radius === 0){
+            length = this.vertices.getSize();
+            var p = this.vertices.get(0);
+            path.push("M",(p.x|0)+0.5," ",(p.y|0)+0.5);
+            for(i=1;i<length;i++){
+                p = this.vertices.get(i);
+                path.push("L", (p.x|0)+0.5, " ", (p.y|0)+0.5);
+            }
+            path.push("Z");
+        }
+        // soften/round corners
+        //
+        else{
+            length = this.vertices.getSize();
+            var start = this.vertices.first();
+            var end   = this.vertices.last();
+            if(start.equals(end)){
+                length = length-1;
+                end = this.vertices.get(length-1);
+            }
+            var begin   = draw2d.geo.Util.insetPoint(start,end, radius);
+            path.push("M", (begin.x|0)+0.5, ",", (begin.y|0)+0.5);
+            for( i=0 ;i<length;i++){
+                start = this.vertices.get(i);
+                end   = this.vertices.get((i+1)%length);
+                modStart = draw2d.geo.Util.insetPoint(start,end, radius);
+                modEnd   = draw2d.geo.Util.insetPoint(end,start,radius);
+                path.push("Q",start.x,",",start.y," ", (modStart.x|0)+0.5, ", ", (modStart.y|0)+0.5);
+                path.push("L", (modEnd.x|0)+0.5, ",", (modEnd.y|0)+0.5);
+            }
+        }
+        return path.join("");
+    }
+
+
+});
+
 /* jshint evil:true */
 shape_designer.figure.TestSwitch = draw2d.shape.basic.Label.extend({
 
@@ -4269,8 +4667,9 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
                     });
             }else if(figure instanceof shape_designer.figure.ExtPort){
                 ports.push({
-                    type:figure.getInputType().toLowerCase(), 
-                    direction:figure.getConnectionDirection(), 
+                    type:figure.getInputType()==="Input"?"new DecoratedInputPort()":'"'+figure.getInputType().toLowerCase()+'"',
+                    method:figure.getInputType()==="Input"?"addPort":'createPort',
+                    direction:figure.getConnectionDirection(),
                     x    : 100/b.w*figure.getCenter().x,
                     y    : 100/b.h*figure.getCenter().y,
                     color: figure.getBackgroundColor().hash(),

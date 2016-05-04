@@ -21003,10 +21003,14 @@ draw2d.layout.connection.ConnectionRouter = Class.extend({
     
     _paint: function(conn)
     {
+        // calculate the path string for the SVG rendering
+        // Important: to avoid subpixel error rendering we add 0.5 to each coordinate
+        //            With this offset the canvas can paint the line on a "full pixel" instead
+        //            of subpixel rendering.
         var ps = conn.getVertices();
         var p = ps.get(0);
         var distance = conn.getRadius();
-        var path = ["M",p.x," ",p.y];
+        var path = ["M",(p.x|0)+0.5," ",(p.y|0)+0.5];
         var i=1;
         if(distance>0){
             var lastP = p;
@@ -21014,22 +21018,22 @@ draw2d.layout.connection.ConnectionRouter = Class.extend({
             for(  ;i<length;i++){
                   p = ps.get(i);
                   inset = draw2d.geo.Util.insetPoint(p,lastP, distance);
-                  path.push("L", (inset), ",", inset.y);
+                  path.push("L", (inset.x|0)+0.5, ",", (inset.y|0)+0.5);
     
                   p2 = ps.get(i+1);
                   inset = draw2d.geo.Util.insetPoint(p,p2,distance);
                   
-                  path.push("Q",p.x,",",p.y," ", inset.x, ", ", inset.y);
+                  path.push("Q",p.x,",",p.y," ", (inset.x|0)+0.5, ", ", (inset.y|0)+0.5);
                   lastP = p;
             }
             p = ps.get(i);
-            path.push("L", p.x, ",", p.y);
+            path.push("L", (p.x|0)+0.5, ",", (p.y|0)+0.5);
        }
         else{
             var length = ps.getSize();
             for( ;i<length;i++){
                 p = ps.get(i);
-                path.push("L", p.x, ",", p.y);
+                path.push("L", (p.x|0)+0.5, ",", (p.y|0)+0.5);
           }
         }
          conn.svgPathString = path.join("");
@@ -26186,8 +26190,7 @@ draw2d.policy.canvas.WheelZoomPolicy = draw2d.policy.canvas.ZoomPolicy.extend({
      * @param zoomFactor
      * @param animated
      */
-    setZoom: function( zoomFactor, animated)
-    {
+    setZoom: function( zoomFactor, animated){
 
         // determine the center of the current canvas. We try to keep the
         // current center during zoom operation
@@ -26204,20 +26207,20 @@ draw2d.policy.canvas.WheelZoomPolicy = draw2d.policy.canvas.ZoomPolicy.extend({
             var myTweenable = new Tweenable();
             myTweenable.tween({
                 from:     { 'x': this.canvas.zoomFactor  },
-                to:       { 'x': zoomFactor },
-                duration: 300,
-                easing : "easeOutSine",
-                step: function (params) {
-                    _this._zoom(params.x, centerX, centerY);
-                },
-                finish: function (state) {
-                    _this.debouncedZoomedCallback();
-                }
-            });
-        }
-        else{
-            this._zoom(zoomFactor, {x:centerX, y:centerY});
-            this.debouncedZoomedCallback();
+            to:       { 'x': zoomFactor },
+            duration: 300,
+            easing : "easeOutSine",
+            step: function (params) {
+                _this._zoom(params.x, centerX, centerY);
+            },
+            finish: function (state) {
+                _this.debouncedZoomedCallback();
+            }
+        });
+    }
+    else{
+        this._zoom(zoomFactor, {x:centerX, y:centerY});
+        this.debouncedZoomedCallback();
         }
     },
 
@@ -26615,11 +26618,7 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
             canDragStart = figure.onDragStart(x - figure.getAbsoluteX(), y - figure.getAbsoluteY(), shiftKey, ctrlKey);
             // Element send a veto about the drag&drop operation
             this.mouseDraggingElement = canDragStart===false ? null : figure;
-        }
-
-        this.mouseDownElement = figure;
-        if(this.mouseDownElement!==null){
-            this.mouseDownElement.fireEvent("mousedown", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
+            this.mouseDownElement = figure;
         }
 
         if (figure !== canvas.getSelection().getPrimary() && figure !== null && figure.isSelectable() === true) {
@@ -26785,10 +26784,6 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
             this.select(canvas,null);
         }
 
-        if(this.mouseDownElement!==null){
-            this.mouseDownElement.fireEvent("mouseup", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
-        }
-
         this.mouseDownElement = null;
         this.mouseMovedDuringMouseDown  = false;
     },
@@ -26808,15 +26803,7 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
     onClick: function(figure, mouseX, mouseY, shiftKey, ctrlKey)
     {
         if(figure!==null){
-            figure.fireEvent("click", {
-                figure:figure,
-                x:mouseX,
-                y:mouseY,
-                relX: mouseX-figure.getAbsoluteX(),
-                relY: mouseY-figure.getAbsoluteY(),
-                shiftKey:shiftKey,
-                ctrlKey:ctrlKey});
-
+            figure.fireEvent("click", {x:mouseX, y:mouseY, shiftKey:shiftKey, ctrlKey:ctrlKey});
             figure.onClick();
         }
     },
@@ -27282,15 +27269,10 @@ draw2d.policy.canvas.BoundingboxSelectionPolicy =  draw2d.policy.canvas.SingleSe
                 canDragStart = figure.onDragStart(x - figure.getAbsoluteX(), y - figure.getAbsoluteY(), shiftKey, ctrlKey);
                 // Element send a veto about the drag&drop operation
                 this.mouseDraggingElement = canDragStart===false ? null : figure;
+                this.mouseDownElement = figure;
             }
-
-             this.mouseDownElement = figure;
-
-             if(this.mouseDownElement!==null){
-                 this.mouseDownElement.fireEvent("mousedown", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
-             }
-
-             // we click on an element which are not part of the current selection
+    
+            // we click on an element which are not part of the current selection
             // => reset the "old" current selection if we didn't press the shift key
             if(shiftKey === false){
                 if(this.mouseDownElement!==null && this.mouseDownElement.isResizeHandle===false && !currentSelection.contains(this.mouseDownElement)){
@@ -34448,7 +34430,7 @@ draw2d.policy.port.IntrusivePortsFeedbackPolicy = draw2d.policy.port.PortFeedbac
  *   Library is under GPL License (GPL)
  *   Copyright (c) 2012 Andreas Herz
  ****************************************/draw2d.Configuration = {
-    version : "6.1.22",
+    version : "6.1.12",
     i18n : {
         command : {
             move : "Move Shape",
@@ -34716,9 +34698,9 @@ draw2d.Canvas = Class.extend(
 
         this.html.bind("mousemove touchmove", function(event)
         {
-            event  = _this._getEvent(event);
-            var pos = _this.fromDocumentToCanvasCoordinate(event.clientX, event.clientY);
+            event = _this._getEvent(event);
             if (_this.mouseDown === false){
+               var pos = _this.fromDocumentToCanvasCoordinate(event.clientX, event.clientY);
                // mouseEnter/mouseLeave events for Figures. Don't use the Raphael or DOM native functions.
                // Raphael didn't work for Rectangle with transparent fill (events only fired for the border line)
                // DOM didn't work well for lines. No eclipse area - you must hit the line exact to retrieve the event.
@@ -34728,14 +34710,12 @@ draw2d.Canvas = Class.extend(
                try{
 	               var hover = _this.getBestFigure(pos.x,pos.y);
 	               if(hover !== _this.currentHoverFigure && _this.currentHoverFigure!==null){
-	            	   _this.currentHoverFigure.onMouseLeave(); // deprecated
+	            	   _this.currentHoverFigure.onMouseLeave();
 	            	   _this.currentHoverFigure.fireEvent("mouseleave");
-                       _this.fireEvent("mouseleave", {figure:_this.currentHoverFigure});
 	               }
 	               if(hover !== _this.currentHoverFigure && hover!==null){
 	            	   hover.onMouseEnter();
 	            	   hover.fireEvent("mouseenter");
-                       _this.fireEvent("mouseenter", {figure:hover});
 	               }
 	               _this.currentHoverFigure = hover;
                }
@@ -34747,7 +34727,6 @@ draw2d.Canvas = Class.extend(
                _this.editPolicy.each(function(i,policy){
                    policy.onMouseMove(_this, pos.x, pos.y, event.shiftKey, event.ctrlKey);
                });
-               _this.fireEvent("mousemove",{x:pos.x, y:pos.y, shiftKey:event.shiftKey, ctrlKey:event.ctrlKey, hoverFigure:_this.currentHoverFigure});
             }
             else{
                var diffXAbs = (event.clientX - _this.mouseDownX)*_this.zoomFactor;
@@ -34757,7 +34736,6 @@ draw2d.Canvas = Class.extend(
                });
                _this.mouseDragDiffX = diffXAbs;
                _this.mouseDragDiffY = diffYAbs;
-               _this.fireEvent("mousemove",{x:pos.x, y:pos.y, shiftKey:event.shiftKey, ctrlKey:event.ctrlKey, hoverFigure:_this.currentHoverFigure});
            }
         });
         
@@ -36108,14 +36086,7 @@ draw2d.Canvas = Class.extend(
         //
         var figure = this.getBestFigure(x, y);
 
-        this.fireEvent("click", {
-            figure:figure,
-            x:x,
-            y:y,
-            relX: figure!==null?x-figure.getAbsoluteX():0,
-            relY: figure!==null?y-figure.getAbsoluteY():0,
-            shiftKey:shiftKey,
-            ctrlKey:ctrlKey});
+        this.fireEvent("click", {figure:figure, x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
 
         // forward the event to all install policies as well.
         // (since 3.0.0)
@@ -38050,7 +38021,7 @@ draw2d.Figure = Class.extend({
      * Called when a user clicks on the element.
      * 
      *      // You can alternatively register an event handler with:
-     *      figure.on("click", function(emitter, event){
+     *      figure.on("click", function(emitter){
      *          alert("user click on the figure");
      *      });
      * 
@@ -38068,7 +38039,7 @@ draw2d.Figure = Class.extend({
      * right click with the mouse.
      * 
      *      // Alternatively you register for this event with:
-     *      figure.on("contextmenu", function(emitter, event){
+     *      figure.on("contextmenu", function(emitter){
      *          alert("user press the right mouse button for a context menu");
      *      });
      * 
