@@ -12,21 +12,24 @@ var DecoratedInputPort = draw2d.InputPort.extend({
 
         this.on("disconnect",function(emitter, event){
             this.decoration.setVisible(this.getConnections().getSize()===0);
+            //A
         }.bind(this));
 
         this.on("connect",function(emitter, event){
             this.decoration.setVisible(false);
+            //B
         }.bind(this));
 
         this.on("dragend",function(emitter, event){
             this.decoration.setVisible(this.getConnections().getSize()===0);
+            //C
         }.bind(this));
         
         this.on("drag",function(emitter, event){
             this.decoration.setVisible(false);
         }.bind(this));
 
-        // a port can have a value. Usefull for workflow engines or circuit diagrams
+        // a port can have a value. Useful for workflow engines or circuit diagrams
         this.setValue(true);
     },
 
