@@ -3306,7 +3306,7 @@ var DecoratedInputPort = draw2d.InputPort.extend({
             this.decoration.setVisible(false);
         }.bind(this));
 */
-
+        
         // a port can have a value. Useful for workflow engines or circuit diagrams
         this.setValue(true);
     },
