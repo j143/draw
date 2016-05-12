@@ -381,6 +381,8 @@ var {{{className}}} = {{{baseClass}}}.extend({
 
    layerGet: function(name, attributes)
    {
+      if(this.svgNodes===null) return null;
+
       var result=null;
       this.svgNodes.some(function(shape){
          if(shape.data("name")===name){
@@ -394,6 +396,8 @@ var {{{className}}} = {{{baseClass}}}.extend({
 
    layerAttr: function(name, attributes)
    {
+     if(this.svgNodes===null) return;
+
      this.svgNodes.forEach(function(shape){
              if(shape.data("name")===name){
                   shape.attr(attributes);
@@ -403,6 +407,8 @@ var {{{className}}} = {{{baseClass}}}.extend({
 
    layerShow: function(name, flag, duration)
    {
+      if(this.svgNodes===null) return;
+
       if(duration){
         this.svgNodes.forEach(function(node){
             if(node.data("name")===name){
