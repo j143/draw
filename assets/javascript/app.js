@@ -3306,7 +3306,7 @@ var DecoratedInputPort = draw2d.InputPort.extend({
 
     hasChangedValue: function()
     {
-        return this.hasChangedValue();
+        return this.hasChanged;
     },
 
     hasRisingEdge: function()
