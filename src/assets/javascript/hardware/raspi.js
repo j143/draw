@@ -3,8 +3,8 @@
 //
 var raspi={
 
-    gpio:function(pin, value)
-    {
-
+    gpio:{
+        set:function(pin, value){},
+        get:function(pin){return false;}
     }
 };
