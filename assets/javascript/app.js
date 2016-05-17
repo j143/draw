@@ -3,9 +3,9 @@
 //
 var raspi={
 
-    gpio:function(pin, value)
-    {
-
+    gpio:{
+        set:function(pin, value){},
+        get:function(pin){return false;}
     }
 };
 if(typeof String.prototype.endsWith ==="undefined") {
@@ -334,26 +334,22 @@ shape_designer.View = draw2d.Canvas.extend({
 
         Mousetrap.bind(['left'],function (event) {
             var diff = _this.getZoom()<0.5?0.5:1;
-            var primarySelection = _this.getSelection().getPrimary();
-            if(primarySelection!==null){ primarySelection.translate(-diff,0);}
+           _this.getSelection().each(function(i,f){f.translate(-diff,0);});
             return false;
         });
         Mousetrap.bind(['up'],function (event) {
             var diff = _this.getZoom()<0.5?0.5:1;
-            var primarySelection = _this.getSelection().getPrimary();
-            if(primarySelection!==null){ primarySelection.translate(0,-diff);}
+             _this.getSelection().each(function(i,f){f.translate(0,-diff);});
             return false;
         });
         Mousetrap.bind(['right'],function (event) {
             var diff = _this.getZoom()<0.5?0.5:1;
-            var primarySelection = _this.getSelection().getPrimary();
-            if(primarySelection!==null){ primarySelection.translate(diff,0);}
+             _this.getSelection().each(function(i,f){f.translate(diff,0);});
             return false;
         });
         Mousetrap.bind(['down'],function (event) {
             var diff = _this.getZoom()<0.5?0.5:1;
-            var primarySelection = _this.getSelection().getPrimary();
-            if(primarySelection!==null){ primarySelection.translate(0,diff);}
+            _this.getSelection().each(function(i,f){f.translate(0,diff);});
             return false;
         });
 
