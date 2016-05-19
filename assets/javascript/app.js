@@ -4557,6 +4557,9 @@ shape_designer.storage.BackendStorage = Class.extend({
                     .contents(path)
                     .fetch()
                     .then(function (info) {
+                        // SAFARI breaks if line breaks part of the base64
+                        info.content  = info.content.replace(/\s/g, '');
+
                         _this.currentFileHandle = {
                             path: path,
                             title: _this.basename(path),
