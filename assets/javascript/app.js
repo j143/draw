@@ -3158,15 +3158,15 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
                 	   ' <div class="panel-body  collapse in" id="position_width_panel">'+
                 	   '   <div class="form-group">'+
                        '      <div class="input-group" ></div> '+ // required to ensure the correct width of the siblings
-                       '       <input id="filter_position_x" type="text" value="'+parseInt(figure.getPosition().x)+'" name="filter_position_x" class="form-control" />'+
-                       '       <input id="filter_position_y" type="text" value="'+parseInt(figure.getPosition().y)+'" name="filter_position_y" class="form-control" />'+
+                       '       <input id="filter_position_x" type="text" value="'+parseFloat(figure.getPosition().x)+'" name="filter_position_x" class="form-control" />'+
+                       '       <input id="filter_position_y" type="text" value="'+parseFloat(figure.getPosition().y)+'" name="filter_position_y" class="form-control" />'+
                        '   </div>'+
                        ' </div>'+
                 	   '</div>');
 
            $("#filter_position_x").TouchSpin({
                min: 0,
-               max: 6000,
+               max: 10000,
                step: 1,
                maxboostedstep: 10,
                postfix: 'X'
@@ -3174,7 +3174,7 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
 
            $("#filter_position_y").TouchSpin({
                min: 0,
-               max: 6000,
+               max: 10000,
                step: 1,
                maxboostedstep: 10,
                postfix: 'Y'
@@ -3184,7 +3184,7 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
                try{
                    this.block = true;
                    var pos = figure.getPosition();
-                   figure.setPosition(parseInt($("input[name='filter_position_x']").val()), pos.y);
+                   figure.setPosition(parseFloat($("input[name='filter_position_x']").val()), pos.y);
                }
                finally{
                    this.block = false;
@@ -3196,7 +3196,7 @@ shape_designer.filter.PositionFilter = shape_designer.filter.Filter.extend({
                try{
                    this.block = true;
                    var pos = figure.getPosition();
-                   figure.setPosition(pos.x,parseInt($("input[name='filter_position_y']").val()));
+                   figure.setPosition(pos.x,parseFloat($("input[name='filter_position_y']").val()));
                }
                finally{
                    this.block = false;
