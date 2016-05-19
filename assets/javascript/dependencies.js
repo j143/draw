@@ -17105,10 +17105,13 @@ draw2d.geo.Point = Class.extend({
      * @param {draw2d.geo.Point} other the point to use
      * @return {Number}
      */
-    getDistance: function(other)
+    distance: function(other)
     {
         return Math.sqrt((this.x - other.x) * (this.x - other.x) + (this.y - other.y) * (this.y - other.y));
     },
+    /* @deprecated */
+    getDistance: function(other){return this.distance(other);},
+
 
     /**
      * @method 
@@ -17630,6 +17633,9 @@ draw2d.geo.Rectangle = draw2d.geo.Point.extend({
 	getVertices: function()
 	{
 	    var result = new draw2d.util.ArrayList();
+		// don't change the order. We expect always that the top left corner has index[0]
+        // and goes clock wise
+        //
         result.add(this.getTopLeft());
         result.add(this.getTopRight());
         result.add(this.getBottomRight());
@@ -20117,10 +20123,10 @@ draw2d.command.CommandDelete = draw2d.command.Command.extend({
           }
        }
        
-        
-       if(this.figure instanceof draw2d.Connection){
-           this.figure.disconnect();
-       }   
+   // already done in the canvas.remove(..) method
+   //    if(this.figure instanceof draw2d.Connection){
+   //        this.figure.disconnect();
+   //    }
     
        // remove this figure from the parent 
        //
@@ -21045,7 +21051,7 @@ draw2d.layout.connection.ConnectionRouter = Class.extend({
      * @method
      * Callback method if the router has been assigned to a connection.
      * 
-     * @param {draw2d.Connection} connection The assigned connection
+     * @param {draw2d.shape.basic.PolyLine} connection The assigned connection
      * @template
      * @since 2.7.2
      */
@@ -21058,7 +21064,7 @@ draw2d.layout.connection.ConnectionRouter = Class.extend({
      * @method
      * Callback method if the router has been removed from the connection.
      * 
-     * @param {draw2d.Connection} connection The related connection
+     * @param {draw2d.shape.basic.PolyLine} connection The related connection
      * @template
      * @since 2.7.2
      */
@@ -22137,7 +22143,7 @@ draw2d.layout.connection.InteractiveManhattanConnectionRouter = draw2d.layout.co
     route: function(conn, routingHints)
     {
         if (!routingHints.oldVertices) {
-            debugger
+            debugger;
         }
         if(routingHints.oldVertices.getSize()===0 || conn._routingMetaData.routedByUserInteraction===false){
             this._super(conn, routingHints);
@@ -24685,7 +24691,7 @@ draw2d.layout.locator.PortLocator = draw2d.layout.locator.Locator.extend({
 /**
  * @class draw2d.layout.locator.DraggableLocator
  * 
- * A DraggableLocator is used to place figures relative to the parent. It is
+ * A DraggableLocator is used to place figures relative to the parent top left corner. It is
  * possible to move a child node via drag&drop.
  *
  * 
@@ -24730,6 +24736,152 @@ draw2d.layout.locator.DraggableLocator= draw2d.layout.locator.Locator.extend({
     {
         // use default
         child.setSelectionAdapter(null);
+    }
+});
+
+/*****************************************
+ *   Library is under GPL License (GPL)
+ *   Copyright (c) 2012 Andreas Herz
+ ****************************************/
+/**
+ * @class draw2d.layout.locator.DraggableLocator
+ * 
+ * A DraggableLocator is used to place figures relative to the parent nearest corner. It is
+ * possible to move a child node via drag&drop.
+ *
+ * 
+ * See the example:
+ *
+ *     @example preview small frame
+ *     
+ *
+ *
+ *     
+ * @author Andreas Herz
+ * @extend draw2d.layout.locator.Locator
+ */
+draw2d.layout.locator.SmartDraggableLocator= draw2d.layout.locator.Locator.extend({
+    NAME : "draw2d.layout.locator.SmartDraggableLocator",
+    
+    /**
+     * @constructor
+     * Constructs a locator with associated parent.
+     * 
+     */
+    init: function( )
+    {
+        this._super();
+
+        // description see "bind" method
+        this.boundedCorners={
+            init:false,
+            parent:0,
+            child:0,
+            dist: Number.MAX_SAFE_INTEGER,
+            xOffset: 0,
+            yOffset: 0
+        }
+
+    },
+
+    bind: function(parent, child)
+    {
+        var _this = this;
+        // determine the best corner of the parent/child node and stick to the calculated corner
+        // In the example below it is R1.2 in combination with R2.0
+        //
+        //     0             1
+        //      +-----------+
+        //      |           |
+        //      |    R1     |
+        //      +-----------+
+        //     3             2
+        //
+        //              0             1
+        //               +-----------+
+        //               |           |
+        //               |    R2     |
+        //               +-----------+
+        //              3             2
+        //
+        var calcBoundingCorner=function() {
+            _this.boundedCorners={
+                init:false,
+                parent:0,
+                child:0,
+                dist: Number.MAX_SAFE_INTEGER,
+                xOffset: 0,
+                yOffset: 0
+            };
+            var parentVertices = child.getParent().getBoundingBox().getVertices();
+            var childVertices  = child.getBoundingBox().getVertices();
+            var i_parent, i_child;
+            var p1, p2, distance;
+            for (i_parent = 0; i_parent < parentVertices.getSize(); i_parent++) {
+                for (i_child = 0; i_child < childVertices.getSize(); i_child++) {
+                    p1 = parentVertices.get(i_parent);
+                    p2 = childVertices.get(i_child);
+                    distance = Math.abs(p1.distance(p2));
+                    if (distance < _this.boundedCorners.dist) {
+                        _this.boundedCorners = {
+                            parent: i_parent,
+                            child: i_child,
+                            dist: distance,
+                            xOffset:p1.x-p2.x,
+                            yOffset:p1.y-p2.y
+                        }
+                    }
+                }
+            }
+            _this.boundedCorners.init=true;
+        };
+
+        // override the parent implementation to avoid
+        // that the child is "!selectable" and "!draggable"
+
+        // Don't redirect the selection handling to the parent
+        // Using the DraggableLocator provides the ability to the children
+        // that they are selectable and draggable. Remove the SelectionAdapter from the parent
+        // assignment.
+        child.setSelectionAdapter( function(){
+            return child;
+        });
+
+        child.getParent().on("added",calcBoundingCorner);
+        child.on("dragend",calcBoundingCorner);
+    },
+
+    unbind: function(parent, child)
+    {
+        // use default
+        child.setSelectionAdapter(null);
+    },
+
+
+    /**
+     * @method
+     * Controls the location of an I{@link draw2d.Figure}
+     *
+     * @param {Number} index child index of the figure
+     * @param {draw2d.Figure} figure the figure to control
+     *
+     * @template
+     **/
+    relocate: function(index, figure)
+    {
+        this._super(index, figure);
+        if(this.boundedCorners.init===true) {
+            var parentVertices = figure.getParent().getBoundingBox().getVertices();
+            var childVertices = figure.getBoundingBox().getVertices();
+            var p1 = parentVertices.get(this.boundedCorners.parent);
+            var p2 = childVertices.get(this.boundedCorners.child);
+
+            var xOffset = p1.x - p2.x;
+            var yOffset = p1.y - p2.y;
+            // restore the initial distance from the corner by adding the new offset
+            // to the position of the child
+            figure.translate(xOffset - this.boundedCorners.xOffset, yOffset - this.boundedCorners.yOffset);
+        }
     }
 });
 
@@ -26619,7 +26771,11 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
             canDragStart = figure.onDragStart(x - figure.getAbsoluteX(), y - figure.getAbsoluteY(), shiftKey, ctrlKey);
             // Element send a veto about the drag&drop operation
             this.mouseDraggingElement = canDragStart===false ? null : figure;
-            this.mouseDownElement = figure;
+        }
+
+        this.mouseDownElement = figure;
+        if(this.mouseDownElement!==null){
+            this.mouseDownElement.fireEvent("mousedown", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
         }
 
         if (figure !== canvas.getSelection().getPrimary() && figure !== null && figure.isSelectable() === true) {
@@ -26783,6 +26939,10 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
         //
         if (this.mouseDownElement === null && this.mouseMovedDuringMouseDown===false) {
             this.select(canvas,null);
+        }
+
+        if(this.mouseDownElement!==null){
+            this.mouseDownElement.fireEvent("mouseup", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
         }
 
         this.mouseDownElement = null;
@@ -27278,10 +27438,15 @@ draw2d.policy.canvas.BoundingboxSelectionPolicy =  draw2d.policy.canvas.SingleSe
                 canDragStart = figure.onDragStart(x - figure.getAbsoluteX(), y - figure.getAbsoluteY(), shiftKey, ctrlKey);
                 // Element send a veto about the drag&drop operation
                 this.mouseDraggingElement = canDragStart===false ? null : figure;
-                this.mouseDownElement = figure;
             }
-    
-            // we click on an element which are not part of the current selection
+
+             this.mouseDownElement = figure;
+
+             if(this.mouseDownElement!==null){
+                 this.mouseDownElement.fireEvent("mousedown", {x:x, y:y, shiftKey:shiftKey, ctrlKey:ctrlKey});
+             }
+
+             // we click on an element which are not part of the current selection
             // => reset the "old" current selection if we didn't press the shift key
             if(shiftKey === false){
                 if(this.mouseDownElement!==null && this.mouseDownElement.isResizeHandle===false && !currentSelection.contains(this.mouseDownElement)){
@@ -34401,9 +34566,11 @@ draw2d.policy.port.IntrusivePortsFeedbackPolicy = draw2d.policy.port.PortFeedbac
      */
     onDragEnd: function(canvas, figure, x, y, shiftKey, ctrlKey)
     {
-        this.tweenable.stop(true);
-        this.tweenable.dispose();
-        this.tweenable= null;
+        if(this.tweenable) {
+            this.tweenable.stop(true);
+            this.tweenable.dispose();
+            this.tweenable = null;
+        }
         canvas.getAllPorts().each(function(i, element){
             // IMPORTANT shortcut to avoid rendering errors!!
             // performance shortcut to avoid a lot of events and recalculate/routing of all related connections
@@ -34439,7 +34606,7 @@ draw2d.policy.port.IntrusivePortsFeedbackPolicy = draw2d.policy.port.PortFeedbac
  *   Library is under GPL License (GPL)
  *   Copyright (c) 2012 Andreas Herz
  ****************************************/draw2d.Configuration = {
-    version : "6.1.16",
+    version : "6.1.28",
     i18n : {
         command : {
             move : "Move Shape",
@@ -34707,9 +34874,9 @@ draw2d.Canvas = Class.extend(
 
         this.html.bind("mousemove touchmove", function(event)
         {
-            event = _this._getEvent(event);
+            event  = _this._getEvent(event);
+            var pos = _this.fromDocumentToCanvasCoordinate(event.clientX, event.clientY);
             if (_this.mouseDown === false){
-               var pos = _this.fromDocumentToCanvasCoordinate(event.clientX, event.clientY);
                // mouseEnter/mouseLeave events for Figures. Don't use the Raphael or DOM native functions.
                // Raphael didn't work for Rectangle with transparent fill (events only fired for the border line)
                // DOM didn't work well for lines. No eclipse area - you must hit the line exact to retrieve the event.
@@ -34719,12 +34886,14 @@ draw2d.Canvas = Class.extend(
                try{
 	               var hover = _this.getBestFigure(pos.x,pos.y);
 	               if(hover !== _this.currentHoverFigure && _this.currentHoverFigure!==null){
-	            	   _this.currentHoverFigure.onMouseLeave();
+	            	   _this.currentHoverFigure.onMouseLeave(); // deprecated
 	            	   _this.currentHoverFigure.fireEvent("mouseleave");
+                       _this.fireEvent("mouseleave", {figure:_this.currentHoverFigure});
 	               }
 	               if(hover !== _this.currentHoverFigure && hover!==null){
 	            	   hover.onMouseEnter();
 	            	   hover.fireEvent("mouseenter");
+                       _this.fireEvent("mouseenter", {figure:hover});
 	               }
 	               _this.currentHoverFigure = hover;
                }
@@ -34736,6 +34905,7 @@ draw2d.Canvas = Class.extend(
                _this.editPolicy.each(function(i,policy){
                    policy.onMouseMove(_this, pos.x, pos.y, event.shiftKey, event.ctrlKey);
                });
+               _this.fireEvent("mousemove",{x:pos.x, y:pos.y, shiftKey:event.shiftKey, ctrlKey:event.ctrlKey, hoverFigure:_this.currentHoverFigure});
             }
             else{
                var diffXAbs = (event.clientX - _this.mouseDownX)*_this.zoomFactor;
@@ -34745,6 +34915,7 @@ draw2d.Canvas = Class.extend(
                });
                _this.mouseDragDiffX = diffXAbs;
                _this.mouseDragDiffY = diffYAbs;
+               _this.fireEvent("mousemove",{x:pos.x, y:pos.y, shiftKey:event.shiftKey, ctrlKey:event.ctrlKey, hoverFigure:_this.currentHoverFigure});
            }
         });
         
@@ -35848,7 +36019,18 @@ draw2d.Canvas = Class.extend(
             });
         };
 
-        // Checking ports first
+
+        // ResizeHandles
+        //
+        var i,len;
+        for ( i = 0, len = this.resizeHandles.getSize(); i < len; i++) {
+            testFigure = this.resizeHandles.get(i);
+            if (testFigure.isVisible() && testFigure.hitTest(x, y) && !isInBlacklist(testFigure) &&  isInWhitelist(testFigure)){
+                return testFigure;
+            }
+        }
+
+        // Checking ports
         //
         for ( i = 0, len = this.commonPorts.getSize(); i < len; i++) {
             port = this.commonPorts.get(i);
@@ -35865,16 +36047,6 @@ draw2d.Canvas = Class.extend(
             }
         }
 
-
-        // ResizeHandles next
-        //
-        var i,len;
-        for ( i = 0, len = this.resizeHandles.getSize(); i < len; i++) {
-            testFigure = this.resizeHandles.get(i);
-            if (testFigure.isVisible() && testFigure.hitTest(x, y) && !isInBlacklist(testFigure) &&  isInWhitelist(testFigure)){
-                return testFigure; 
-            }
-        }
 
 
         //  Check now the common objects.
@@ -36099,8 +36271,8 @@ draw2d.Canvas = Class.extend(
             figure:figure,
             x:x,
             y:y,
-            relX: x-figure.getAbsoluteX(),
-            relY: y-figure.getAbsoluteY(),
+            relX: figure!==null?x-figure.getAbsoluteX():0,
+            relY: figure!==null?y-figure.getAbsoluteY():0,
             shiftKey:shiftKey,
             ctrlKey:ctrlKey});
 
@@ -37150,12 +37322,12 @@ draw2d.Figure = Class.extend({
           this.getShapeElement();
       }
 
-      // resset the attribute cache. We must start by paint all attributes
+      // reset the attribute cache. We must start by paint all attributes
       //
       this.lastAppliedAttributes = {};
 
 
-     if(canvas === null){
+      if(canvas === null){
     	  this.stopTimer();
       }
       else{
@@ -38630,7 +38802,7 @@ draw2d.Figure = Class.extend({
      **/
     setDimension: function(w, h)
     {
-        var old = {w:this.width, h:this.height};
+        var old = {width:this.width, height:this.height};
 
         var _this = this;
         w = Math.max(this.getMinWidth(),w);
@@ -38686,7 +38858,7 @@ draw2d.Figure = Class.extend({
             this.repaint();
 
             this.fireEvent("resize");
-            this.fireEvent("change:dimension",{value:{height:this.height, width:this.width}});
+            this.fireEvent("change:dimension",{value:{height:this.height, width:this.width, old:old}});
 
             // Update the resize handles if the user change the position of the element via an API call.
             //
@@ -38756,7 +38928,7 @@ draw2d.Figure = Class.extend({
      * 
      * @returns {Boolean}
      */
-    hitTest : function ( iX , iY, corona)
+    hitTest: function ( iX , iY, corona)
     {
         if(typeof corona === "number"){
             return this.getBoundingBox().scale(corona,corona).hitTest(iX,iY);
