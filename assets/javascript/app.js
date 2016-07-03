@@ -817,11 +817,17 @@ shape_designer.Toolbar = Class.extend({
         //
         this.deleteButton  = $('<button  data-toggle="tooltip" title="Delete <span class=\'highlight\'> [ Del ]</span>" class=\"btn btn-default\" ><img src="./assets/images/toolbar_delete.png"></button>');
         buttonGroup.append(this.deleteButton);
-        this.deleteButton.on("click",$.proxy(function(){
-            var node = this.view.getPrimarySelection();
-            var command= new draw2d.command.CommandDelete(node);
-            this.view.getCommandStack().execute(command);
-        },this)).prop( "disabled", true );
+        this.deleteButton.on("click",function(){
+            view.getCommandStack().startTransaction(draw2d.Configuration.i18n.command.deleteShape);
+            view.getSelection().each(function(index, figure){
+                var cmd = figure.createCommand(new draw2d.command.CommandType(draw2d.command.CommandType.DELETE));
+                if(cmd!==null){
+                    view.getCommandStack().execute(cmd);
+                }
+            });
+            // execute all single commands at once.
+            view.getCommandStack().commitTransaction();
+        }).prop( "disabled", true );
         Mousetrap.bind(["del"], $.proxy(function (event) {this.deleteButton.click();return false;},this));
 
 
