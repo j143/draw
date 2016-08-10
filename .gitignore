@@ -2,3 +2,5 @@ bower_components
 dist
 node_modules
 workspace.xml
+.idea/jsLibraryMappings.xml
+.idea/libraries/draw2d_js_app_shape_designer_node_modules.xml
