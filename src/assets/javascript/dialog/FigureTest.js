@@ -72,10 +72,10 @@ shape_designer.dialog.FigureTest = Class.extend(
 
 			// create and add two nodes which contains Ports (In and OUT)
 			//
-			var start = new draw2d.shape.node.Start();
+			var start   = new draw2d.shape.node.Start();
 			var toggle1 = new shape_designer.figure.TestSwitch();
 			var toggle2 = new shape_designer.figure.TestSwitch();
-			var end   = new draw2d.shape.node.End();
+			var end     = new draw2d.shape.node.End();
 
 			// ...add it to the canvas
 			canvas.add( toggle1, 50,150);

@@ -12,7 +12,7 @@ shape_designer.View = draw2d.Canvas.extend({
 		this.setScrollArea("#"+id);
 
         this.installEditPolicy( this.grid);
-        this.installEditPolicy(new draw2d.policy.canvas.FadeoutDecorationPolicy());
+        this.installEditPolicy( new draw2d.policy.canvas.FadeoutDecorationPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
