@@ -327,7 +327,7 @@ shape_designer.View = draw2d.Canvas.extend({
 		this.setScrollArea("#"+id);
 
         this.installEditPolicy( this.grid);
-        this.installEditPolicy(new draw2d.policy.canvas.FadeoutDecorationPolicy());
+        this.installEditPolicy( new draw2d.policy.canvas.FadeoutDecorationPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToGeometryEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToCenterEditPolicy());
         this.installEditPolicy( new draw2d.policy.canvas.SnapToInBetweenEditPolicy());
@@ -1177,10 +1177,10 @@ shape_designer.dialog.FigureTest = Class.extend(
 
 			// create and add two nodes which contains Ports (In and OUT)
 			//
-			var start = new draw2d.shape.node.Start();
+			var start   = new draw2d.shape.node.Start();
 			var toggle1 = new shape_designer.figure.TestSwitch();
 			var toggle2 = new shape_designer.figure.TestSwitch();
-			var end   = new draw2d.shape.node.End();
+			var end     = new draw2d.shape.node.End();
 
 			// ...add it to the canvas
 			canvas.add( toggle1, 50,150);
@@ -4620,7 +4620,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
      * @param {Function} resultCallback the method to call on success. The first argument is the result object, the second the base64 representation of the file content
      */
     marshal: function(canvas, className, resultCallback){
-        var baseClass = app.getConfiguration("baseClass");
+        var baseClass  = app.getConfiguration("baseClass");
         var customCode = app.getConfiguration("code");
         var figures = canvas.getExtFigures();
         var b = canvas.getBoundingBox();
@@ -4637,6 +4637,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
                     });
         
         figures.each(function(i,figure){
+            figure.uninstallEditPolicy(draw2d.policy.figure.RegionEditPolicy.NAME);
             var attr = {};
             figure.svgPathString=null;
             figure.translate(-x,-y);
