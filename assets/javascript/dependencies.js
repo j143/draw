@@ -34718,7 +34718,7 @@ draw2d.policy.port.IntrusivePortsFeedbackPolicy = draw2d.policy.port.PortFeedbac
  *   Library is under GPL License (GPL)
  *   Copyright (c) 2012 Andreas Herz
  ****************************************/draw2d.Configuration = {
-    version : "6.1.56",
+    version : "6.1.57",
     i18n : {
         command : {
             move : "Move Shape",
@@ -38023,8 +38023,9 @@ draw2d.Figure = Class.extend({
          // deinstall all instances of the policy
          //
          var _this = this;
+         var name = (typeof policy === "string")?policy:policy.NAME;
          this.editPolicy.grep(function(p){
-             if(p.NAME === policy.NAME){
+             if(p.NAME === name){
                  p.onUninstall(_this);
                  return false;
              }
