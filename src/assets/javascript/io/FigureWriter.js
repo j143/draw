@@ -38,7 +38,7 @@ shape_designer.FigureWriter = draw2d.io.Writer.extend({
                     });
         
         figures.each(function(i,figure){
-            figure.uninstallEditPolicy(draw2d.policy.figure.RegionEditPolicy.NAME);
+            figure.uninstallEditPolicy("draw2d.policy.figure.RegionEditPolicy");
             var attr = {};
             figure.svgPathString=null;
             figure.translate(-x,-y);
