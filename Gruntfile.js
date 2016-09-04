@@ -48,7 +48,7 @@ module.exports = function (grunt) {
             application: {
                 src: [
 
-                    './src/assets/javascript/hardware/raspi.js',
+                    './src/assets/javascript/Hardware.js',
                     './src/assets/javascript/polyfill.js',
                     './src/assets/javascript/Configuration.js',
                     './src/assets/javascript/Application.js',
