@@ -10,7 +10,9 @@ var hardware={
 
     bloc:{
         set:function(blocId, value){},
-        get:function(blocId){return false;}
+        get:function(blocId){return false;},
+        on:function(){},
+        off:function(){}
     }
 };
 if(typeof String.prototype.endsWith ==="undefined") {
