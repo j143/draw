@@ -12,7 +12,8 @@ var hardware={
         set:function(blocId, value){},
         get:function(blocId){return false;},
         on:function(){},
-        off:function(){}
+        off:function(){},
+        isConnected: function(blocId){return true;}
     }
 };
 if(typeof String.prototype.endsWith ==="undefined") {
